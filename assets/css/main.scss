@@ -1,0 +1,233 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css");
+@import url("https://fonts.googleapis.com/css2?family=Lobster+Two:wght@700&family=Open+Sans:wght@300;500;700&display=swap");
+
+@import "@/node_modules/bootstrap/scss/functions";
+
+// new theme settings
+$primary: #420d0a;
+$secondary: #078f87;
+$light: #ddd;
+$body-bg: #f4f4f4;
+$border-color: #ddd;
+$font-family-base: "Open Sans", sans-serif;
+$font-weight-base: 300;
+$line-height-base: 1.54;
+$display-font-family: "Lobster Two", cursive;
+$display-font-weight: 700;
+
+// my custom variables
+$btn-hover-filter: hue-rotate(-40deg) brightness(1.5); // button hover effect
+
+// old theme settings
+// $primary: #000;
+// $secondary: #755df1;
+// $light: #ddd;
+// $body-bg: #f4f4f4;
+// $border-color: #ddd;
+// $font-family-base: "Open Sans", sans-serif;
+// $font-weight-base: 300;
+// $line-height-base: 1.54;
+// $display-font-family: "Lobster Two", cursive;
+// $display-font-weight: 700;
+
+// my custom variables
+
+// $btn-hover-filter: hue-rotate(77deg); // button hover effect
+//end theme settings
+
+$link-decoration: none;
+
+//typography
+
+$headings-font-weight: 700;
+$headings-line-height: 1.4;
+
+$aspect-ratios: (
+  "1x1": 100%,
+  "4x3": calc(3 / 4 * 100%),
+  "16x9": calc(9 / 16 * 100%),
+  "21x9": calc(9 / 21 * 100%),
+  // additional ratios:
+  "3x4": calc(4 / 3 * 100%),
+);
+
+// buttons
+$btn-active-box-shadow: 0;
+$btn-focus-width: 0;
+$btn-padding-y: 0.5rem;
+$btn-padding-x: 1.2rem;
+$btn-border-width: 3;
+$btn-border-color: transparent;
+$btn-border-radius: 12px;
+$btn-font-weight: 500;
+
+$enable-smooth-scroll: false;
+
+// badges
+$badge-font-size: 0.7em;
+$badge-font-weight: 500;
+$badge-padding-x: 0.7em;
+$badge-padding-y: 0.35em;
+
+// form
+$form-label-font-weight: 700; // not working??
+// $input-focus-width: 0;
+$input-btn-focus-box-shadow: none;
+
+// Bootstrap stylesheets
+@import "@/node_modules/bootstrap/scss/variables";
+@import "@/node_modules/bootstrap/scss/mixins";
+@import "@/node_modules/bootstrap/scss/maps";
+@import "@/node_modules/bootstrap/scss/utilities";
+
+// Optional Bootstrap components
+@import "@/node_modules/bootstrap/scss/root";
+@import "@/node_modules/bootstrap/scss/reboot";
+@import "@/node_modules/bootstrap/scss/images";
+@import "@/node_modules/bootstrap/scss/containers";
+@import "@/node_modules/bootstrap/scss/grid";
+@import "@/node_modules/bootstrap/scss/buttons";
+@import "@/node_modules/bootstrap/scss/dropdown";
+@import "@/node_modules/bootstrap/scss/close"; // = close button
+@import "@/node_modules/bootstrap/scss/badge";
+@import "@/node_modules/bootstrap/scss/forms";
+@import "@/node_modules/bootstrap/scss/type"; // list
+
+// Helpers
+@import "@/node_modules/bootstrap/scss/helpers/position";
+@import "@/node_modules/bootstrap/scss/helpers/stacks";
+@import "@/node_modules/bootstrap/scss/helpers/ratio";
+
+// Utilities
+@import "@/node_modules/bootstrap/scss/utilities/api";
+
+:root {
+  --my-secondary2: #420d0a;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+body {
+  width: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &.modal-open {
+    overflow-y: hidden;
+    position: fixed;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent;
+}
+
+.is-blurred {
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+  transition: filter 0.3s linear;
+}
+
+// custom gradient backgrounds
+.bg-secondary,
+.btn-secondary {
+  background: $secondary;
+  background: linear-gradient(141deg, $secondary 0%, var(--my-secondary2) 81%);
+  color: #fff;
+  transition: filter 0.24s linear !important;
+
+  &:hover,
+  &:active:hover,
+  &:focus {
+    filter: $btn-hover-filter; // hue-rotate($hue-rotate) brightness(2);
+    color: #fff !important;
+  }
+}
+
+// custom icon gradient background
+.bi.color-secondary,
+span.color-secondary {
+  background: -webkit-linear-gradient(45deg, $secondary, var(--my-secondary2));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: filter 0.24s linear !important;
+
+  &:hover,
+  &:active:hover,
+  &:focus {
+    filter: $btn-hover-filter;
+  }
+}
+
+// for vue page transitions
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s cubic-bezier(0.2, 0, 0.1, 1);
+}
+.page-enter,
+.page-leave-active {
+  opacity: 0.1;
+  transform: translateY(60px);
+}
+
+// custom inline list with bullets in between
+.bullet-list-inline {
+  padding-left: 0;
+
+  li {
+    $size: 6px; // bullet size
+    $padding: 1.7rem;
+    $line-height: 24.64px; // 16 * $line-height-base
+
+    display: inline;
+    position: relative;
+    padding-right: $padding;
+
+    &:not(:first-of-type)::before {
+      position: absolute;
+      content: "";
+      z-index: 2;
+      left: calc(($padding / -2) - $size);
+      top: calc($line-height/2 - $size/2 - 1px);
+      width: $size;
+      height: $size;
+      border-radius: 50%;
+      background-color: var(--bs-secondary);
+    }
+  }
+}
+
+// custom animation
+.fade-in-up {
+  animation: fade-in-up 0.7s cubic-bezier(0.2, 0, 0.1, 1) both;
+  will-change: transform, opacity;
+  animation-play-state: paused;
+}
+
+.start-animation {
+  animation-play-state: running !important;
+}
+
+@keyframes fade-in-up {
+  from {
+    transform: translateY(60px); // scaleY(1.2)
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// card custom responsive heading size (needs mixins which are only available here)
+.card h2 {
+  font-size: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    font-size: 1.125rem;
+  }
+}
