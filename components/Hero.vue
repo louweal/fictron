@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div class="hero">
     <div class="row gx-3 gx-lg-5">
       <div class="col-6 col-md-4">
-        <display-card :post="posts[0]" ratio="3x4" />
+        <card :post="posts[0]" hero />
       </div>
       <div class="col-6 col-md-4">
-        <display-card :post="posts[1]" ratio="3x4" />
+        <card :post="posts[1]" hero />
       </div>
       <div class="col-6 col-md-4">
-        <display-card :post="posts[2]" ratio="3x4" class="d-none d-md-block" />
+        <card :post="posts[2]" class="d-none d-md-block" hero />
       </div>
     </div>
   </div>

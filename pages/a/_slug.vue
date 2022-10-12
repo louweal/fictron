@@ -6,7 +6,7 @@
           :class="
             $options.ratio.w > $options.ratio.h
               ? 'col-12 col-md-10 offset-md-1'
-              : 'col-4 col-md-2 col-xl-1 offset-sm-1 offset-lg-2'
+              : 'col-4 col-md-2 offset-sm-1 offset-lg-2'
           "
         >
           <div
@@ -23,7 +23,7 @@
           :class="
             $options.ratio.w > $options.ratio.h
               ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
-              : 'col-12 col-md-6 col-xl-9 mb-5'
+              : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
           "
         >
           <ul class="bullet-list-inline mt-2">
@@ -42,6 +42,8 @@
           </ul>
 
           <h1>{{ post.title }}</h1>
+
+          <span v-if="post.chapters">{{ post.chapters }} chapters</span>
         </div>
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <template v-for="(p, i) in post.content">
@@ -68,7 +70,7 @@
           </template>
 
           <p class="text-secondary">
-            Thank you for reading this and supporting
+            Thank you for supporting
             <b>
               <nuxt-link :to="'/w/' + author.slug" class="text-secondary">
                 {{ author.name }}
@@ -257,6 +259,7 @@ $fontsize: 8px;
   right: 0;
   height: 1.4vh;
   background-color: var(--bs-gray-400);
+  z-index: 9;
 
   .bar {
     position: absolute;
@@ -266,6 +269,7 @@ $fontsize: 8px;
     width: 0%;
     transition: width 0.8s ease-out;
     will-change: width;
+    z-index: 2;
   }
 
   .progress-label {

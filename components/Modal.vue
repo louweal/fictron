@@ -59,7 +59,7 @@ export default {
         id: 1,
         name: "Anneloes Louwe",
         categories: ["fantasy", "sci-fi"], // ["dogs", "hiking", "chess", "save-ukraine"],
-        writers: [1, 3, 7, 9, 13, 15],
+        writers: [1, 3, 7, 9, 13, 15, 21, 23],
         history: [],
       });
 

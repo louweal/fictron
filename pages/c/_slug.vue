@@ -7,7 +7,7 @@
         @click="updateUserCategories()"
         v-if="$store.state.user"
       >
-        {{ following ? "Unfollow" : "Follow" }}
+        {{ following ? "Unsubsribe" : "Subscribe" }}
       </div>
     </div>
 

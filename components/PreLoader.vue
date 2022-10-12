@@ -7,9 +7,9 @@
         </div>
       </div>
 
-      <p class="display-6 fs-3 text-secondary text-center mt-2">
-        <span class="color-secondary delay-800">stories.</span>
-        <span class="color-secondary delay-1400">reimagined.</span>
+      <p class="display-6 fs-3 xxxtext-secondary text-center mt-2">
+        <span class="text-primary delay-800">stories.</span>
+        <span class="text-primary delay-1400">reimagined.</span>
       </p>
     </div>
   </div>
@@ -24,9 +24,6 @@ export default {};
   background-color: #fff;
   display: block;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   width: 100vw;
   height: 100%;
   z-index: 3000;
@@ -45,12 +42,6 @@ export default {};
       opacity: 0;
       animation: fade-in-up 1.8s cubic-bezier(0.2, 0, 0.1, 1) forwards;
     }
-
-    // .wobbler {
-    //   margin-right: 1rem;
-    //   transform-origin: center center;
-    //   animation: wobble 0.4s ease-in-out forwards;
-    // }
 
     p {
       display: block;
@@ -71,24 +62,6 @@ export default {};
 .delay-1400 {
   animation-delay: 1400ms !important;
 }
-
-// @keyframes wobble {
-//   0% {
-//     transform: rotate(-20deg);
-//   }
-//   25% {
-//     transform: rotate(20deg);
-//   }
-//   50% {
-//     transform: rotate(-10deg);
-//   }
-//   75% {
-//     transform: rotate(10deg);
-//   }
-//   100% {
-//     transform: rotate(0deg);
-//   }
-// }
 
 @keyframes disappear {
   to {

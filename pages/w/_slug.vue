@@ -1,12 +1,9 @@
 <template>
   <main>
     <div class="container-xl">
-      <div class="hstack gap-3 mt-2">
+      <div class="hstack gap-3 mt-2 d-md-none">
         <h1>{{ writer.name }}</h1>
-        <div
-          class="btn btn-sm btn-secondary d-md-none"
-          @click="updateWriters()"
-        >
+        <div class="btn btn-sm btn-secondary" @click="updateWriters()">
           {{ following ? "Unfollow" : "Follow" }}
         </div>
       </div>
@@ -14,7 +11,17 @@
 
       <div class="row gx-3 gx-lg-5 mt-2 mt-lg-4">
         <div class="col-12 col-md-9">
-          <post-grid :posts="posts" />
+          <template v-for="(c, i) in new Set(posts.map((p) => p.category))">
+            <h2 class="fs-3" :key="i">
+              Publications in
+              {{ categories.find((cat) => cat.slug === c).title }}
+            </h2>
+
+            <post-grid
+              :posts="posts.filter((p) => p.category === c)"
+              :key="i"
+            />
+          </template>
         </div>
 
         <div class="col-md-3 d-none d-md-block">
@@ -53,6 +60,10 @@ export default {
 
     posts() {
       return this.$store.state.posts.filter((a) => a.author === this.writer.id);
+    },
+
+    categories() {
+      return this.$store.state.categories;
     },
 
     following() {

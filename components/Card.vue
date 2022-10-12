@@ -13,12 +13,12 @@
           })
         : paywall()
     "
-    class="card position-relative"
+    class="xxxcard position-relative"
   >
-    <div v-if="borderTop" class="w-100 border-top d-md-none"></div>
+    <div v-if="borderTop && !hero" class="w-100 border-top d-md-none"></div>
 
     <div class="row gx-3 my-3 my-md-0">
-      <div class="col-3 col-md-12 xxxmb-md-0">
+      <div :class="hero ? 'col-12' : 'col-3 col-md-12'">
         <div class="ratio ratio-3x4">
           <div
             class="card-img position-absolute rounded bg-light"
@@ -28,13 +28,23 @@
           ></div>
 
           <div
-            class="card-img-overlay rounded pb-1 px-3 px-lg-3 pb-lg-2 d-none d-md-flex"
+            class="card-img-overlay rounded pb-3 px-3 px-lg-3 pb-lg-3"
+            :class="hero ? 'd-flex' : 'd-none d-md-flex'"
           >
-            <h2 class="text-white fs-4">{{ post.title }}</h2>
+            <component
+              :is="hero ? 'h1' : 'h2'"
+              class="text-white"
+              :class="hero ? 'display-4' : 'fs-4'"
+            >
+              {{ post.title }}
+            </component>
             <span class="fw-bold text-white">{{ author }}</span>
           </div>
 
-          <div class="blurb p-4 text-white rounded">
+          <div
+            class="blurb p-4 text-white rounded d-none"
+            :class="hero ? false : 'd-md-block'"
+          >
             <p>
               {{ post.intro }}
             </p>
@@ -48,7 +58,10 @@
           <span v-else>{{ progress }} %</span>
         </span>
       </div>
-      <div class="col-9 d-md-none align-self-center">
+      <div
+        class="col-9 d-md-none align-self-center"
+        :class="hero ? 'd-none' : false"
+      >
         <h2 class="fs-5">{{ post.title }}</h2>
         <span class="fw-bold">{{ author }}</span>
       </div>
@@ -74,6 +87,11 @@ export default {
     borderTop: {
       type: Boolean,
       default: true,
+    },
+
+    hero: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -122,7 +140,7 @@ export default {
 
 <style lang="scss" scoped>
 .card {
-  position: relative;
+  overflow: hidden;
 
   &:hover .card-img {
     background-size: 120%;
@@ -162,6 +180,7 @@ export default {
   opacity: 0;
   background-color: var(--bs-primary);
   transition: opacity 0.4s 0.15s linear; //cubic-bezier(0.2, 0, 0.1, 1);
+  overflow: hidden;
 
   &:hover {
     opacity: 1;

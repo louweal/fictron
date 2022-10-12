@@ -16,6 +16,7 @@ $line-height-base: 1.54;
 $font-weight-bold: 500;
 $display-font-family: "Fredoka", cursive;
 $display-font-weight: 400;
+$display-line-height: 1.125;
 $text-muted: #290604;
 $headings-font-weight: 500;
 $btn-hover-bg-shade-amount: 0%;
@@ -235,6 +236,7 @@ span.color-secondary {
 // card custom responsive heading size (needs mixins which are only available here)
 .card h2 {
   font-size: 1rem;
+  font-family: $font-family-base;
 
   @include media-breakpoint-up(lg) {
     font-size: 1.125rem;

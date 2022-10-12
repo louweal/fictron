@@ -21,9 +21,9 @@ function makeParagraphs(n) {
   for (let i = 0; i < n; i++) {
     let p = {};
 
-    if (i === 0 || Math.ceil(Math.random() * 10) == 10) {
-      // add section title above paragraph (1/3 prob)
-      p["title"] = "Chapter " + chapter; //getWords(Math.ceil(Math.random() * 3));
+    if (i === 0 || Math.ceil(Math.random() * 5) == 5) {
+      // add chapter title above paragraph (1/5 prob)
+      p["title"] = "Chapter " + chapter;
       end += p.title.length;
       p["titleEnd"] = end;
       chapter += 1;
@@ -33,7 +33,7 @@ function makeParagraphs(n) {
     p["end"] = end;
     a.push(p);
   }
-  return { a, end };
+  return { a, end, chapter };
 }
 
 export function posts(n) {
@@ -59,6 +59,7 @@ export function posts(n) {
       category: category,
       content: content.a,
       total: content.end,
+      chapters: content.chapter,
       date: new Date((1662031747 + Math.ceil(Math.random() * 2592000)) * 1000), // 1 sept 2022 + 1 month
       views: Math.ceil(Math.random() * 777),
     });
