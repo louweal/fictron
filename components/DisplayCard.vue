@@ -31,7 +31,8 @@
       class="badge bg-secondary position-absolute m-1 top-0 end-0 lh-1"
       v-if="progress"
     >
-      {{ progress }} %
+      <i v-if="progress === 100" class="bi bi-check-lg"></i>
+      <span v-else>{{ progress }} %</span>
     </span>
   </nuxt-link>
 </template>

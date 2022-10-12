@@ -13,48 +13,44 @@
           })
         : paywall()
     "
-    class="card"
+    class="card position-relative"
   >
     <div v-if="borderTop" class="w-100 border-top d-md-none"></div>
-    <div
-      class="row g-0 w-100 my-md-0"
-      :class="flex ? 'gx-2 gx-md-0 my-3' : 'gx-0 my-0 mt-2'"
-    >
-      <div
-        class="col-md-12"
-        :class="flex ? 'col-4 col-sm-3 col-md-2' : 'col-12'"
-      >
-        <div class="position-relative mt-md-0">
+
+    <div class="row gx-3 my-3 my-md-0">
+      <div class="col-3 col-md-12 xxxmb-md-0">
+        <div class="ratio ratio-3x4">
           <div
-            class="card-img ratio ratio-4x3 rounded mb-md-1 mb-xl-2 w-100 bg-light"
+            class="card-img position-absolute rounded bg-light"
             :style="{
               backgroundImage: visual,
             }"
           ></div>
 
-          <span
-            class="badge bg-secondary position-absolute m-1 top-0 end-0"
-            v-if="progress"
+          <div
+            class="card-img-overlay rounded pb-1 px-3 px-lg-3 pb-lg-2 d-none d-md-flex"
           >
-            <i v-if="progress === 100" class="bi bi-check"></i>
+            <h2 class="text-white fs-4">{{ post.title }}</h2>
+            <span class="fw-bold text-white">{{ author }}</span>
+          </div>
 
-            <span v-else>{{ progress }} %</span>
-          </span>
+          <div class="blurb p-4 text-white rounded">
+            <p>
+              {{ post.intro }}
+            </p>
+          </div>
         </div>
+        <span
+          class="badge bg-light position-absolute m-1 top-0 end-0 lh-1"
+          v-if="progress"
+        >
+          <i v-if="progress === 100" class="bi bi-check-lg"></i>
+          <span v-else>{{ progress }} %</span>
+        </span>
       </div>
-      <div class="col-8 col-md-12 d-none d-md-block">
-        <h2 class="card-title">{{ post.title }}</h2>
-
-        <p v-if="showIntro" class="d-none d-md-block">{{ post.intro }}</p>
-      </div>
-
-      <div
-        class="d-md-none align-self-center"
-        :class="flex ? 'col-8 col-sm-9' : 'col-12'"
-      >
-        <h2 class="card-title" :class="flex ? 'fw-light' : false">
-          {{ post.title }}
-        </h2>
+      <div class="col-9 d-md-none align-self-center">
+        <h2 class="fs-5">{{ post.title }}</h2>
+        <span class="fw-bold">{{ author }}</span>
       </div>
     </div>
   </nuxt-link>
@@ -69,18 +65,11 @@ export default {
       progress: 0,
     };
   },
+
   props: {
     post: {
       type: [Array, Object],
       default: () => [],
-    },
-    showIntro: {
-      type: Boolean,
-      default: true,
-    },
-    flex: {
-      type: Boolean,
-      default: true, // shows content in flex 'row' like manner on mobile
     },
     borderTop: {
       type: Boolean,
@@ -103,7 +92,6 @@ export default {
     visual() {
       return getImage(this.post.visual);
     },
-
     historicProgress() {
       if (this.$store.state.user) {
         let history = this.$store.state.user.history.find(
@@ -114,6 +102,11 @@ export default {
         }
       }
       return 0;
+    },
+
+    author() {
+      return this.$store.state.writers.find((w) => w.id === this.post.author)
+        .name;
     },
   },
 
@@ -129,34 +122,49 @@ export default {
 
 <style lang="scss" scoped>
 .card {
-  display: block;
   position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  // border: 1px solid plum;
 
-  &:hover {
-    .card-img {
-      background-size: 120%;
-    }
-
-    .card-title {
-      color: var(--bs-secondary);
-    }
+  &:hover .card-img {
+    background-size: 120%;
   }
 }
 
-.card-title {
-  transition: color 0.5s linear;
+.card-img {
+  height: 100%;
+  overflow: hidden;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-size 0.4s 0.15s cubic-bezier(0.2, 0, 0.1, 1);
+  background-size: 115%;
 }
 
-.card-img {
-  height: auto;
-  overflow: hidden;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition: background-size 0.3s 0.15s cubic-bezier(0.2, 0, 0.1, 1);
-  background-size: 115%;
+.card-img-overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  // padding: 1.3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  // align-items: flex-end;
+  background: rgb(0, 0, 0);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 59%);
+  z-index: 3;
+}
+
+.blurb {
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  opacity: 0;
+  background-color: var(--bs-primary);
+  transition: opacity 0.4s 0.15s linear; //cubic-bezier(0.2, 0, 0.1, 1);
+
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>

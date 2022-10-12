@@ -1,13 +1,13 @@
 [
   {
-    "title": "Fantasy",
-    "slug": "fantasy",
-    "images": 18
-  },
-  {
     "title": "Action & adventure",
     "slug": "action-adventure",
     "images": 0
+  },
+  {
+    "title": "Fantasy",
+    "slug": "fantasy",
+    "images": 36
   },
   {
     "title": "Detective",
@@ -15,28 +15,18 @@
     "images": 0
   },
   {
-    "title": "Horror",
-    "slug": "horror",
-    "images": 0
+    "title": "Sci-fi",
+    "slug": "sci-fi",
+    "images": 31
   },
   {
     "title": "Romance",
     "slug": "romance",
-    "images": 0
+    "images": 37
   },
   {
-    "title": "Sci-fi",
-    "slug": "sci-fi",
-    "images": 0
-  },
-  {
-    "title": "Short stories",
-    "slug": "short-stories",
-    "images": 0
-  },
-  {
-    "title": "Thriller",
-    "slug": "thriller",
-    "images": 0
+    "title": "Horror",
+    "slug": "horror",
+    "images": 31
   }
 ]

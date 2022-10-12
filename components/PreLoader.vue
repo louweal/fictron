@@ -5,7 +5,6 @@
         <div class="wobbler w-100 h-100">
           <img src="@/images/logo.svg" alt="logo" class="w-100 h-100" />
         </div>
-        <!-- <span class="color-secondary display-2 lh-1"> NearPress </span> -->
       </div>
 
       <p class="display-6 fs-3 text-secondary text-center mt-2">

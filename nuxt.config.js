@@ -7,7 +7,7 @@ export default {
     base: "/",
   },
   head: {
-    title: "NearPress",
+    title: "Fictron",
     htmlAttrs: {
       lang: "en",
     },

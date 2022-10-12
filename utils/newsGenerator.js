@@ -42,7 +42,7 @@ export function posts(n) {
   let a = [];
   for (let i = 0; i < n; i++) {
     let author = Math.ceil(Math.random() * 42);
-    let title = getWords(Math.floor(Math.random() * 4) + 7).replace(".", "");
+    let title = getWords(Math.floor(Math.random() * 4) + 7).replaceAll(".", "");
     title = title.charAt(0) + title.slice(1).toLowerCase();
     let content = makeParagraphs(7 + Math.ceil(Math.random() * 15));
     let category = categorySlugs[author % numCategories];

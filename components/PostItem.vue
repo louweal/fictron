@@ -23,7 +23,10 @@
     </small>
     <h3 class="fs-6 fw-light">
       {{ post.title }}
-      <span class="badge bg-secondary" v-if="progress"> {{ progress }} %</span>
+      <span class="badge bg-secondary" v-if="progress">
+        <i v-if="progress === 100" class="bi bi-check-lg"></i>
+        <span v-else>{{ progress }} %</span>
+      </span>
     </h3>
   </nuxt-link>
 </template>

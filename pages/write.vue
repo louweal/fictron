@@ -2,11 +2,18 @@
   <main>
     <div class="container">
       <div class="row">
-        <div class="col-12 col-md-10 offset-md-1">
+        <div
+          :class="
+            $options.ratio.w > $options.ratio.h
+              ? 'col-12 col-md-10 offset-md-1'
+              : 'col-6 col-md-3 offset-md-2'
+          "
+        >
           <form>
             <div class="form-group d-grid">
               <div
-                class="ratio ratio-16x9 field--upload rounded image cursor-pointer"
+                class="ratio field--upload rounded image cursor-pointer"
+                :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
                 @click="toggleModal"
                 :style="{
                   backgroundImage:
@@ -41,7 +48,8 @@
               <div class="form-group">
                 <p>
                   <b>Tip:</b> To create a sub-heading, add two asterisks before
-                  and after a word or phrase: e.g. <b>**I'm a heading**</b>.
+                  and after a word or phrase: e.g.
+                  <b>**Important sub-heading**</b>.
                 </p>
                 <textarea
                   class="form-control"
@@ -51,17 +59,10 @@
                   placeholder="Text"
                 ></textarea>
 
-                <span id="characters" v-if="post.content">
+                <span id="characters">
                   {{ post.content ? post.content.length : 0 }}
                 </span>
                 characters
-
-                <!-- 
-                <p>
-                  <span>{{ text.length }}</span> characters <br />You receive
-                  {{ text.length * 10 }} microNEAR when someone reads the whole
-                  post.
-                </p> -->
               </div>
             </div>
           </form>
@@ -74,15 +75,13 @@
 
           <form>
             <div class="form-group">
-              <!-- <label for="category">Category</label> -->
-
               <select
                 class="form-select"
                 aria-label="category select"
                 id="category"
                 @change="setCategory($event)"
               >
-                <option selected>Select channel</option>
+                <option selected>Select genre</option>
                 <option
                   :value="c.slug"
                   v-for="(c, i) in [...categories].sort((a, b) =>
@@ -154,8 +153,16 @@
             ></button>
           </div>
           <div class="row g-1">
-            <div class="col-4" v-for="i in 9" :key="i" :set="(j = i + 1)">
-              <div class="ratio ratio-16x9 cursor-pointer">
+            <div
+              :class="$options.ratio.w > $options.ratio.h ? 'col-4' : 'col-3'"
+              v-for="i in 9"
+              :key="i"
+              :set="(j = i + 1)"
+            >
+              <div
+                class="ratio cursor-pointer"
+                :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
+              >
                 <div
                   class="position-absolute rounded bg-light image"
                   @click="selectImage(i)"
@@ -187,6 +194,15 @@ export default {
       category: undefined,
       post: {},
     };
+  },
+
+  ratio: {
+    w: 3,
+    h: 4,
+  },
+
+  created() {
+    Vue.set(this.post, "author", 43);
   },
 
   computed: {
@@ -297,7 +313,7 @@ export default {
       console.log(id);
 
       Vue.set(this.post, "id", id);
-      Vue.set(this.post, "author", 43); // me
+      // Vue.set(this.post, "author", 43); // me
       Vue.set(this.post, "date", this.date);
       Vue.set(this.post, "views", 0);
 
@@ -327,5 +343,6 @@ export default {
 .image {
   background-size: 120%;
   background-position: center center;
+  background-repeat: no-repeat;
 }
 </style>

@@ -2,18 +2,16 @@
   <main>
     <div class="container-xl">
       <category-list
-        :categories="
-          userCategories.length > 0 ? userCategories : $options.categories
-        "
+        :categories="userCategories.length > 0 ? userCategories : categories"
       />
 
       <!-- {{ userWriters }} -->
 
-      <hero-variant :posts="feed.slice(0, 3)" />
+      <hero :posts="feed.slice(0, 3)" />
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
-          <news-grid :posts="feed.slice(2, 11)" hide-first-post="desktop" />
+          <post-grid :posts="feed.slice(2, 12)" hide-first-post="desktop" />
         </div>
 
         <div class="col-md-3 d-none d-md-block">
@@ -73,7 +71,7 @@
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
-          <news-grid :posts="feed.slice(11)" />
+          <post-grid :posts="feed.slice(11)" hide-first-post="desktop" />
         </div>
 
         <div
@@ -100,6 +98,10 @@ export default {
   computed: {
     posts() {
       return this.$store.state.posts; // all posts
+    },
+
+    categories() {
+      return this.$store.state.categories;
     },
 
     feed() {

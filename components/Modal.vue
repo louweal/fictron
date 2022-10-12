@@ -21,23 +21,17 @@
           </div>
           <div class="modal-body px-4">
             <p class="text-center">
-              Connect your NEAR wallet to read and write posts on NearPress.
+              <!-- Connect your NEAR wallet to read and write posts on NearPress.
               Reading posts costs 10 microNEAR per character, which goes
-              directly to the writer.
+              directly to the writer. -->
+              Connect your TRON wallet to read and write posts on Fictron.
+              Reading posts costs X xxxTRON per character, which goes directly
+              to the writer.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
                 MetaMask
               </div>
-              <!-- <div class="btn btn-secondary cursor-pointer" @click="signIn">
-              MetaMask
-            </div>
-            <div class="btn btn-secondary cursor-pointer" @click="signIn">
-              MetaMask
-            </div> -->
-              <!-- <nuxt-link to="/getting-started" class="fw-bold text-center mt-1">
-                I need more information
-              </nuxt-link> -->
             </div>
           </div>
         </slot>
@@ -64,7 +58,7 @@ export default {
       this.$store.commit("setUser", {
         id: 1,
         name: "Anneloes Louwe",
-        categories: ["dogs", "hiking", "chess", "save-ukraine"],
+        categories: ["fantasy", "sci-fi"], // ["dogs", "hiking", "chess", "save-ukraine"],
         writers: [1, 3, 7, 9, 13, 15],
         history: [],
       });

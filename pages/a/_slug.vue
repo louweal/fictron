@@ -2,16 +2,30 @@
   <main>
     <div class="container-xl">
       <div class="row">
-        <!-- <div class="col-12 col-md-10 offset-md-1">
+        <div
+          :class="
+            $options.ratio.w > $options.ratio.h
+              ? 'col-12 col-md-10 offset-md-1'
+              : 'col-4 col-md-2 col-xl-1 offset-sm-1 offset-lg-2'
+          "
+        >
           <div
-            class="post-img ratio ratio-16x9 rounded mb-2 bg-light"
+            class="post-img ratio rounded mb-2 bg-light"
+            :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
             :style="{
               backgroundImage: visual,
             }"
           ></div>
-        </div> -->
+        </div>
 
-        <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
+        <div
+          class=""
+          :class="
+            $options.ratio.w > $options.ratio.h
+              ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
+              : 'col-12 col-md-6 col-xl-9 mb-5'
+          "
+        >
           <ul class="bullet-list-inline mt-2">
             <li>
               <nuxt-link :to="'/w/' + author.slug">{{ author.name }}</nuxt-link>
@@ -28,7 +42,8 @@
           </ul>
 
           <h1>{{ post.title }}</h1>
-
+        </div>
+        <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <template v-for="(p, i) in post.content">
             <h2
               :key="'title' + i"
@@ -80,7 +95,7 @@
       </div>
       <div class="progress">
         <div class="bar bg-secondary" ref="bar">
-          <div class="progress-label">{{ progress }}</div>
+          <div class="progress-label fw-bold">{{ progress }}</div>
         </div>
       </div>
     </div>
@@ -103,6 +118,11 @@ export default {
       posts: () => {},
       post: () => {},
     };
+  },
+
+  ratio: {
+    w: 3, //16
+    h: 4, //9
   },
 
   created() {
@@ -255,7 +275,6 @@ $fontsize: 8px;
     top: calc(50% - $fontsize / 2);
     font-size: $fontsize;
     line-height: 1;
-    font-weight: 700;
     z-index: 3;
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="character display-4"
+    class="character display-4 fw-bold"
     :style="{
       color: randomXPos < 55 ? 'var(--bs-secondary)' : 'var(--my-secondary2)',
       left: randomXPos + '%',
@@ -61,7 +61,6 @@ export default {
   height: 6px;
   opacity: 0;
   animation: float 6s ease-in-out infinite;
-  font-weight: 700;
 }
 
 @keyframes float {

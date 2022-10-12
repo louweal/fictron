@@ -13,7 +13,7 @@
 
     <div class="row gx-3 gx-lg-5 mt-2 mt-lg-4">
       <div class="col-12 col-md-9">
-        <news-grid :posts="categoryPosts.slice(0, 30)" />
+        <post-grid :posts="categoryPosts.slice(0, 30)" />
       </div>
 
       <div class="col-md-3 d-none d-md-block">

@@ -1,7 +1,9 @@
 <template>
-  <div class="category-list d-sm-none">
+  <div class="category-list d-sm-none" v-if="categories.length > 0">
     <div class="category-list__inner hstack gap-2 mb-2 text-nowrap">
-      <button class="btn btn-secondary opacity-100" disabled>All</button>
+      <button class="btn btn-secondary opacity-100 text-white" disabled>
+        All
+      </button>
       <nuxt-link
         :to="'/c/' + c.slug"
         v-for="(c, i) in categories"

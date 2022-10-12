@@ -1,19 +1,14 @@
 <template>
   <div>
     <div class="row gx-3 gx-lg-5">
-      <div class="col-12 col-md-6">
-        <display-card :post="posts[0]" />
+      <div class="col-6 col-md-4">
+        <display-card :post="posts[0]" ratio="3x4" />
       </div>
-      <div class="col-12 col-md-6">
-        <display-card :post="posts[1]" class="d-none d-md-block" />
+      <div class="col-6 col-md-4">
+        <display-card :post="posts[1]" ratio="3x4" />
       </div>
-    </div>
-
-    <!-- shown on mobile only: -->
-
-    <div class="row gy-0 gx-3 d-sm-none mt-2">
-      <div class="col-6" v-for="(post, i) in posts.slice(1, 3)" :key="i">
-        <card :post="post" :flex="false" :borderTop="false" />
+      <div class="col-6 col-md-4">
+        <display-card :post="posts[2]" ratio="3x4" class="d-none d-md-block" />
       </div>
     </div>
   </div>

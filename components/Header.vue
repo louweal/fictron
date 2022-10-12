@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="header shadow-sm border-bottom bg-white fixed-top py-md-3"
+    class="header shadow-sm border-bottom bg-white fixed-top py-2 py-md-3"
     id="header"
     ref="header"
   >
