@@ -38,7 +38,7 @@
           >
             <i v-if="progress === 100" class="bi bi-check-lg"></i>
 
-            <span v-else>{{ progress }} %</span>
+            <span v-else>{{ progress }}%</span>
           </span>
         </div>
       </div>

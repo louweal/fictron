@@ -3,7 +3,7 @@
     <pre-loader />
 
     <div id="page">
-      <characters />
+      <!-- <characters /> -->
 
       <Header />
       <div class="min-vh-100 d-flex flex-column justify-content-between">

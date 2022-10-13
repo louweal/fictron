@@ -1,18 +1,18 @@
 <template>
   <main>
-    <div class="container">
+    <div class="container-xl">
       <div class="row">
         <div
           :class="
             $options.ratio.w > $options.ratio.h
               ? 'col-12 col-md-10 offset-md-1'
-              : 'col-6 col-md-3 offset-md-2'
+              : 'col-4 col-md-2 offset-sm-1 offset-lg-2'
           "
         >
           <form>
             <div class="form-group d-grid">
               <div
-                class="ratio field--upload rounded image cursor-pointer"
+                class="ratio field--upload rounded image cursor-pointer bg-light"
                 :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
                 @click="toggleModal"
                 :style="{
@@ -27,9 +27,17 @@
             </div>
           </form>
         </div>
-        <div class="col-12 col-md-8 offset-md-2">
+
+        <div
+          class=""
+          :class="
+            $options.ratio.w > $options.ratio.h
+              ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
+              : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
+          "
+        >
           <ul class="bullet-list-inline mt-2">
-            <li v-if="$store.state.user">{{ $store.state.user.name }}</li>
+            <li>{{ me }}</li>
             <li>{{ datestring }}</li>
             <li v-if="category">{{ category }}</li>
           </ul>
@@ -44,86 +52,91 @@
                   placeholder="Title"
                 ></textarea>
               </div>
-
-              <div class="form-group">
-                <p>
-                  <b>Tip:</b> To create a sub-heading, add two asterisks before
-                  and after a word or phrase: e.g.
-                  <b>**Important sub-heading**</b>.
-                </p>
-                <textarea
-                  class="form-control"
-                  id="content"
-                  rows="16"
-                  @input="(e) => setText(e.target.value)"
-                  placeholder="Text"
-                ></textarea>
-
-                <span id="characters">
-                  {{ post.content ? post.content.length : 0 }}
-                </span>
-                characters
-              </div>
             </div>
           </form>
         </div>
+        <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
+          <div class="form-group">
+            <p class="bg-info rounded p-2 mt-3">
+              <b>Tip:</b> To create a chapter title, add two asterisks before
+              and after the chapter title: e.g. **Chapter 1: The beginning**.
+            </p>
+            <!-- <p>
+                  <b>Tip:</b> To create a sub heading, add two asterisks before
+                  and after the title: e.g. <b>**Lorem ipsum**</b>.
+                </p> -->
+            <textarea
+              class="form-control"
+              id="content"
+              rows="16"
+              @input="(e) => setText(e.target.value)"
+              placeholder="Text"
+            ></textarea>
 
-        <div class="mt-4"></div>
+            <span id="characters">
+              {{ post.content ? post.content.length : 0 }}
+            </span>
+            characters
+          </div>
+        </div>
+        <!-- </form> -->
+      </div>
 
-        <div class="col-12 col-md-5 offset-md-2">
-          <h2 class="fs-5">Metadata</h2>
+      <div class="mt-4"></div>
 
-          <form>
-            <div class="form-group">
-              <select
-                class="form-select"
-                aria-label="category select"
-                id="category"
-                @change="setCategory($event)"
-              >
-                <option selected>Select genre</option>
-                <option
-                  :value="c.slug"
-                  v-for="(c, i) in [...categories].sort((a, b) =>
-                    a.title > b.title ? 1 : -1
-                  )"
-                  :key="i"
-                >
-                  {{ c.title }}
-                </option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="intro">Introduction (shown on overview pages)</label>
+      <div class="col-12 col-md-5 offset-md-2">
+        <!-- <h2 class="fs-5">Metadata</h2> -->
 
-              <textarea
-                class="form-control"
-                id="intro"
-                rows="3"
-                @input="(e) => setIntro(e.target.value)"
-              ></textarea>
-
-              <p>
-                <span id="characters">{{ intro.length }}</span> characters
-                <br />
-                <span class="text-danger" v-if="intro.length < 100">
-                  The introduction should be at least 100 characters.
-                </span>
-                <span class="text-danger" v-if="intro.length > 200">
-                  The introduction can't have more than 200 characters.
-                </span>
-              </p>
-            </div>
-
-            <div
-              v-if="validFields"
-              class="btn btn-secondary"
-              @click="publishArtice()"
+        <form>
+          <div class="form-group">
+            <select
+              class="form-select"
+              aria-label="category select"
+              id="category"
+              @change="setCategory($event)"
             >
-              Publish
-            </div>
-          </form>
-        </div>
+              <option selected>Select genre</option>
+              <option
+                :value="c.slug"
+                v-for="(c, i) in [...categories].sort((a, b) =>
+                  a.title > b.title ? 1 : -1
+                )"
+                :key="i"
+              >
+                {{ c.title }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group mt-3">
+            <!-- <label for="intro">Introduction</label> -->
+            <p class="mb-0">
+              <span class="text-danger" v-if="post.intro.length < 100">
+                The minimum length is 100 characters.
+              </span>
+              <span class="text-danger" v-if="post.intro.length > 200">
+                The maximum length is 200 characters.
+              </span>
+            </p>
+            <textarea
+              class="form-control"
+              id="intro"
+              rows="3"
+              placeholder="Introduction"
+              @input="(e) => setIntro(e.target.value)"
+            ></textarea>
+            <span id="characters">{{ post.intro.length }}</span
+            >/200 characters
+          </div>
+
+          <div
+            v-if="validFields"
+            class="btn btn-secondary"
+            @click="publishArtice()"
+          >
+            Publish
+          </div>
+        </form>
+        <!-- </div> -->
 
         <div
           class="col-12 col-md-3"
@@ -189,10 +202,10 @@ export default {
     return {
       showModal: false,
       image: -1,
-      intro: "",
-      text: "",
+      // intro: "",
+      // text: "",
       category: undefined,
-      post: {},
+      post: { intro: "" },
     };
   },
 
@@ -216,6 +229,13 @@ export default {
         month: "long",
         year: "numeric",
       });
+    },
+
+    me() {
+      if (this.$store.state.user) {
+        return this.$store.state.user.name; // todo
+      }
+      return undefined;
     },
 
     categories() {
@@ -256,9 +276,6 @@ export default {
     },
 
     setIntro(e) {
-      // console.log(e);
-      this.intro = e;
-      // this.post["intro"] = e;
       Vue.set(this.post, "intro", e);
     },
 
@@ -310,10 +327,9 @@ export default {
 
     publishArtice() {
       let id = this.$store.state.posts.length + 1;
-      console.log(id);
+      // console.log(id);
 
       Vue.set(this.post, "id", id);
-      // Vue.set(this.post, "author", 43); // me
       Vue.set(this.post, "date", this.date);
       Vue.set(this.post, "views", 0);
 

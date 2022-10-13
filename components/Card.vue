@@ -13,50 +13,54 @@
           })
         : paywall()
     "
-    class="xxxcard position-relative"
+    class="position-relative"
   >
     <div v-if="borderTop && !hero" class="w-100 border-top d-md-none"></div>
 
     <div class="row gx-3 my-3 my-md-0">
       <div :class="hero ? 'col-12' : 'col-3 col-md-12'">
-        <div class="ratio ratio-3x4">
-          <div
-            class="card-img position-absolute rounded bg-light"
-            :style="{
-              backgroundImage: visual,
-            }"
-          ></div>
-
-          <div
-            class="card-img-overlay rounded pb-3 px-3 px-lg-3 pb-lg-3"
-            :class="hero ? 'd-flex' : 'd-none d-md-flex'"
-          >
-            <component
-              :is="hero ? 'h1' : 'h2'"
-              class="text-white"
-              :class="hero ? 'display-4' : 'fs-4'"
+        <div class="position-relative">
+          <div class="ratio ratio-3x4">
+            <div
+              class="card-img position-absolute rounded bg-light"
+              :style="{
+                backgroundImage: visual,
+              }"
             >
-              {{ post.title }}
-            </component>
-            <span class="fw-bold text-white">{{ author }}</span>
-          </div>
+              {{ visual === "none" ? post.visual.name : "" }}
+            </div>
 
-          <div
-            class="blurb p-4 text-white rounded d-none"
-            :class="hero ? false : 'd-md-block'"
-          >
-            <p>
-              {{ post.intro }}
-            </p>
+            <div
+              class="card-img-overlay rounded pb-3 px-3 px-lg-3 pb-lg-3"
+              :class="hero ? 'd-flex' : 'd-none d-md-flex'"
+            >
+              <component
+                :is="hero ? 'h1' : 'h2'"
+                class="text-white"
+                :class="hero ? 'display-4' : 'fs-4'"
+              >
+                {{ post.title }}
+              </component>
+              <span class="fw-bold text-white">{{ author }}</span>
+            </div>
+
+            <div
+              class="blurb p-4 text-white rounded d-none"
+              :class="hero ? false : 'd-md-block'"
+            >
+              <p>
+                {{ post.intro }}
+              </p>
+            </div>
           </div>
+          <span
+            class="badge bg-light position-absolute m-1 top-0 end-0 lh-1"
+            v-if="progress"
+          >
+            <i v-if="progress === 100" class="bi bi-check-lg"></i>
+            <span v-else>{{ progress }}%</span>
+          </span>
         </div>
-        <span
-          class="badge bg-light position-absolute m-1 top-0 end-0 lh-1"
-          v-if="progress"
-        >
-          <i v-if="progress === 100" class="bi bi-check-lg"></i>
-          <span v-else>{{ progress }} %</span>
-        </span>
       </div>
       <div
         class="col-9 d-md-none align-self-center"

@@ -14,7 +14,9 @@
           <template v-for="(c, i) in new Set(posts.map((p) => p.category))">
             <h2 class="fs-3" :key="i">
               Publications in
-              {{ categories.find((cat) => cat.slug === c).title }}
+              <nuxt-link :to="'/c/' + c" class="text-secondary">
+                {{ categories.find((cat) => cat.slug === c).title }}
+              </nuxt-link>
             </h2>
 
             <post-grid
