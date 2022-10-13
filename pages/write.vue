@@ -51,8 +51,7 @@
               {{ post.chapters }} chapters
             </li>
 
-            <li><i class="bi bi-eye"></i> 0</li>
-            <li><i class="bi bi-piggy-bank"></i> {{ post.total }} mTRX</li>
+            <li><i class="bi bi-piggy-bank"></i> {{ post.total }} mTRX ()</li>
           </ul>
 
           <form class="gy-3">

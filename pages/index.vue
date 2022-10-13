@@ -76,7 +76,14 @@
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
-          <post-grid :posts="feed.slice(11)" hide-first-post="desktop" />
+          <post-grid
+            :posts="feed.slice(11, feedMax)"
+            hide-first-post="desktop"
+          />
+
+          <div class="text-center mt-4">
+            <div class="btn btn-secondary" @click="loadMore()">Load more</div>
+          </div>
         </div>
 
         <div
@@ -99,6 +106,12 @@
 <script>
 export default {
   transition: "page",
+
+  data() {
+    return {
+      feedMax: 30,
+    };
+  },
 
   computed: {
     posts() {
@@ -134,6 +147,12 @@ export default {
         );
       }
       return [];
+    },
+  },
+
+  methods: {
+    loadMore() {
+      this.feedMax += 18;
     },
   },
 };

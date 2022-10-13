@@ -1,34 +1,37 @@
 <template>
-  <nuxt-link
-    :to="{
-      path: '/a/' + post.slug,
-      hash: historicProgress !== 0 ? '#' + historicProgress : false,
-    }"
-    event=""
-    @click.native="
-      $store.state.user
-        ? $router.push({
-            path: '/a/' + post.slug,
-            hash: historicProgress !== 0 ? '#' + historicProgress : false,
-          })
-        : paywall(post)
-    "
-    class="d-block w-100 m-1 pt-1"
-  >
-    <small class="text-muted fw-bold">
-      <ul class="bullet-list-inline mb-0">
+  <div class="w-100 m-1 py-2">
+    <nuxt-link
+      :to="{
+        path: '/a/' + post.slug,
+        hash: historicProgress !== 0 ? '#' + historicProgress : false,
+      }"
+      event=""
+      @click.native="
+        $store.state.user
+          ? $router.push({
+              path: '/a/' + post.slug,
+              hash: historicProgress !== 0 ? '#' + historicProgress : false,
+            })
+          : paywall(post)
+      "
+    >
+      <small class="text-light fw-bold mb-1">
+        <!-- <ul class="bullet-list-inline mb-1">
         <li>{{ post.category }}</li>
         <li>{{ author.name }}</li>
-      </ul>
-    </small>
-    <h3 class="fs-6 fw-light">
-      {{ post.title }}
-      <span class="badge bg-secondary" v-if="progress">
-        <i v-if="progress === 100" class="bi bi-check-lg"></i>
-        <span v-else>{{ progress }}%</span>
-      </span>
-    </h3>
-  </nuxt-link>
+      </ul> -->
+        {{ author.name }}
+      </small>
+
+      <h3 class="fs-6 fw-light mb-0">
+        <span class="badge bg-secondary" v-if="progress">
+          <i v-if="progress === 100" class="bi bi-check-lg"></i>
+          <span v-else>{{ progress }}%</span>
+        </span>
+        {{ post.title }}
+      </h3>
+    </nuxt-link>
+  </div>
 </template>
 
 <script>
@@ -85,3 +88,9 @@ export default {
 </script>
 
 <style></style>
+
+<style lang="scss" scoped>
+a:hover {
+  color: var(--bs-secondary);
+}
+</style>

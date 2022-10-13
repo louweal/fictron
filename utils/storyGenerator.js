@@ -53,7 +53,7 @@ export function posts(n) {
       author: author, // the data/writers.json contains 42 writers, with ids 1-42
       id: i,
       title: title,
-      intro: getWords(50),
+      intro: getWords(100 + Math.ceil(Math.random() * 100)), // book blurb is 100-200 words
       slug: title.toLowerCase().replaceAll(" ", "-"),
       visual: { name: Math.ceil(Math.random() * numImages), path: category },
       category: category,

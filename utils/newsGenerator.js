@@ -60,6 +60,7 @@ export function posts(n) {
       total: content.end,
       date: new Date((1662031747 + Math.ceil(Math.random() * 2592000)) * 1000), // 1 sept 2022 + 1 month
       views: Math.ceil(Math.random() * 777),
+      type: "article",
     });
   }
 

@@ -14,6 +14,7 @@
         : paywall()
     "
     class="position-relative"
+    :class="!blurb ? 'zoom-in' : false"
   >
     <div v-if="borderTop && !hero" class="w-100 border-top d-md-none"></div>
 
@@ -49,8 +50,10 @@
               :class="blurb ? 'd-md-block' : ''"
             >
               <p>
-                {{ post.intro }}
+                {{ post.intro.slice(0, 420) }}
+                {{ post.intro.length > 420 ? "..." : false }}
               </p>
+              <i class="bi bi-arrow-right"></i>
             </div>
           </div>
           <span
@@ -148,7 +151,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card {
+.zoom-in {
   overflow: hidden;
 
   &:hover .card-img {
