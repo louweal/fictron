@@ -63,7 +63,12 @@
                 .slice(0, 5)"
               :key="i"
             >
-              <card :post="post" :showIntro="false" :borderTop="i !== 0" />
+              <card
+                :post="post"
+                :showIntro="false"
+                :borderTop="i !== 0"
+                :blurb="false"
+              />
             </div>
           </div>
         </div>

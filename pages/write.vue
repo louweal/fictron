@@ -18,7 +18,11 @@
                 :style="{
                   backgroundImage:
                     image !== -1
-                      ? `url(${require('@/images/new/' + image + '.jpg')})`
+                      ? `url(${require('@/images/' +
+                          path +
+                          '/' +
+                          image +
+                          '.jpg')})`
                       : false,
                 }"
               >
@@ -36,23 +40,38 @@
               : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
           "
         >
-          <ul class="bullet-list-inline mt-2">
-            <li>{{ me }}</li>
+          <nuxt-link :to="{ hash: '#category' }" class="badge bg-secondary">
+            {{ categoryName }}
+          </nuxt-link>
+
+          <ul class="bullet-list-inline mt-1 mb-1">
             <li>{{ datestring }}</li>
-            <li v-if="category">{{ category }}</li>
+
+            <li v-if="post.chapters && post.type === 'book'">
+              {{ post.chapters }} chapters
+            </li>
+
+            <li><i class="bi bi-eye"></i> 0</li>
+            <li><i class="bi bi-piggy-bank"></i> {{ post.total }} mTRX</li>
           </ul>
+
           <form class="gy-3">
-            <div class="vstack gap-2">
-              <div class="form-group">
-                <textarea
-                  class="form-control fs-2 fw-bold"
-                  id="title"
-                  rows="2"
-                  @input="(e) => setTitle(e.target.value)"
-                  placeholder="Title"
-                ></textarea>
-              </div>
+            <div class="form-group">
+              <textarea
+                class="form-control fs-2 fw-bold"
+                id="title"
+                rows="2"
+                @input="(e) => setTitle(e.target.value)"
+                placeholder="Title"
+              ></textarea>
             </div>
+
+            <h2 class="fs-3 mt-3">
+              By
+              <span class="text-secondary">
+                {{ me }}
+              </span>
+            </h2>
           </form>
         </div>
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
@@ -68,13 +87,13 @@
             <textarea
               class="form-control"
               id="content"
-              rows="16"
+              rows="33"
               @input="(e) => setText(e.target.value)"
               placeholder="Text"
             ></textarea>
 
             <span id="characters">
-              {{ post.content ? post.content.length : 0 }}
+              {{ post.total ? post.total : 0 }}
             </span>
             characters
           </div>
@@ -84,7 +103,7 @@
 
       <div class="mt-4"></div>
 
-      <div class="col-12 col-md-5 offset-md-2">
+      <div class="col-12 col-md-8 offset-md-2">
         <!-- <h2 class="fs-5">Metadata</h2> -->
 
         <form>
@@ -108,45 +127,40 @@
             </select>
           </div>
           <div class="form-group mt-3">
-            <!-- <label for="intro">Introduction</label> -->
             <p class="mb-0">
-              <span class="text-danger" v-if="post.intro.length < 100">
-                The minimum length is 100 characters.
+              <span
+                class="text-danger"
+                v-if="post.intro.length < $options.introMin"
+              >
+                The minimum length is {{ $options.introMin }} characters.
               </span>
-              <span class="text-danger" v-if="post.intro.length > 200">
-                The maximum length is 200 characters.
+              <span
+                class="text-danger"
+                v-if="post.intro.length > $options.introMax"
+              >
+                The maximum length is {{ $options.introMax }} characters.
               </span>
             </p>
             <textarea
               class="form-control"
               id="intro"
               rows="3"
-              placeholder="Introduction"
+              :placeholder="post.type === 'article' ? 'Introduction' : 'Blurb'"
               @input="(e) => setIntro(e.target.value)"
             ></textarea>
             <span id="characters">{{ post.intro.length }}</span
-            >/200 characters
+            >/{{ $options.introMax }} characters
           </div>
 
-          <div
-            v-if="validFields"
-            class="btn btn-secondary"
+          <button
+            xxxv-if="validFields"
+            class="btn btn-secondary mt-2"
             @click="publishArtice()"
+            :disabled="validFields ? false : true"
           >
             Publish
-          </div>
+          </button>
         </form>
-        <!-- </div> -->
-
-        <div
-          class="col-12 col-md-3"
-          v-if="post.title && post.visual && post.intro"
-        >
-          <h2 class="fs-5">Preview:</h2>
-          <template>
-            <card :post="post" />
-          </template>
-        </div>
       </div>
     </div>
 
@@ -168,9 +182,8 @@
           <div class="row g-1">
             <div
               :class="$options.ratio.w > $options.ratio.h ? 'col-4' : 'col-3'"
-              v-for="i in 9"
+              v-for="i in 12"
               :key="i"
-              :set="(j = i + 1)"
             >
               <div
                 class="ratio cursor-pointer"
@@ -180,7 +193,9 @@
                   class="position-absolute rounded bg-light image"
                   @click="selectImage(i)"
                   :style="{
-                    backgroundImage: `url(${require('@/images/new/' +
+                    backgroundImage: `url(${require('@/images/' +
+                      path +
+                      '/' +
                       i +
                       '.jpg')})`,
                   }"
@@ -206,6 +221,7 @@ export default {
       // text: "",
       category: undefined,
       post: { intro: "" },
+      categoryName: "genre",
     };
   },
 
@@ -214,13 +230,23 @@ export default {
     h: 4,
   },
 
+  introMin: 250, //100
+  introMax: 500, //200
+
   created() {
     Vue.set(this.post, "author", 43);
+    Vue.set(this.post, "type", "book"); // story stories
   },
 
   computed: {
     date() {
       return new Date(Date.now());
+    },
+
+    path() {
+      return this.$options.ratio.w > this.$options.ratio.h
+        ? "landscape"
+        : "portrait";
     },
 
     datestring() {
@@ -245,8 +271,8 @@ export default {
     validFields() {
       return (
         this.post.intro &&
-        this.post.intro.length >= 100 &&
-        this.post.intro.length <= 200 &&
+        this.post.intro.length >= this.$options.introMin &&
+        this.post.intro.length <= this.$options.introMax &&
         this.post.title &&
         this.post.title.length > 0 &&
         this.post.visual &&
@@ -264,7 +290,7 @@ export default {
     selectImage(i) {
       this.image = i;
       // this.post["visual"] = i;
-      Vue.set(this.post, "visual", { name: i, path: "new" });
+      Vue.set(this.post, "visual", { name: i, path: this.path });
 
       this.showModal = !this.showModal;
     },
@@ -285,6 +311,7 @@ export default {
       if (parts.length > 0) {
         let a = [];
         let end = 0;
+        let chapters = 0;
         for (let i = 0; i < parts.length; i++) {
           if (parts[i]) {
             let p = {};
@@ -297,6 +324,8 @@ export default {
                 p["title"] = title;
                 end += title.length;
                 p["titleEnd"] = end;
+
+                chapters += 1;
 
                 if (parts[i + 1]) {
                   p["content"] = parts[i + 1];
@@ -317,11 +346,15 @@ export default {
         }
         Vue.set(this.post, "content", a);
         Vue.set(this.post, "total", end);
+        Vue.set(this.post, "chapters", chapters);
       }
     },
 
     setCategory(e) {
-      // console.log(e.target.value);
+      console.log(e.target.value);
+      this.categoryName = this.$store.state.categories.find(
+        (c) => c.slug === e.target.value
+      ).title;
       Vue.set(this.post, "category", e.target.value);
     },
 

@@ -6,7 +6,7 @@
           :class="
             $options.ratio.w > $options.ratio.h
               ? 'col-12 col-md-10 offset-md-1'
-              : 'col-4 col-md-2 offset-sm-1 offset-lg-2'
+              : 'col-4 col-sm-3 col-md-2 offset-md-1 offset-lg-2'
           "
         >
           <div
@@ -23,27 +23,31 @@
           :class="
             $options.ratio.w > $options.ratio.h
               ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
-              : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
+              : 'col-12 col-sm-8 col-lg-6 mb-5 align-self-center'
           "
         >
-          <ul class="bullet-list-inline mt-2">
+          <nuxt-link :to="'/c/' + post.category" class="badge bg-secondary">
+            {{ post.category }}
+          </nuxt-link>
+
+          <ul class="bullet-list-inline mt-1 mb-1">
             <li>
-              <nuxt-link :to="'/w/' + author.slug">{{ author.name }}</nuxt-link>
-            </li>
-            <!-- <li>
               {{ formatDate(post.date) }}
-            </li> -->
-            <li>
-              <nuxt-link :to="'/c/' + post.category">
-                {{ post.category }}
-              </nuxt-link>
             </li>
-            <li>{{ post.views }}x read</li>
+            <li v-if="post.chapters">{{ post.chapters }} chapters</li>
+
+            <li><i class="bi bi-eye"></i> {{ post.views }}</li>
+            <li><i class="bi bi-piggy-bank"></i> {{ post.total }} mTRX</li>
           </ul>
 
           <h1>{{ post.title }}</h1>
 
-          <span v-if="post.chapters">{{ post.chapters }} chapters</span>
+          <h2 class="fs-3">
+            By
+            <nuxt-link class="text-secondary" :to="'/w/' + author.slug">
+              {{ author.name }}
+            </nuxt-link>
+          </h2>
         </div>
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <template v-for="(p, i) in post.content">
@@ -95,9 +99,12 @@
           <card :post="a" :showIntro="false" :borderTop="i !== 0" />
         </div>
       </div>
-      <div class="progress">
-        <div class="bar bg-secondary" ref="bar">
-          <div class="progress-label fw-bold">{{ progress }}</div>
+      <div class="progress position-fixed bottom-0 start-0 end-0">
+        <div
+          class="bar bg-secondary h-100 left-0 position-absolute fw-bold text-end"
+          ref="bar"
+        >
+          {{ progress }}
         </div>
       </div>
     </div>
@@ -251,35 +258,18 @@ export default {
 }
 
 $fontsize: 8px;
-
 .progress {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   height: 1.4vh;
   background-color: var(--bs-gray-400);
   z-index: 9;
 
   .bar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0%;
     transition: width 0.8s ease-out;
     will-change: width;
-    z-index: 2;
-  }
-
-  .progress-label {
-    position: absolute;
-    text-align: right;
-    right: 4px;
-    top: calc(50% - $fontsize / 2);
+    padding-right: 4px;
+    padding-top: 3px; //calc(50% - $fontsize / 2);
     font-size: $fontsize;
     line-height: 1;
-    z-index: 3;
   }
 }
 </style>

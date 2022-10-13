@@ -46,7 +46,7 @@
 
             <div
               class="blurb p-4 text-white rounded d-none"
-              :class="hero ? false : 'd-md-block'"
+              :class="blurb ? 'd-md-block' : ''"
             >
               <p>
                 {{ post.intro }}
@@ -96,6 +96,11 @@ export default {
     hero: {
       type: Boolean,
       default: false,
+    },
+
+    blurb: {
+      type: Boolean,
+      default: true, // show blurb on hover
     },
   },
 

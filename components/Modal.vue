@@ -25,8 +25,8 @@
               Reading posts costs 10 microNEAR per character, which goes
               directly to the writer. -->
               Connect your TRON wallet to read and write posts on Fictron.
-              Reading posts costs X xxxTRON per character, which goes directly
-              to the writer.
+              Reading posts costs X mTRX per character, which goes directly to
+              the writer.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">

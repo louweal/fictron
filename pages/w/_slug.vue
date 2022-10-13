@@ -1,17 +1,16 @@
 <template>
   <main>
     <div class="container-xl">
-      <div class="hstack gap-3 mt-2 d-md-none">
-        <h1>{{ writer.name }}</h1>
-        <div class="btn btn-sm btn-secondary" @click="updateWriters()">
-          {{ following ? "Unfollow" : "Follow" }}
-        </div>
-      </div>
-      <span class="d-md-none">{{ posts.length }} {{ $options.type }}</span>
-
       <div class="row gx-3 gx-lg-5 mt-2 mt-lg-4">
         <div class="col-12 col-md-9">
-          <template v-for="(c, i) in new Set(posts.map((p) => p.category))">
+          <div class="hstack gap-3 mt-2 mb-4">
+            <h1>{{ writer.name }}</h1>
+            <div class="btn btn-sm btn-secondary" @click="updateWriters()">
+              {{ following ? "Unfollow" : "Follow" }}
+            </div>
+          </div>
+
+          <template v-for="(c, i) in writerCategories">
             <h2 class="fs-3" :key="i">
               Publications in
               <nuxt-link :to="'/c/' + c" class="text-secondary">
@@ -20,29 +19,21 @@
             </h2>
 
             <post-grid
-              :posts="posts.filter((p) => p.category === c)"
+              :posts="writerPosts.filter((p) => p.category === c)"
               :key="i"
             />
           </template>
         </div>
 
         <div class="col-md-3 d-none d-md-block">
-          <img
-            :src="`${require('@/images/authors/' +
-              writer.gender +
-              '/' +
-              writer.avatar +
-              '.jpg')}`"
-            :alt="writer.name"
-            class="rounded-circle"
-            width="100"
+          <sidebar
+            title="Discover also"
+            :posts="
+              [...similarPosts]
+                .sort((a, b) => (a.views > b.views ? -1 : 1))
+                .slice(0, 12)
+            "
           />
-          <h2>{{ writer.name }}</h2>
-          <p>{{ posts.length }} {{ $options.type }}</p>
-
-          <div class="btn btn-sm btn-secondary" @click="updateWriters()">
-            {{ following ? "Unfollow" : "Follow" }}
-          </div>
         </div>
       </div>
     </div>
@@ -61,7 +52,22 @@ export default {
     },
 
     posts() {
+      return this.$store.state.posts;
+    },
+
+    writerPosts() {
       return this.$store.state.posts.filter((a) => a.author === this.writer.id);
+    },
+
+    similarPosts() {
+      // same category but not same writer
+      return this.posts
+        .filter((p) => p.author !== this.writer.id)
+        .filter((p) => this.writerCategories.includes(p.category));
+    },
+
+    writerCategories() {
+      return [...new Set(this.writerPosts.map((p) => p.category))];
     },
 
     categories() {
@@ -69,7 +75,10 @@ export default {
     },
 
     following() {
-      return this.$store.state.user.writers.includes(this.writer.id);
+      if (this.$store.state.user) {
+        return this.$store.state.user.writers.includes(this.writer.id);
+      }
+      return false;
     },
   },
 
