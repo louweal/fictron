@@ -26,7 +26,7 @@
               directly to the writer. -->
               Connect your TRON wallet to read and write {{ $options.type }} on
               Fictron. Reading {{ $options.type }} costs 1 TRX per 1000
-              characters, which goes directly to the writer.
+              characters.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">

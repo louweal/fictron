@@ -31,7 +31,7 @@
             :posts="
               [...similarPosts]
                 .sort((a, b) => (a.views > b.views ? -1 : 1))
-                .slice(0, 12)
+                .slice(0, 9)
             "
           />
         </div>

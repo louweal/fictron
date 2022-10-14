@@ -23,7 +23,11 @@ function makeParagraphs(n) {
 
     if (i === 0 || Math.ceil(Math.random() * 5) == 5) {
       // add chapter title above paragraph (1/5 prob)
-      p["title"] = "Chapter " + chapter;
+      p["title"] =
+        "Chapter " +
+        chapter +
+        ": " +
+        getWords(Math.ceil(Math.random() * 4)).replaceAll(".", "");
       end += p.title.length;
       p["titleEnd"] = end;
       chapter += 1;
