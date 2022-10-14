@@ -7,7 +7,7 @@
 // new theme settings
 $primary: #420d0a;
 $secondary: #078f87;
-$light: #797979;
+$light: #dbdbdb;
 $info: #aee6e2;
 $body-bg: #f4f4f4;
 $border-color: #ddd;
@@ -185,7 +185,28 @@ span.color-secondary {
 .page-enter,
 .page-leave-active {
   opacity: 0.1;
-  transform: translateY(60px);
+  transform: translateY(-30px);
+}
+
+.post-enter-active,
+.post-leave-active {
+  transition: all 0.3s cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+// .post-enter {
+//   opacity: 0.1;
+//   // transform: translateY(-30px);
+//   transform: translateY(100vh);
+// }
+
+.post-enter {
+  opacity: 0.1;
+  transform: translateY(-75vh);
+}
+
+.post-leave-active {
+  opacity: 0.1;
+  transform: translateY(-30px);
 }
 
 // custom inline list with bullets in between

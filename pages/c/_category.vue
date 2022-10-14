@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  transition: "page",
+  // transition: "page",
 
   async mounted() {
     await this.validatePage();
@@ -56,7 +56,7 @@ export default {
 
     categoryPosts() {
       return this.$store.state.posts.filter(
-        (a) => a.category === this.$route.params.slug
+        (a) => a.category === this.$route.params.category
       );
     },
 
@@ -65,7 +65,10 @@ export default {
     },
 
     category() {
-      return this.categories.find((c) => c.slug === this.$route.params.slug);
+      // console.log("this.$route.params :>> ", this.$route.params);
+      return this.categories.find(
+        (c) => c.slug === this.$route.params.category
+      );
     },
 
     userCategories() {

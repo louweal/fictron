@@ -29,7 +29,7 @@ import categories from "@/data/genres.json";
 import writers from "@/data/writers.json";
 
 export default {
-  transition: "page",
+  // transition: "page",
 
   categories,
   writers,
@@ -62,7 +62,8 @@ export default {
       }
       document.body.classList.toggle("modal-open");
 
-      if (!show) {
+      if (!show && !this.$store.state.user) {
+        //after closing modal without sigin
         window.scrollTo(0, this.posY);
       }
     },

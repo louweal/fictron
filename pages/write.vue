@@ -40,15 +40,17 @@
               : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
           "
         >
-          <nuxt-link :to="{ hash: '#category' }" class="badge bg-secondary">
+          <div class="badge bg-secondary">
             {{ categoryName }}
-          </nuxt-link>
+          </div>
 
           <ul class="bullet-list-inline mt-1 mb-1">
             <li>{{ datestring }}</li>
 
-            <li v-if="post.chapters && post.type === 'book'">
-              {{ post.chapters }} chapters
+            <li
+              v-if="post.chapters && post.chapters > 0 && post.type === 'book'"
+            >
+              {{ post.chapters }} chapter<span v-if="post.chapters > 1">s</span>
             </li>
 
             <li><i class="bi bi-piggy-bank"></i> {{ post.total }} mTRX ()</li>

@@ -34,7 +34,9 @@
             <li>
               {{ formatDate(post.date) }}
             </li>
-            <li v-if="post.chapters">{{ post.chapters }} chapters</li>
+            <li v-if="post.chapters && post.chapters > 0">
+              {{ post.chapters }} chapter<span v-if="post.chapters > 1">s</span>
+            </li>
 
             <li><i class="bi bi-eye"></i> {{ post.views }}</li>
             <li>
@@ -54,17 +56,21 @@
         </div>
 
         <div class="col-12 col-sm-10 col-lg-6 offset-sm-1 offset-lg-4">
-          <p class="font-lg">{{ post.intro }}</p>
-
+          <p class="font-lg border-start ps-3">{{ post.intro }}</p>
+          <!-- 
           <p class="fs-5">
             Scroll down to start reading.
             <i class="bi bi-chevron-double-down"></i>
-          </p>
+          </p> -->
         </div>
 
-        <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
-          <div class="alert alert-warning shadow-sm" role="alert">
+        <div
+          class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
+          v-if="!$route.hash"
+        >
+          <div class="w-100 p-2 bg-secondary rounded mb-3">
             <p class="text-center mb-0">
+              Scroll down to start reading. <br />
               <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> You are
               charged per visible paragraph. 1000 characters = 1 TRX.
             </p>
@@ -88,13 +94,30 @@
 
             <p
               :key="i"
-              :class="historicProgress < p.end ? 'fade-in-up' : false"
+              :class="[
+                historicProgress < p.end ? 'fade-in-up' : false,
+                +$route.hash.slice(1) == p.end ? 'bg-light' : false,
+              ]"
               :data-aos="historicProgress < p.end ? 70 : undefined"
               :data-end="p.end"
-              :id="p.end"
             >
               {{ p.content }}
             </p>
+
+            <div
+              class="w-100"
+              v-if="$route.hash.slice(2) == p.end"
+              :id="'c' + p.end"
+              :key="'anchor' + i"
+            >
+              <div class="p-2 bg-secondary rounded my-3 mt-5">
+                <p class="text-center mb-0">
+                  Scroll down to continue reading. <br />
+                  <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> You are
+                  charged per visible paragraph. 1000 characters = 1 TRX.
+                </p>
+              </div>
+            </div>
           </template>
 
           <p class="text-secondary">
@@ -140,7 +163,7 @@ import getImage from "@/utils/getImage.js";
 import getUSD from "@/utils/getUSD.js";
 
 export default {
-  transition: "page",
+  transition: "post",
 
   data() {
     return {
@@ -163,7 +186,7 @@ export default {
 
   async created() {
     this.posts = this.$store.state.posts;
-    this.post = this.posts.find((a) => a.slug === this.$route.params.slug);
+    this.post = this.posts.find((a) => a.slug === this.$route.params.post);
 
     this.categoryName = this.$store.state.categories.find(
       (c) => c.slug === this.post.category
@@ -256,6 +279,16 @@ export default {
     },
 
     aos() {
+      let scrollY = window.pageYOffset;
+      let direction = scrollY > this.prevPosY ? "down" : "up";
+      // console.log(this.prevPosY);
+      // console.log(direction);
+
+      if (this.prevPosY === 0 || direction === "up") {
+        this.prevPosY = window.scrollY;
+        return;
+      }
+
       let animTargets = document.querySelectorAll("[data-aos]");
       [].forEach.call(animTargets, (target) => {
         let startAt = parseInt(target.dataset.aos);
@@ -278,6 +311,7 @@ export default {
           }
         }
       });
+      this.prevPosY = window.scrollY;
     },
   },
 };
@@ -294,9 +328,9 @@ export default {
   background-size: 115%;
 }
 
-$fontsize: 8px;
+$fontsize: 13px;
 .progress {
-  height: 1.4vh;
+  height: 1.9vh;
   background-color: var(--bs-gray-400);
   z-index: 9;
 
@@ -304,7 +338,7 @@ $fontsize: 8px;
     transition: width 0.8s ease-out;
     will-change: width;
     padding-right: 4px;
-    padding-top: 3px; //calc(50% - $fontsize / 2);
+    padding-top: 2px; //calc(50% - $fontsize / 2);
     font-size: $fontsize;
     line-height: 1;
   }

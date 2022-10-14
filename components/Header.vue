@@ -5,15 +5,28 @@
     ref="header"
   >
     <div class="container-xl d-flex justify-content-between align-items-center">
-      <nuxt-link to="/" class="me-4" aria-label="to homepage">
-        <img src="@/images/logo.svg" alt="" width="203" height="45" />
+      <nuxt-link
+        to="/"
+        event=""
+        @click.native="scrollToTop($route.path)"
+        class="me-4"
+        aria-label="to homepage"
+      >
+        <img src="@/images/logo.svg" alt="to homepage" height="46" />
       </nuxt-link>
 
       <div class="dropdown d-none d-sm-inline cursor-pointer">
         <div class="dropdown-toggle pe-3" @click="toggleDropdown">
-          {{ hasCategories ? "Your genres" : "All genres" }}
+          Discover
+          <!-- {{ hasCategories ? "Your genres" : "All genres" }} -->
         </div>
         <div class="dropdown-menu" ref="dropdown-menu">
+          <nuxt-link
+            to="/search"
+            class="dropdown-item fw-bold bg-secondary mb-1 text-white d-flex justify-content-between"
+          >
+            Search ... <i class="bi bi-search"></i>
+          </nuxt-link>
           <nuxt-link
             :to="'/c/' + c.slug"
             event=""
@@ -57,6 +70,7 @@ export default {
     return {
       dropdownActive: false,
       prevPosY: 0,
+      from: undefined, // current route path
     };
   },
 
@@ -90,9 +104,19 @@ export default {
   },
 
   methods: {
+    scrollToTop(path) {
+      if (path === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "auto" });
+        this.$router.push("/");
+      }
+    },
     signOut() {
       this.$store.commit("setUser", undefined);
-      this.$router.push("/");
+      if (this.$route.path.startsWith("/a/")) {
+        this.$router.push("/");
+      }
     },
 
     aosHeader() {
@@ -164,7 +188,7 @@ export default {
   will-change: transform;
 
   &-logo img {
-    max-width: 36vw !important;
+    max-width: 20vw !important; //36vw !important;
   }
 }
 </style>

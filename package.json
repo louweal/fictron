@@ -22,7 +22,6 @@
   "dependencies": {
     "bootstrap": "^5.2.1",
     "core-js": "^3.25.2",
-    "crypto-price": "^0.0.6",
     "nuxt": "^2.15.8",
     "webpack": "^4.46.0"
   },

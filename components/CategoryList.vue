@@ -2,7 +2,7 @@
   <div class="category-list d-sm-none" v-if="categories.length > 0">
     <div class="category-list__inner hstack gap-2 mb-2 text-nowrap">
       <button class="btn btn-secondary opacity-100 text-white" disabled>
-        All
+        <i class="bi bi-search"></i>
       </button>
       <nuxt-link
         :to="'/c/' + c.slug"

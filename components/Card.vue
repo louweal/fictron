@@ -2,14 +2,14 @@
   <nuxt-link
     :to="{
       path: '/a/' + post.slug,
-      hash: historicProgress !== 0 ? '#' + historicProgress : false,
+      hash: historicProgress !== 0 ? '#c' + historicProgress : false,
     }"
     event=""
     @click.native="
       $store.state.user
         ? $router.push({
             path: '/a/' + post.slug,
-            hash: historicProgress !== 0 ? '#' + historicProgress : false,
+            hash: historicProgress !== 0 ? '#c' + historicProgress : false,
           })
         : paywall()
     "

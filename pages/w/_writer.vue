@@ -11,7 +11,7 @@
           </div>
 
           <template v-for="(c, i) in writerCategories">
-            <h2 class="fs-3" :key="i">
+            <h2 class="fs-3" :key="'title' + i">
               Publications in
               <nuxt-link :to="'/c/' + c" class="text-secondary">
                 {{ categories.find((cat) => cat.slug === c).title }}
@@ -47,7 +47,7 @@ export default {
   computed: {
     writer() {
       return this.$store.state.writers.find(
-        (a) => a.slug === this.$route.params.slug
+        (a) => a.slug === this.$route.params.writer
       );
     },
 

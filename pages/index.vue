@@ -81,7 +81,7 @@
             hide-first-post="desktop"
           />
 
-          <div class="text-center mt-4">
+          <div class="text-center mt-4" v-if="feed.length > feedMax">
             <div class="btn btn-secondary" @click="loadMore()">Load more</div>
           </div>
         </div>
@@ -105,7 +105,7 @@
 
 <script>
 export default {
-  transition: "page",
+  // transition: "page",
 
   data() {
     return {

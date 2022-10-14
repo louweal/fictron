@@ -1,5 +1,11 @@
 <template>
   <div class="w-100 m-1 py-2">
+    <nuxt-link :to="'/w/' + author.slug">
+      <small class="text-secondary fw-bold mb-1">
+        {{ author.name }}
+      </small>
+    </nuxt-link>
+
     <nuxt-link
       :to="{
         path: '/a/' + post.slug,
@@ -15,14 +21,6 @@
           : paywall(post)
       "
     >
-      <small class="text-light fw-bold mb-1">
-        <!-- <ul class="bullet-list-inline mb-1">
-        <li>{{ post.category }}</li>
-        <li>{{ author.name }}</li>
-      </ul> -->
-        {{ author.name }}
-      </small>
-
       <h3 class="fs-6 fw-light mb-0">
         <span class="badge bg-secondary" v-if="progress">
           <i v-if="progress === 100" class="bi bi-check-lg"></i>
@@ -90,7 +88,10 @@ export default {
 <style></style>
 
 <style lang="scss" scoped>
-a:hover {
-  color: var(--bs-secondary);
+a {
+  transition: color 0.2s ease-in;
+  &:hover {
+    color: var(--bs-secondary);
+  }
 }
 </style>

@@ -44,10 +44,13 @@
 export default {
   type: "books", // articles
 
+  beforeDestroy() {},
+
   methods: {
     toggleModal() {
       this.$store.commit("toggleModal");
       document.getElementById("page").classList.toggle("is-blurred");
+      this.$store.commit("setClickedPost", undefined);
     },
 
     closeAndClick() {
@@ -55,8 +58,6 @@ export default {
       this.$router.push(path);
     },
     signIn() {
-      this.toggleModal();
-
       this.$store.commit("setUser", {
         id: 1,
         name: "Anneloes Louwe",
@@ -65,10 +66,22 @@ export default {
         history: [],
       });
 
+      console.log(this.$route.path);
+
       let goto = this.$store.state.clickedPost
         ? this.$store.state.clickedPost
-        : "/";
-      this.$router.push(goto);
+        : this.$route.path;
+
+      if (this.$route.path === goto) {
+        console.log("stay but scroll!");
+        // stay on same page
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        this.toggleModal();
+      } else {
+        this.toggleModal();
+
+        this.$router.push(goto);
+      }
       this.$store.commit("setClickedPost", undefined);
     },
   },

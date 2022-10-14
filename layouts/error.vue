@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  transition: "page",
+  // transition: "page",
 
   props: {
     error: {
