@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 m-1 py-2">
-    <nuxt-link :to="'/w/' + author.slug">
+    <nuxt-link :to="'/w/' + author.slug" rel="author">
       <small class="text-secondary fw-bold mb-1">
         {{ author.name }}
       </small>

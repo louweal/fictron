@@ -38,7 +38,7 @@
               <component
                 :is="hero ? 'h1' : 'h2'"
                 class="text-white"
-                :class="hero ? 'display-4' : 'fs-4'"
+                :class="hero ? '' : 'fs-4'"
               >
                 {{ post.title }}
               </component>

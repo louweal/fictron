@@ -53,7 +53,10 @@
               {{ post.chapters }} chapter<span v-if="post.chapters > 1">s</span>
             </li>
 
-            <li><i class="bi bi-piggy-bank"></i> {{ post.total }} mTRX ()</li>
+            <li v-if="post.total">
+              <i class="bi bi-piggy-bank"></i>
+              {{ (post.total / 1000).toFixed(2) }} TRX ≈ {{ price }} USD
+            </li>
           </ul>
 
           <form class="gy-3">
@@ -212,6 +215,7 @@
 
 <script>
 import Vue from "vue";
+import getUSD from "@/utils/getUSD.js";
 
 export default {
   data() {
@@ -223,6 +227,7 @@ export default {
       category: undefined,
       post: { intro: "" },
       categoryName: "genre",
+      trxusd: 1,
     };
   },
 
@@ -234,9 +239,11 @@ export default {
   introMin: 250, //100
   introMax: 500, //200
 
-  created() {
+  async created() {
     Vue.set(this.post, "author", 43);
     Vue.set(this.post, "type", "book"); // story stories
+
+    this.trxusd = await getUSD();
   },
 
   computed: {
@@ -248,6 +255,10 @@ export default {
       return this.$options.ratio.w > this.$options.ratio.h
         ? "landscape"
         : "portrait";
+    },
+
+    price() {
+      return ((this.post.total / 1000) * this.trxusd).toFixed(2);
     },
 
     datestring() {

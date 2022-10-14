@@ -38,6 +38,11 @@ export default {
     this.$store.commit("SET_POSTS", posts(120));
     this.$store.commit("SET_CATEGORIES", this.$options.categories);
     this.$store.commit("SET_WRITERS", this.$options.writers);
+
+    console.log(this.$store.state.posts.map((p) => p.slug).length);
+    console.log(
+      [...new Set(this.$store.state.posts.map((p) => p.slug))].length
+    );
   },
 
   mounted() {

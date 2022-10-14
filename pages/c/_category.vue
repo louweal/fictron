@@ -13,13 +13,22 @@
 
     <div class="row gx-3 gx-lg-5 mt-2 mt-lg-4">
       <div class="col-12 col-md-9">
-        <post-grid :posts="categoryPosts.slice(0, 30)" />
+        <post-grid
+          :posts="
+            categoryPosts
+              .sort((a, b) => (a.views > b.views ? -1 : 1))
+              .slice(0, 30)
+          "
+        />
       </div>
 
       <div class="col-md-3 d-none d-md-block">
         <sidebar
+          title="Recently published"
           :posts="
-            [...posts].sort((a, b) => (a.views > b.views ? -1 : 1)).slice(0, 7)
+            [...categoryPosts]
+              .sort((a, b) => (a.date > b.date ? -1 : 1))
+              .slice(0, 7)
           "
         />
 

@@ -268,3 +268,21 @@ span.color-secondary {
     font-size: 1.125rem;
   }
 }
+
+.hero {
+  h1 {
+    // card title
+    font-size: 4vw;
+    @include media-breakpoint-up(lg) {
+      font-size: map-get($display-font-sizes, 6);
+    }
+  }
+
+  span {
+    //author
+    font-size: min(3.5vw, 1rem);
+    // @include media-breakpoint-up(md) {
+    //   font-size: 1rem;
+    // }
+  }
+}

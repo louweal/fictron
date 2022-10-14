@@ -46,8 +46,17 @@ export function posts(n) {
 
   let a = [];
   for (let i = 0; i < n; i++) {
-    let author = Math.ceil(Math.random() * 42);
     let title = getWords(Math.floor(Math.random() * 2) + 4).replaceAll(".", "");
+    let slug = title.toLowerCase().replaceAll(" ", "-");
+    let existingSlugSet = new Set(a.map((a) => a.slug));
+
+    if (existingSlugSet.has(slug)) {
+      console.log("duplicate!");
+      n += 1;
+      continue; // do not add post with duplicate title/slug
+    }
+
+    let author = Math.ceil(Math.random() * 42);
     title = title.charAt(0) + title.slice(1).toLowerCase();
     let content = makeParagraphs(37 + Math.ceil(Math.random() * 15));
     let category = categorySlugs[author % numCategories];
@@ -58,7 +67,7 @@ export function posts(n) {
       id: i,
       title: title,
       intro: getWords(100 + Math.ceil(Math.random() * 100)), // book blurb is 100-200 words
-      slug: title.toLowerCase().replaceAll(" ", "-"),
+      slug: slug,
       visual: { name: Math.ceil(Math.random() * numImages), path: category },
       category: category,
       content: content.a,

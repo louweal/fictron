@@ -23,7 +23,7 @@
         <div class="dropdown-menu" ref="dropdown-menu">
           <nuxt-link
             to="/search"
-            class="dropdown-item fw-bold bg-secondary mb-1 text-white d-flex justify-content-between"
+            class="dropdown-item fw-bold bg-secondary mb-1 py-2 text-white d-flex justify-content-between"
           >
             Search ... <i class="bi bi-search"></i>
           </nuxt-link>

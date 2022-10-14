@@ -34,10 +34,6 @@
             <li>
               {{ formatDate(post.date) }}
             </li>
-            <!-- <li v-if="post.chapters && post.chapters > 0">
-              {{ post.chapters }} chapter<span v-if="post.chapters > 1">s</span>
-            </li> -->
-
             <li><i class="bi bi-eye"></i> {{ post.views }}</li>
             <li>
               <i class="bi bi-piggy-bank"></i>
@@ -61,13 +57,11 @@
               <h2 class="accordion-header" @click="toggleAccordion('blurb')">
                 <div class="accordion-button cursor-pointer">Blurb</div>
               </h2>
-              <transition>
-                <div class="accordion-collapse" v-if="showBlurb">
-                  <div class="accordion-body">
-                    <p>{{ post.intro }}</p>
-                  </div>
+              <div class="accordion-collapse" v-if="showBlurb">
+                <div class="accordion-body">
+                  <p>{{ post.intro }}</p>
                 </div>
-              </transition>
+              </div>
             </div>
             <div
               class="accordion-item"
@@ -81,19 +75,17 @@
                   >)
                 </div>
               </h2>
-              <transition>
-                <div class="accordion-collapse" v-if="showContents">
-                  <div class="accordion-body">
-                    <ul class="m-3 list-unstyled">
-                      <template v-for="(p, i) in post.content">
-                        <li v-if="p.title" :key="i">
-                          {{ p.title }}
-                        </li>
-                      </template>
-                    </ul>
-                  </div>
+              <div class="accordion-collapse" v-if="showContents">
+                <div class="accordion-body">
+                  <ul class="m-3 list-unstyled">
+                    <template v-for="(p, i) in post.content">
+                      <li v-if="p.title" :key="i">
+                        {{ p.title }}
+                      </li>
+                    </template>
+                  </ul>
                 </div>
-              </transition>
+              </div>
             </div>
           </div>
         </div>
@@ -104,9 +96,9 @@
         >
           <div class="w-100 p-2 bg-secondary rounded mb-3">
             <p class="text-center mb-0">
-              Scroll down to start reading. <br />
-              <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> Reading
-              further costs 1 TRX/1000 characters.
+              <!-- Scroll down to start reading. <br /> -->
+              <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> Scrolling
+              further costs 1 TRX/1000 appearing characters.
             </p>
           </div>
         </div>
@@ -146,9 +138,9 @@
             >
               <div class="p-2 bg-secondary rounded my-3 mt-5">
                 <p class="text-center mb-0">
-                  Scroll down to continue reading. <br />
-                  <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> Reading
-                  further costs 1 TRX/1000 characters.
+                  <!-- Scroll down to continue reading. <br /> -->
+                  <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b>
+                  Scrolling further costs 1 TRX/1000 appearing characters.
                 </p>
               </div>
             </div>
@@ -405,14 +397,14 @@ $fontsize: 13px;
 //   }
 // }
 
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.3s ease;
-}
+// .v-enter-active,
+// .v-leave-active {
+//   transition: opacity 0.3s ease;
+// }
 
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+// .v-enter-from,
+// .v-leave-to {
+//   opacity: 0;
+//   transition: opacity 0.3s ease;
+// }
 </style>
