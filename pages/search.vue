@@ -82,7 +82,9 @@ export default {
         return posts; // all posts
       } else {
         return posts.filter(
-          (p) => p.title.includes(this.q) || p.authorName.includes(this.q)
+          (p) =>
+            p.title.toLowerCase().includes(this.q) ||
+            p.authorName.includes(this.q)
         );
       }
     },
