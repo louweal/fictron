@@ -9,7 +9,8 @@
               type="search"
               placeholder="Find authors and books"
               aria-label="Search"
-              v-model="q"
+              :value="q"
+              @input="(e) => (q = e.target.value)"
             />
 
             <div class="btn btn-secondary">Search</div>
