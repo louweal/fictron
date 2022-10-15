@@ -45,7 +45,7 @@ export function posts(n) {
   let categorySlugs = categories.map((c) => c.slug);
   // let categoryIds = categories.map((c) => c.id);
 
-  let imagesUsed = new Array(numCategories).fill(1);
+  let imagesUsed = new Array(numCategories).fill(0);
 
   let imagesPerCategory = categories.map((c) => c.images);
 
@@ -56,7 +56,6 @@ export function posts(n) {
     let existingSlugSet = new Set(a.map((a) => a.slug));
 
     if (existingSlugSet.has(slug)) {
-      // console.log("duplicate!");
       n += 1;
       continue; // do not add post with duplicate title/slug
     }
@@ -66,7 +65,6 @@ export function posts(n) {
     let content = makeParagraphs(37 + Math.ceil(Math.random() * 15));
     let catId = author % numCategories;
     let category = categorySlugs[catId];
-    // let numImages = categories.find((c) => c.slug === category).images;
 
     a.push({
       author: author, // the data/writers.json contains 42 writers, with ids 1-42
@@ -74,7 +72,7 @@ export function posts(n) {
       title: title,
       intro: getWords(100 + Math.ceil(Math.random() * 100)), // book blurb is 100-200 words
       slug: slug,
-      visual: { name: imagesUsed[catId], path: category },
+      visual: { name: imagesUsed[catId] + 1, path: category },
       category: category,
       content: content.a,
       total: content.end,
