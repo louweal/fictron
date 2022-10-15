@@ -148,7 +148,7 @@
             <textarea
               class="form-control"
               id="intro"
-              rows="3"
+              rows="8"
               :placeholder="post.type === 'article' ? 'Introduction' : 'Blurb'"
               @input="(e) => setIntro(e.target.value)"
             ></textarea>
@@ -157,7 +157,6 @@
           </div>
 
           <button
-            xxxv-if="validFields"
             class="btn btn-secondary mt-2"
             @click="publishArtice()"
             :disabled="validFields ? false : true"

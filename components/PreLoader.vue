@@ -7,7 +7,7 @@
         </div>
       </div>
 
-      <p class="display-6 fs-3 xxxtext-secondary text-center mt-2">
+      <p class="display-6 fs-3 text-center mt-2">
         <span class="text-primary delay-800">stories.</span>
         <span class="text-primary delay-1400">reimagined.</span>
       </p>

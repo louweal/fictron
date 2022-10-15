@@ -11,7 +11,7 @@
           </div>
 
           <template v-for="(c, i) in writerCategories">
-            <h2 class="fs-3" :key="'title' + i">
+            <h2 class="fs-3 mb-3" :key="'title' + i">
               Publications in
               <nuxt-link :to="'/c/' + c" class="text-secondary">
                 {{ categories.find((cat) => cat.slug === c).title }}

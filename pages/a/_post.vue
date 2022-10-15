@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="container-xl">
+    <div class="container-xl" v-if="post">
       <div class="row min-vh-100 pb-5">
         <div
           :class="
@@ -76,7 +76,7 @@
                 </div>
               </h2>
               <div class="accordion-collapse" v-if="showContents">
-                <div class="accordion-body">
+                <div class="accordion-body" style="min-height: 300px">
                   <ul class="m-3 list-unstyled">
                     <template v-for="(p, i) in post.content">
                       <li v-if="p.title" :key="i">
@@ -94,13 +94,7 @@
           class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
           v-if="!$route.hash"
         >
-          <div class="w-100 p-2 bg-secondary rounded mb-3">
-            <p class="text-center mb-0">
-              <!-- Scroll down to start reading. <br /> -->
-              <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> Scrolling
-              further costs 1 TRX/1000 appearing characters.
-            </p>
-          </div>
+          <notice />
         </div>
       </div>
 
@@ -136,13 +130,7 @@
               :id="'c' + p.end"
               :key="'anchor' + i"
             >
-              <div class="p-2 bg-secondary rounded my-3 mt-5">
-                <p class="text-center mb-0">
-                  <!-- Scroll down to continue reading. <br /> -->
-                  <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b>
-                  Scrolling further costs 1 TRX/1000 appearing characters.
-                </p>
-              </div>
+              <notice />
             </div>
           </template>
 
@@ -216,15 +204,25 @@ export default {
     this.posts = this.$store.state.posts;
     this.post = this.posts.find((a) => a.slug === this.$route.params.post);
 
-    this.categoryName = this.$store.state.categories.find(
-      (c) => c.slug === this.post.category
-    ).title;
+    if (this.post) {
+      this.categoryName = this.$store.state.categories.find(
+        (c) => c.slug === this.post.category
+      ).title;
 
-    this.trxusd = await getUSD();
+      this.trxusd = await getUSD();
+    }
+  },
+
+  async fetch() {
+    await this.validatePage();
+    // await this.validateAccess();
   },
 
   async mounted() {
-    await this.validatePage();
+    if (!this.$store.state.user) {
+      return;
+    }
+
     this.scrollHeight = document.body.scrollHeight;
     window.addEventListener("scroll", this.aos);
 
@@ -262,7 +260,7 @@ export default {
 
   computed: {
     visual() {
-      if (this.post.visual) {
+      if (this.post) {
         return getImage(this.post.visual);
       }
       return "none";
@@ -284,9 +282,22 @@ export default {
     },
     validatePage() {
       if (!this.post) {
-        this.$nuxt.error({
+        return this.$nuxt.error({
           statusCode: 404,
-          message: "Article not found",
+          message: "Book not found",
+        });
+      } else if (this.$store.state.user == undefined) {
+        return this.$nuxt.error({
+          statusCode: 404,
+          message: "Access denied",
+        });
+      }
+    },
+    validateAccess() {
+      if (this.$store.state.user == undefined) {
+        return this.$nuxt.error({
+          statusCode: 404,
+          message: "Access denied",
         });
       }
     },
@@ -313,8 +324,6 @@ export default {
     aos() {
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
-      // console.log(this.prevPosY);
-      // console.log(direction);
 
       if (this.prevPosY === 0 || direction === "up") {
         this.prevPosY = window.scrollY;

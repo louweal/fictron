@@ -43,6 +43,11 @@ function makeParagraphs(n) {
 export function posts(n) {
   let numCategories = categories.length;
   let categorySlugs = categories.map((c) => c.slug);
+  // let categoryIds = categories.map((c) => c.id);
+
+  let imagesUsed = new Array(numCategories).fill(1);
+
+  let imagesPerCategory = categories.map((c) => c.images);
 
   let a = [];
   for (let i = 0; i < n; i++) {
@@ -51,7 +56,7 @@ export function posts(n) {
     let existingSlugSet = new Set(a.map((a) => a.slug));
 
     if (existingSlugSet.has(slug)) {
-      console.log("duplicate!");
+      // console.log("duplicate!");
       n += 1;
       continue; // do not add post with duplicate title/slug
     }
@@ -59,8 +64,9 @@ export function posts(n) {
     let author = Math.ceil(Math.random() * 42);
     title = title.charAt(0) + title.slice(1).toLowerCase();
     let content = makeParagraphs(37 + Math.ceil(Math.random() * 15));
-    let category = categorySlugs[author % numCategories];
-    let numImages = categories.find((c) => c.slug === category).images;
+    let catId = author % numCategories;
+    let category = categorySlugs[catId];
+    // let numImages = categories.find((c) => c.slug === category).images;
 
     a.push({
       author: author, // the data/writers.json contains 42 writers, with ids 1-42
@@ -68,7 +74,7 @@ export function posts(n) {
       title: title,
       intro: getWords(100 + Math.ceil(Math.random() * 100)), // book blurb is 100-200 words
       slug: slug,
-      visual: { name: Math.ceil(Math.random() * numImages), path: category },
+      visual: { name: imagesUsed[catId], path: category },
       category: category,
       content: content.a,
       total: content.end,
@@ -76,6 +82,8 @@ export function posts(n) {
       date: new Date((1662031747 + Math.ceil(Math.random() * 2592000)) * 1000), // 1 sept 2022 + 1 month
       views: Math.ceil(Math.random() * 777),
     });
+
+    imagesUsed[catId] = (imagesUsed[catId] + 1) % imagesPerCategory[catId];
   }
 
   return a;

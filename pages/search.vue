@@ -1,39 +1,54 @@
 <template>
   <main>
     <div class="container-xl">
-      <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
-        <div class="col-12 col-md-9 xxxalign-items-center mb-5">
-          <form class="form-inline my-2 my-lg-0 d-flex">
+      <div class="row g-3 g-lg-5">
+        <div class="col-12 col-md-9">
+          <form class="form-inline d-flex">
             <input
-              class="form-control mr-sm-2"
+              class="form-control me-2"
               type="search"
-              placeholder="Search"
+              placeholder="Find authors and books"
               aria-label="Search"
+              v-model="q"
             />
-            <div class="btn btn-secondary ms-2 my-2 my-sm-0">Search</div>
+
+            <div class="btn btn-secondary">Search</div>
           </form>
         </div>
 
-        <div class="col-12 col-md-9">
-          <!-- <h1>Books</h1> -->
-
-          <post-grid :posts="posts.slice(0, 30)" />
+        <div class="col-md-3 align-self-center">
+          {{ posts.length }} books found
         </div>
 
-        <div class="col-md-3 d-none d-md-block">
-          <ul class="list-inline">
-            <li
-              v-for="(c, i) in categories"
-              :key="i"
-              class="mb-2 me-2 list-inline-item"
-            >
-              <nuxt-link :to="'/c/' + c.slug" class="btn btn-sm btn-secondary">
-                {{ c.title }}
-              </nuxt-link>
-            </li>
-          </ul>
+        <div class="col-12 col-md-3 order-md-3">
+          <div
+            class="border bg-white shadow-sm rounded py-3 px-3"
+            v-if="writers.length > 0"
+          >
+            <h2 class="fs-5">Writers</h2>
 
-          <h2 class="fs-5">Writers</h2>
+            <div
+              class="py-2"
+              v-for="(w, i) in [...writers].sort((a, b) =>
+                a.numBooks > b.numBooks ? -1 : 1
+              )"
+              :key="i"
+              :class="i > 0 ? 'border-top' : false"
+            >
+              <nuxt-link :to="'/w/' + w.slug" class="">
+                <h3 class="fw-bold fs-6 mb-0 text-secondary">{{ w.name }}</h3>
+                <span
+                  >{{ w.numBooks }} book<span v-if="w.numBooks > 1"
+                    >s</span
+                  ></span
+                >
+              </nuxt-link>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-9 order-md-2">
+          <post-grid :posts="posts" />
         </div>
       </div>
     </div>
@@ -41,14 +56,62 @@
 </template>
 
 <script>
+import getImage from "@/utils/getImage.js";
+
 export default {
+  data() {
+    return {
+      q: "",
+    };
+  },
+
   computed: {
     posts() {
-      return this.$store.state.posts; // all posts
+      let posts = this.$store.state.posts;
+      posts.forEach(
+        (p) =>
+          (p["authorName"] = this.$store.state.writers
+            .find((w) => w.id == p.author)
+            .name.toLowerCase())
+      );
+
+      if (this.q.length <= 2) {
+        return posts; // all posts
+      } else {
+        return posts.filter(
+          (p) => p.title.includes(this.q) || p.authorName.includes(this.q)
+        );
+      }
+    },
+
+    writers() {
+      let writers = this.$store.state.writers;
+
+      writers.forEach(
+        (w) =>
+          (w["numBooks"] = this.$store.state.posts.filter(
+            (p) => p.author === w.id
+          ).length)
+      );
+
+      writers = writers.filter((w) => w.numBooks > 0);
+
+      if (this.q.length <= 2) {
+        return writers; // ...
+      } else {
+        return writers.filter((w) => w.name.toLowerCase().includes(this.q));
+      }
     },
 
     categories() {
       return this.$store.state.categories;
+    },
+  },
+
+  methods: {
+    getBgImg(obj) {
+      console.log(getImage(obj));
+      return getImage(obj);
     },
   },
 };

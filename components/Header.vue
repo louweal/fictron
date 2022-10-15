@@ -8,7 +8,10 @@
       <nuxt-link
         to="/"
         event=""
-        @click.native="scrollToTop($route.path)"
+        @click.native="
+          hideDropdown();
+          scrollToTop($route.path);
+        "
         class="me-4"
         aria-label="to homepage"
       >
@@ -16,13 +19,15 @@
       </nuxt-link>
 
       <div class="dropdown d-none d-sm-inline cursor-pointer">
-        <div class="dropdown-toggle pe-3" @click="toggleDropdown">
-          Discover
-          <!-- {{ hasCategories ? "Your genres" : "All genres" }} -->
-        </div>
-        <div class="dropdown-menu" ref="dropdown-menu">
+        <div class="dropdown-toggle pe-3" @click="toggleDropdown">Discover</div>
+        <div class="dropdown-menu" ref="dropdown-menu" v-if="showDropdown">
           <nuxt-link
             to="/search"
+            event=""
+            @click.native="
+              toggleDropdown();
+              $router.push('/search');
+            "
             class="dropdown-item fw-bold bg-secondary mb-1 py-2 text-white d-flex justify-content-between"
           >
             Search ... <i class="bi bi-search"></i>
@@ -44,13 +49,23 @@
       </div>
 
       <div class="ms-auto d-flex align-items-center gap-2 gap-md-4">
-        <div v-if="$store.state.user" @click="signOut" class="cursor-pointer">
+        <div
+          v-if="$store.state.user"
+          @click="
+            hideDropdown();
+            signOut();
+          "
+          class="cursor-pointer"
+        >
           Disconnect<span class="d-none d-md-inline"> wallet</span>
         </div>
 
         <div
           class="btn btn-secondary"
-          @click="toggleModal"
+          @click="
+            hideDropdown();
+            toggleModal();
+          "
           v-if="!$store.state.user"
         >
           Connect<span class="d-none d-md-inline"> wallet</span>
@@ -68,9 +83,8 @@
 export default {
   data() {
     return {
-      dropdownActive: false,
       prevPosY: 0,
-      from: undefined, // current route path
+      showDropdown: false,
     };
   },
 
@@ -149,22 +163,18 @@ export default {
       // hide dropdown on scroll
       let menu = this.$refs["dropdown-menu"];
 
-      if (menu && this.dropdownActive) {
+      if (menu && this.showDropdown) {
         menu.style.display = "none";
-        this.dropdownActive = false;
+        this.showDropdown = false;
       }
     },
 
-    toggleDropdown(e) {
-      // console.log("click!");
-      let menu = this.$refs["dropdown-menu"];
-      // console.log(e.target);
-      if (!this.dropdownActive) {
-        menu.style.display = "block";
-      } else {
-        menu.style.display = "none";
-      }
-      this.dropdownActive = !this.dropdownActive;
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+
+    hideDropdown() {
+      this.showDropdown = false;
     },
 
     toggleModal() {
@@ -181,6 +191,18 @@ export default {
 
 .move-down {
   transform: translateY(0);
+}
+
+// .dropdown-menu {
+//   display: none;
+
+//   &--active {
+//     display: block;
+//   }
+// }
+
+.dropdown-menu {
+  display: block;
 }
 
 .header {

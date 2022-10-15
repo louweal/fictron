@@ -99,7 +99,7 @@ export default {
   methods: {
     validatePage() {
       if (!this.category) {
-        this.$nuxt.error({
+        return this.$nuxt.error({
           statusCode: 404,
           message: "Category not found",
         });
