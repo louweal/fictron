@@ -9,8 +9,8 @@
               type="search"
               placeholder="Find authors and books"
               aria-label="Search"
-              :value="q"
-              @input="(e) => (q = e.target.value)"
+              :value="query"
+              @input="(e) => (query = e.target.value)"
             />
 
             <div class="btn btn-secondary">Search</div>
@@ -57,16 +57,18 @@
 </template>
 
 <script>
-import getImage from "@/utils/getImage.js";
-
 export default {
   data() {
     return {
-      q: "",
+      query: "",
     };
   },
 
   computed: {
+    q() {
+      return this.query.toLowerCase();
+    },
+
     posts() {
       let posts = this.$store.state.posts;
       posts.forEach(
@@ -106,13 +108,6 @@ export default {
 
     categories() {
       return this.$store.state.categories;
-    },
-  },
-
-  methods: {
-    getBgImg(obj) {
-      console.log(getImage(obj));
-      return getImage(obj);
     },
   },
 };
