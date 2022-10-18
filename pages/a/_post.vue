@@ -37,7 +37,8 @@
             <li><i class="bi bi-eye"></i> {{ post.views }}</li>
             <li>
               <i class="bi bi-piggy-bank"></i>
-              {{ (post.total / 1000).toFixed(2) }} TRX ≈ {{ price }} USD
+              {{ (post.content.length / 1000).toFixed(2) }} TRX ≈
+              {{ price }} USD
             </li>
           </ul>
 
@@ -63,14 +64,11 @@
                 </div>
               </div>
             </div>
-            <div
-              class="accordion-item"
-              v-if="post.chapters && post.chapters > 0"
-            >
+            <div class="accordion-item" v-if="numChapters && numChapters > 0">
               <h2 class="accordion-header" @click="toggleAccordion('contents')">
                 <div class="accordion-button cursor-pointer">
-                  Contents ({{ post.chapters }} chapter<span
-                    v-if="post.chapters > 1"
+                  Contents ({{ numChapters }} chapter<span
+                    v-if="numChapters > 1"
                     >s</span
                   >)
                 </div>
@@ -78,7 +76,7 @@
               <div class="accordion-collapse" v-if="showContents">
                 <div class="accordion-body" style="min-height: 300px">
                   <ul class="m-3 list-unstyled">
-                    <template v-for="(p, i) in post.content">
+                    <template v-for="(p, i) in content">
                       <li v-if="p.title" :key="i">
                         {{ p.title }}
                       </li>
@@ -100,7 +98,7 @@
 
       <div class="row">
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
-          <template v-for="(p, i) in post.content">
+          <template v-for="(p, i) in content">
             <h2
               :key="'title' + i"
               v-if="p.title"
@@ -192,6 +190,7 @@ export default {
       trxusd: 1,
       showBlurb: true,
       showContents: false,
+      numChapters: 0,
     };
   },
 
@@ -214,8 +213,8 @@ export default {
   },
 
   async fetch() {
+    await this.validateAccess();
     await this.validatePage();
-    // await this.validateAccess();
   },
 
   async mounted() {
@@ -251,7 +250,7 @@ export default {
 
   watch: {
     progress: function (val) {
-      let p = parseInt((val * 100) / this.post.total);
+      let p = parseInt((val * 100) / this.post.content.length);
       if (p === 100) {
         this.$store.commit("updateViews", this.post.id);
       }
@@ -266,8 +265,57 @@ export default {
       return "none";
     },
 
+    content() {
+      // console.log(this.post.content);
+      let parts = this.post.content.split(/(?:\r?\n)+/);
+
+      console.log(parts.length);
+      let a = [];
+
+      if (parts.length > 0) {
+        let end = 0;
+        // let chapters = 0;
+        for (let i = 0; i < parts.length; i++) {
+          if (parts[i]) {
+            let p = {};
+
+            if (
+              parts[i].toLowerCase().startsWith("chapter ") &&
+              parts[i].length <= 80
+            ) {
+              //title
+              let title = parts[i]; //.replaceAll("**", ""); // todo
+              if (title.length > 0) {
+                p["title"] = title;
+                end += title.length;
+                p["titleEnd"] = end;
+
+                this.numChapters += 1;
+
+                if (parts[i + 1]) {
+                  p["content"] = parts[i + 1];
+                  end += p["content"].length;
+                  p["end"] = end;
+
+                  i = i + 1; // skip next part
+                }
+              }
+            } else {
+              // content
+              p["content"] = parts[i];
+              end += p.content.length;
+              p["end"] = end;
+            }
+            a.push(p);
+          }
+        }
+      }
+
+      return a;
+    },
+
     price() {
-      return ((this.post.total / 1000) * this.trxusd).toFixed(2);
+      return ((this.post.content.length / 1000) * this.trxusd).toFixed(2);
     },
 
     author() {
@@ -286,24 +334,19 @@ export default {
           statusCode: 404,
           message: "Book not found",
         });
-      } else if (this.$store.state.user == undefined) {
-        return this.$nuxt.error({
-          statusCode: 404,
-          message: "Access denied",
-        });
       }
     },
     validateAccess() {
       if (this.$store.state.user == undefined) {
         return this.$nuxt.error({
-          statusCode: 404,
+          statusCode: 403,
           message: "Access denied",
         });
       }
     },
 
     formatDate(date) {
-      return date.toLocaleDateString("us-EN", {
+      return new Date(date * 1000).toLocaleDateString("us-EN", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -312,7 +355,7 @@ export default {
 
     updateBar() {
       if (this.post) {
-        let p = (100 * this.progress) / this.post.total;
+        let p = (100 * this.progress) / this.post.content.length;
         let bar = this.$refs["bar"];
 
         if (bar) {
@@ -385,35 +428,9 @@ $fontsize: 13px;
   }
 }
 
-// :root {
-//   --bs-accordion-btn-icon-transform: rotate(0deg);
-// }
-
 .accordion-button {
   &::after {
     display: none;
   }
 }
-
-// .accordion-body {
-//   height: 0;
-//   overflow: hidden;
-//   padding: 0;
-//   transition: max-height 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-
-//   &.show {
-//     max-height: auto;
-//   }
-// }
-
-// .v-enter-active,
-// .v-leave-active {
-//   transition: opacity 0.3s ease;
-// }
-
-// .v-enter-from,
-// .v-leave-to {
-//   opacity: 0;
-//   transition: opacity 0.3s ease;
-// }
 </style>

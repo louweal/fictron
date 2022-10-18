@@ -45,17 +45,12 @@
           </div>
 
           <ul class="bullet-list-inline mt-1 mb-1">
-            <li>{{ datestring }}</li>
+            <li>{{ today }}</li>
 
-            <li
-              v-if="post.chapters && post.chapters > 0 && post.type === 'book'"
-            >
-              {{ post.chapters }} chapter<span v-if="post.chapters > 1">s</span>
-            </li>
-
-            <li v-if="post.total">
+            <li v-if="post.content">
               <i class="bi bi-piggy-bank"></i>
-              {{ (post.total / 1000).toFixed(2) }} TRX ≈ {{ price }} USD
+              {{ (post.content.length / 1000).toFixed(2) }} TRX ≈
+              {{ price }} USD
             </li>
           </ul>
 
@@ -81,8 +76,8 @@
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <div class="form-group">
             <p class="bg-info rounded p-2 mt-3">
-              <b>Tip:</b> To create a chapter title, add two asterisks before
-              and after the chapter title: e.g. **Chapter 1: The beginning**.
+              <b>Important:</b> Each chapter title has to start with 'Chapter '
+              or 'CHAPTER ' and has to be shorter than 80 characters.
             </p>
             <!-- <p>
                   <b>Tip:</b> To create a sub heading, add two asterisks before
@@ -96,10 +91,12 @@
               placeholder="Text"
             ></textarea>
 
-            <span id="characters">
-              {{ post.total ? post.total : 0 }}
-            </span>
-            characters
+            <ul class="bullet-list-inline">
+              <li>{{ post.content ? post.content.length : 0 }} characters</li>
+              <li v-if="numChapters > 0 && post.type === 'book'">
+                {{ numChapters }} chapter<span v-if="numChapters > 1">s</span>
+              </li>
+            </ul>
           </div>
         </div>
         <!-- </form> -->
@@ -108,8 +105,6 @@
       <div class="mt-4"></div>
 
       <div class="col-12 col-md-8 offset-md-2">
-        <!-- <h2 class="fs-5">Metadata</h2> -->
-
         <form>
           <div class="form-group">
             <select
@@ -156,13 +151,13 @@
             >/{{ $options.introMax }} characters
           </div>
 
-          <button
+          <div
             class="btn btn-secondary mt-2"
-            @click="publishArtice()"
-            :disabled="validFields ? false : true"
+            @click="validFields ? publishPost() : false"
+            :style="validFields ? 'opacity-100' : 'opacity-25'"
           >
             Publish
-          </button>
+          </div>
         </form>
       </div>
     </div>
@@ -221,8 +216,6 @@ export default {
     return {
       showModal: false,
       image: -1,
-      // intro: "",
-      // text: "",
       category: undefined,
       post: { intro: "" },
       categoryName: "genre",
@@ -241,13 +234,16 @@ export default {
   async created() {
     Vue.set(this.post, "author", 43);
     Vue.set(this.post, "type", "book"); // story stories
-
     this.trxusd = await getUSD();
   },
 
+  async fetch() {
+    await this.validatePage();
+  },
+
   computed: {
-    date() {
-      return new Date(Date.now());
+    today() {
+      return this.dateToString(new Date());
     },
 
     path() {
@@ -257,15 +253,18 @@ export default {
     },
 
     price() {
-      return ((this.post.total / 1000) * this.trxusd).toFixed(2);
+      return this.post.content
+        ? ((this.post.content.length / 1000) * this.trxusd).toFixed(2)
+        : -1;
     },
 
-    datestring() {
-      return this.date.toLocaleDateString("us-EN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
+    numChapters() {
+      return this.post.content
+        ? this.post.content
+            .toLowerCase()
+            .split(/(?:\r?\n)+/)
+            .filter((p) => p.startsWith("chapter ")).length
+        : "0";
     },
 
     me() {
@@ -294,13 +293,21 @@ export default {
   },
 
   methods: {
+    validatePage() {
+      if (this.$store.state.user == undefined) {
+        return this.$nuxt.error({
+          statusCode: 403,
+          message: "Access denied",
+        });
+      }
+    },
+
     toggleModal() {
       this.showModal = !this.showModal;
     },
 
     selectImage(i) {
       this.image = i;
-      // this.post["visual"] = i;
       Vue.set(this.post, "visual", { name: i, path: this.path });
 
       this.showModal = !this.showModal;
@@ -316,49 +323,50 @@ export default {
       Vue.set(this.post, "intro", e);
     },
 
+    // parseContent() {
+    //   let parts = e.split(/(?:\r?\n)+/);
+
+    //   if (parts.length > 0) {
+    //     let a = [];
+    //     let end = 0;
+    //     let chapters = 0;
+    //     for (let i = 0; i < parts.length; i++) {
+    //       if (parts[i]) {
+    //         let p = {};
+
+    //         // let p = paragraphs[i];
+    //         if (parts[i].startsWith("**")) {
+    //           //title
+    //           let title = parts[i].replaceAll("**", "");
+    //           if (title.length > 0) {
+    //             p["title"] = title;
+    //             end += title.length;
+    //             p["titleEnd"] = end;
+
+    //             chapters += 1;
+
+    //             if (parts[i + 1]) {
+    //               p["content"] = parts[i + 1];
+    //               end += p["content"].length;
+    //               p["end"] = end;
+
+    //               i = i + 1; // skip next part
+    //             }
+    //           }
+    //         } else {
+    //           // content
+    //           p["content"] = parts[i];
+    //           end += p.content.length;
+    //           p["end"] = end;
+    //         }
+    //         a.push(p);
+    //       }
+    //     }
+    //   }
+    // },
+
     setText(e) {
-      let parts = e.split(/(?:\r?\n)+/);
-
-      if (parts.length > 0) {
-        let a = [];
-        let end = 0;
-        let chapters = 0;
-        for (let i = 0; i < parts.length; i++) {
-          if (parts[i]) {
-            let p = {};
-
-            // let p = paragraphs[i];
-            if (parts[i].startsWith("**")) {
-              //title
-              let title = parts[i].replaceAll("**", "");
-              if (title.length > 0) {
-                p["title"] = title;
-                end += title.length;
-                p["titleEnd"] = end;
-
-                chapters += 1;
-
-                if (parts[i + 1]) {
-                  p["content"] = parts[i + 1];
-                  end += p["content"].length;
-                  p["end"] = end;
-
-                  i = i + 1; // skip next part
-                }
-              }
-            } else {
-              // content
-              p["content"] = parts[i];
-              end += p.content.length;
-              p["end"] = end;
-            }
-            a.push(p);
-          }
-        }
-        Vue.set(this.post, "content", a);
-        Vue.set(this.post, "total", end);
-        Vue.set(this.post, "chapters", chapters);
-      }
+      Vue.set(this.post, "content", e);
     },
 
     setCategory(e) {
@@ -369,17 +377,25 @@ export default {
       Vue.set(this.post, "category", e.target.value);
     },
 
-    publishArtice() {
+    dateToString(date) {
+      return date.toLocaleDateString("us-EN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    },
+
+    publishPost() {
       let id = this.$store.state.posts.length + 1;
-      // console.log(id);
 
       Vue.set(this.post, "id", id);
-      Vue.set(this.post, "date", this.date);
+      Vue.set(this.post, "date", new Date().getTime() / 1000);
       Vue.set(this.post, "views", 0);
 
-      // console.log(this.post);
       this.$store.commit("addPost", this.post);
-      this.$router.push("/");
+
+      console.log(this.post);
+      this.$router.push("/a/" + this.post.slug);
     },
   },
 };
@@ -394,7 +410,6 @@ export default {
   p {
     display: block;
     width: 100%;
-    // height: 50%;
     text-align: center;
     transform: translateY(calc(50% - 1rem));
   }

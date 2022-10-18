@@ -191,19 +191,12 @@ span.color-secondary {
 .page-enter,
 .page-leave-active {
   opacity: 0.1;
-  transform: translateY(-30px);
 }
 
 .post-enter-active,
 .post-leave-active {
   transition: all 0.3s cubic-bezier(0.2, 0, 0.1, 1);
 }
-
-// .post-enter {
-//   opacity: 0.1;
-//   // transform: translateY(-30px);
-//   transform: translateY(100vh);
-// }
 
 .post-enter {
   opacity: 0.1;
@@ -212,7 +205,7 @@ span.color-secondary {
 
 .post-leave-active {
   opacity: 0.1;
-  transform: translateY(-30px);
+  transform: translateY(0px);
 }
 
 // custom inline list with bullets in between
@@ -285,8 +278,5 @@ span.color-secondary {
   span {
     //author
     font-size: min(3.5vw, 1rem);
-    // @include media-breakpoint-up(md) {
-    //   font-size: 1rem;
-    // }
   }
 }

@@ -21,16 +21,12 @@
           </div>
           <div class="modal-body px-4">
             <p class="text-center">
-              <!-- Connect your NEAR wallet to read and write posts on NearPress.
-              Reading posts costs 10 microNEAR per character, which goes
-              directly to the writer. -->
-              Connect your TRON wallet to read and write {{ $options.type }} on
-              Fictron. Reading {{ $options.type }} costs 1 TRX per 1000
-              characters.
+              Connect your TRON wallet to get full access. Reading books costs 1
+              TRX per 1000 characters. Publishing books is free.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
-                MetaMask
+                TronLink
               </div>
             </div>
           </div>
@@ -43,8 +39,6 @@
 <script>
 export default {
   type: "books", // articles
-
-  beforeDestroy() {},
 
   methods: {
     toggleModal() {
@@ -66,14 +60,13 @@ export default {
         history: [],
       });
 
-      console.log(this.$route.path);
+      // console.log(this.$route.path);
 
       let goto = this.$store.state.clickedPost
         ? this.$store.state.clickedPost
         : this.$route.path;
 
       if (this.$route.path === goto) {
-        console.log("stay but scroll!");
         // stay on same page
         window.scrollTo({ top: 0, behavior: "smooth" });
         this.toggleModal();
@@ -150,14 +143,14 @@ export default {
     .modal__bg {
       opacity: 0;
       visibility: hidden;
-      transition: all 0.5s 0.3s linear;
+      transition: all 0.3s 0.15s linear;
     }
 
     .modal__content {
       visibility: hidden;
       opacity: 0;
       transform: translateY(100px);
-      transition: all 0.4s cubic-bezier(0.2, 0, 0.1, 1);
+      transition: all 0.3s cubic-bezier(0.2, 0, 0.1, 1);
     }
   }
 }

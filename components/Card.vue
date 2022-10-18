@@ -53,7 +53,6 @@
                 {{ post.intro.slice(0, 420) }}
                 {{ post.intro.length > 420 ? "..." : false }}
               </p>
-              <i class="bi bi-arrow-right"></i>
             </div>
           </div>
           <span
@@ -113,7 +112,9 @@ export default {
         (a) => a.id === this.post.id
       );
       if (history) {
-        this.progress = parseInt((100 * history.progress) / this.post.total);
+        this.progress = parseInt(
+          (100 * history.progress) / this.post.content.length
+        );
       }
     }
   },
@@ -191,11 +192,20 @@ export default {
   z-index: 4;
   opacity: 0;
   background-color: var(--bs-primary);
-  transition: opacity 0.4s 0.15s linear; //cubic-bezier(0.2, 0, 0.1, 1);
+  transition: opacity 0.35s 0.15s ease-out; //cubic-bezier(0.2, 0, 0.1, 1);
   overflow: hidden;
+
+  p {
+    opacity: 0;
+    transition: opacity 0.65s 0.35s ease-in; //cubic-bezier(0.2, 0, 0.1, 1);
+  }
 
   &:hover {
     opacity: 1;
+
+    p {
+      opacity: 1;
+    }
   }
 }
 </style>

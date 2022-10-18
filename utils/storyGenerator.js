@@ -15,38 +15,32 @@ function getWords(x) {
 }
 
 function makeParagraphs(n) {
-  let a = [];
-  let end = 0;
+  let s = "";
   let chapter = 1;
-  for (let i = 0; i < n; i++) {
-    let p = {};
 
+  for (let i = 0; i < n; i++) {
     if (i === 0 || Math.ceil(Math.random() * 5) == 5) {
-      // add chapter title above paragraph (1/5 prob)
-      p["title"] =
+      let title =
         "Chapter " +
         chapter +
         ": " +
-        getWords(Math.ceil(Math.random() * 4)).replaceAll(".", "");
-      end += p.title.length;
-      p["titleEnd"] = end;
+        getWords(Math.ceil(Math.random() * 4)).replaceAll(".", "") +
+        "\n";
       chapter += 1;
+      s += title;
     }
-    p["content"] = getWords(200 + Math.floor(Math.random() * 50));
-    end += p.content.length;
-    p["end"] = end;
-    a.push(p);
+
+    let content = getWords(200 + Math.floor(Math.random() * 50)) + "\n";
+    s += content;
   }
-  return { a, end, chapter };
+
+  return s;
 }
 
 export function posts(n) {
   let numCategories = categories.length;
   let categorySlugs = categories.map((c) => c.slug);
-  // let categoryIds = categories.map((c) => c.id);
-
   let imagesUsed = new Array(numCategories).fill(0);
-
   let imagesPerCategory = categories.map((c) => c.images);
 
   let a = [];
@@ -74,10 +68,11 @@ export function posts(n) {
       slug: slug,
       visual: { name: imagesUsed[catId] + 1, path: category },
       category: category,
-      content: content.a,
-      total: content.end,
-      chapters: content.chapter,
-      date: new Date((1662031747 + Math.ceil(Math.random() * 2592000)) * 1000), // 1 sept 2022 + 1 month
+      content: content,
+      date:
+        new Date(
+          (1662031747 + Math.ceil(Math.random() * 2592000)) * 1000
+        ).getTime() / 1000, // 1 sept 2022 + 1 month -- the date timestamp is in SECONDS for solidity
       views: Math.ceil(Math.random() * 777),
     });
 
@@ -86,3 +81,5 @@ export function posts(n) {
 
   return a;
 }
+
+//

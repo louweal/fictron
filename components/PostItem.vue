@@ -70,7 +70,9 @@ export default {
         (a) => a.id === this.post.id
       );
       if (history) {
-        this.progress = parseInt((100 * history.progress) / this.post.total);
+        this.progress = parseInt(
+          (100 * history.progress) / this.post.content.length
+        );
       }
     }
   },

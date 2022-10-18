@@ -18,16 +18,16 @@
     "images": 23
   },
   {
-    "id": 3,
-    "title": "Sci-fi",
-    "slug": "sci-fi",
-    "images": 31
-  },
-  {
     "id": 4,
     "title": "Romance",
     "slug": "romance",
     "images": 36
+  },
+  {
+    "id": 3,
+    "title": "Sci-fi",
+    "slug": "sci-fi",
+    "images": 31
   },
   {
     "id": 5,
