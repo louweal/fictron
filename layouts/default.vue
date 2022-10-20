@@ -23,6 +23,12 @@
 // import { posts } from "@/utils/newsGenerator.js";
 // import categories from "@/data/channels.json";
 
+import {
+  getTronWeb,
+  setLibraryContract,
+  fetchAllPosts,
+} from "~/utils/tronUtils.js";
+
 import { posts } from "@/utils/storyGenerator.js";
 import categories from "@/data/genres.json";
 
@@ -33,12 +39,32 @@ export default {
   writers,
 
   created() {
-    this.$store.commit("SET_POSTS", posts(120));
     this.$store.commit("SET_CATEGORIES", this.$options.categories);
     this.$store.commit("SET_WRITERS", this.$options.writers);
+    this.$store.commit("SET_POSTS", []); //delete any previous posts
+
+    let n = 4;
+    let dummyPosts = posts(n);
+
+    for (let i = 0; i < n; i++) {
+      this.$store.commit("addPost", { id: i, ...dummyPosts[i] });
+    }
+
+    //todo (elsewhere): sort posts and add to contracts
   },
 
-  mounted() {
+  async mounted() {
+    // await getTronWeb();
+
+    // await setLibraryContract();
+
+    // fetch all books
+    // const posts = await fetchAllPosts();
+
+    // console.log(books);
+
+    // console.log("The total number of Books: " + posts.length);
+
     let headerHeight = document.querySelector("#header").offsetHeight; //refs ?
     let pushdown = document.querySelector("#pushdown"); // refs?
     pushdown.style.height = headerHeight + "px";

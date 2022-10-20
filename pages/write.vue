@@ -154,7 +154,7 @@
           <div
             class="btn btn-secondary mt-2"
             @click="validFields ? publishPost() : false"
-            :style="validFields ? 'opacity-100' : 'opacity-25'"
+            :class="validFields ? 'opacity-100' : 'opacity-50'"
           >
             Publish
           </div>
@@ -308,7 +308,7 @@ export default {
 
     selectImage(i) {
       this.image = i;
-      Vue.set(this.post, "visual", { name: i, path: this.path });
+      Vue.set(this.post, "visual", `/_nuxt/images/${this.path}/${i}.jpg`);
 
       this.showModal = !this.showModal;
     },
@@ -394,7 +394,7 @@ export default {
 
       this.$store.commit("addPost", this.post);
 
-      console.log(this.post);
+      // console.log(this.post);
       this.$router.push("/a/" + this.post.slug);
     },
   },

@@ -25,10 +25,10 @@
             <div
               class="card-img position-absolute rounded bg-light"
               :style="{
-                backgroundImage: visual,
+                backgroundImage: `url(${post.visual}`,
               }"
             >
-              {{ visual === "none" ? post.visual.name : "" }}
+              {{ post.visual === "none" ? post.visual : "" }}
             </div>
 
             <div
@@ -76,8 +76,6 @@
 </template>
 
 <script>
-import getImage from "@/utils/getImage.js";
-
 export default {
   data() {
     return {
@@ -120,9 +118,6 @@ export default {
   },
 
   computed: {
-    visual() {
-      return getImage(this.post.visual);
-    },
     historicProgress() {
       if (this.$store.state.user) {
         let history = this.$store.state.user.history.find(

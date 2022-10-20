@@ -1,3 +1,5 @@
+// run this file with: node storyGenerator.js
+
 import loremIpsum from "~/data/lorem-ipsum.json";
 import categories from "~/data/genres.json";
 
@@ -54,26 +56,24 @@ export function posts(n) {
       continue; // do not add post with duplicate title/slug
     }
 
-    let author = Math.ceil(Math.random() * 42);
+    let author = 42; // Math.floor(Math.random() * 42); // the data/writers.json contains 42 writers, with ids 0-41
     title = title.charAt(0) + title.slice(1).toLowerCase();
     let content = makeParagraphs(37 + Math.ceil(Math.random() * 15));
     let catId = author % numCategories;
     let category = categorySlugs[catId];
 
     a.push({
-      author: author, // the data/writers.json contains 42 writers, with ids 1-42
-      id: i,
       title: title,
-      intro: getWords(100 + Math.ceil(Math.random() * 100)), // book blurb is 100-200 words
-      slug: slug,
-      visual: { name: imagesUsed[catId] + 1, path: category },
+      intro: getWords(100 + Math.ceil(Math.random() * 100)),
+      visual: `/_nuxt/images/${category}/${imagesUsed[catId] + 1}.jpg`,
       category: category,
-      content: content,
+      content: content, // todoo!
       date:
         new Date(
           (1662031747 + Math.ceil(Math.random() * 2592000)) * 1000
         ).getTime() / 1000, // 1 sept 2022 + 1 month -- the date timestamp is in SECONDS for solidity
-      views: Math.ceil(Math.random() * 777),
+      author: author,
+      // views: Math.ceil(Math.random() * 777),
     });
 
     imagesUsed[catId] = (imagesUsed[catId] + 1) % imagesPerCategory[catId];
@@ -82,4 +82,16 @@ export function posts(n) {
   return a;
 }
 
-//
+// call generator
+// let p = posts(1);
+// sort
+// posts.sort((a, b) => (a.date > b.date ? -1 : 1));
+
+// create Library smart contract
+
+// loop books
+// add each book to Library
+
+// create Post smart contract for each book
+
+// add reference to Library item

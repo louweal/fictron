@@ -53,7 +53,7 @@ export default {
     },
     signIn() {
       this.$store.commit("setUser", {
-        id: 1,
+        id: 42,
         name: "Anneloes Louwe",
         categories: ["fantasy", "sci-fi"], // ["dogs", "hiking", "chess", "save-ukraine"],
         writers: [1, 3, 7, 9, 13, 15, 21, 23],

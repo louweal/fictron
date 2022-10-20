@@ -19,7 +19,7 @@
       <div
         class="card-img position-absolute rounded bg-light"
         :style="{
-          backgroundImage: visual,
+          backgroundImage: `url(${post.visual}`,
         }"
       ></div>
 
@@ -38,8 +38,6 @@
 </template>
 
 <script>
-import getImage from "@/utils/getImage.js";
-
 export default {
   data() {
     return {
@@ -72,9 +70,6 @@ export default {
   },
 
   computed: {
-    visual() {
-      return getImage(this.post.visual);
-    },
     historicProgress() {
       if (this.$store.state.user) {
         let history = this.$store.state.user.history.find(

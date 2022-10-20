@@ -21,11 +21,18 @@ export const mutations = {
   },
 
   SET_WRITERS(state, payload) {
-    state.writers = payload;
+    state.writers = payload.map((name, index) => ({
+      id: index,
+      name,
+      slug: name.toLowerCase().replace(" ", "-"),
+    }));
   },
 
   addPost(state, payload) {
-    state.posts.push(payload);
+    state.posts.push({
+      slug: payload.title.toLowerCase().replaceAll(" ", "-"),
+      ...payload,
+    });
   },
 
   // id, progress

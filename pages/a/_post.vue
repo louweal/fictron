@@ -4,24 +4,23 @@
       <div class="row min-vh-100 pb-5">
         <div
           :class="
-            $options.ratio.w > $options.ratio.h
+            $options.type === 'article'
               ? 'col-12 col-md-10 offset-md-1'
               : 'col-4 col-sm-3 col-md-2 offset-md-1 offset-lg-2 align-self-center'
           "
         >
           <div
             class="post-img ratio rounded mb-2 bg-light"
-            :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
+            :class="$options.type === 'article' ? 'ratio-3x1' : 'ratio-3x4'"
             :style="{
-              backgroundImage: visual,
+              backgroundImage: `url(${post.visual}`,
             }"
           ></div>
         </div>
 
         <div
-          class=""
           :class="
-            $options.ratio.w > $options.ratio.h
+            $options.type === 'article'
               ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
               : 'col-12 col-sm-8 col-lg-6 mb-5 align-self-center'
           "
@@ -34,29 +33,36 @@
             <li>
               {{ formatDate(post.date) }}
             </li>
-            <li><i class="bi bi-eye"></i> {{ post.views }}</li>
+            <li v-if="post.views">
+              <i class="bi bi-eye"></i> {{ post.views }}
+            </li>
             <li>
               <i class="bi bi-piggy-bank"></i>
-              {{ (post.content.length / 1000).toFixed(2) }} TRX ≈
+              {{ (post.content.length / 1000).toFixed(3) }} TRX ≈
               {{ price }} USD
             </li>
           </ul>
 
           <h1>{{ post.title }}</h1>
 
-          <h2 class="fs-3">
+          <h2 class="fs-3" v-if="$store.state.user.id !== author.id">
             By
             <nuxt-link class="text-secondary" :to="'/w/' + author.slug">
               {{ author.name }}
             </nuxt-link>
           </h2>
+          <div class="text-danger" v-else @click="removePost()">
+            <i class="bi bi-x"></i> Depublish
+          </div>
         </div>
 
-        <div class="col-12 col-sm-10 col-lg-6 offset-sm-1 offset-lg-4">
+        <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2 mt-3">
           <div class="accordion mb-4">
             <div class="accordion-item">
               <h2 class="accordion-header" @click="toggleAccordion('blurb')">
-                <div class="accordion-button cursor-pointer">Blurb</div>
+                <div class="accordion-button cursor-pointer">
+                  {{ $options.type === "article" ? "Introduction" : "Blurb" }}
+                </div>
               </h2>
               <div class="accordion-collapse" v-if="showBlurb">
                 <div class="accordion-body">
@@ -64,7 +70,10 @@
                 </div>
               </div>
             </div>
-            <div class="accordion-item" v-if="numChapters && numChapters > 0">
+            <div
+              class="accordion-item"
+              v-if="$options.type === 'book' && numChapters && numChapters > 0"
+            >
               <h2 class="accordion-header" @click="toggleAccordion('contents')">
                 <div class="accordion-button cursor-pointer">
                   Contents ({{ numChapters }} chapter<span
@@ -92,7 +101,7 @@
           class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
           v-if="!$route.hash"
         >
-          <notice />
+          <notice id="warning-0" data-aos="70" />
         </div>
       </div>
 
@@ -171,11 +180,12 @@
 </template>
 
 <script>
-import getImage from "@/utils/getImage.js";
 import getUSD from "@/utils/getUSD.js";
 
 export default {
-  transition: "post",
+  transition: "post", // important for scroll position on page load!
+
+  type: "book", // article
 
   data() {
     return {
@@ -192,11 +202,6 @@ export default {
       showContents: false,
       numChapters: 0,
     };
-  },
-
-  ratio: {
-    w: 3, //16
-    h: 4, //9
   },
 
   async created() {
@@ -223,7 +228,7 @@ export default {
     }
 
     this.scrollHeight = document.body.scrollHeight;
-    window.addEventListener("scroll", this.aos);
+    window.addEventListener("scroll", this.aos); // todo wrap in debounce?
 
     let history = this.$store.state.user.history.find(
       (a) => a.id === this.post.id
@@ -258,18 +263,11 @@ export default {
   },
 
   computed: {
-    visual() {
-      if (this.post) {
-        return getImage(this.post.visual);
-      }
-      return "none";
-    },
-
     content() {
       // console.log(this.post.content);
       let parts = this.post.content.split(/(?:\r?\n)+/);
 
-      console.log(parts.length);
+      // console.log(parts.length);
       let a = [];
 
       if (parts.length > 0) {
@@ -324,7 +322,7 @@ export default {
   },
 
   methods: {
-    toggleAccordion(item) {
+    toggleAccordion() {
       this.showContents = !this.showContents;
       this.showBlurb = !this.showBlurb;
     },
@@ -343,6 +341,10 @@ export default {
           message: "Access denied",
         });
       }
+    },
+
+    removePost() {
+      console.log("todo: call contract func removePost");
     },
 
     formatDate(date) {
@@ -374,17 +376,21 @@ export default {
       }
 
       let animTargets = document.querySelectorAll("[data-aos]");
-      [].forEach.call(animTargets, (target) => {
-        let startAt = parseInt(target.dataset.aos);
-        let rect = target.getBoundingClientRect();
-        let elemTop = rect.top;
+      // console.log(animTargets.length);
 
-        // target.style.opacity = "0"; // hide element by default
+      for (let i = 0; i < animTargets.length; i++) {
+        let target = animTargets[i];
+        let top = target.getBoundingClientRect().top;
 
         let startTrigger =
-          elemTop < window.innerHeight * (startAt / 100) && elemTop > 0;
+          top < window.innerHeight * (+target.dataset.aos / 100) && top > 0;
 
         if (startTrigger) {
+          if (target.id === "warning-0") {
+            console.log("todo: fetch post contract! and first page");
+            delete target.dataset.aos;
+          }
+
           if (!target.classList.contains("start-animation")) {
             target.classList.add("start-animation");
 
@@ -392,9 +398,11 @@ export default {
               this.progress = parseInt(target.dataset.end);
               this.updateBar();
             }
+            delete target.dataset.aos;
           }
+          break; // --> at most one animation per scroll event !
         }
-      });
+      }
       this.prevPosY = window.scrollY;
     },
   },
