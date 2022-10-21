@@ -121,19 +121,19 @@
 
             <p
               :key="i"
-              :class="[
-                historicProgress < p.end ? 'fade-in-up' : false,
-                +$route.hash.slice(1) == p.end ? 'bg-light' : false,
-              ]"
+              :class="historicProgress < p.end ? 'fade-in-up' : false"
               :data-aos="historicProgress < p.end ? 70 : undefined"
               :data-end="p.end"
+              :data-n="p.n"
             >
               {{ p.content }}
+
+              {{ p.end }}
             </p>
 
             <div
               class="w-100"
-              v-if="$route.hash.slice(2) == p.end"
+              v-if="+$route.hash.slice(2) === +p.end"
               :id="'c' + p.end"
               :key="'anchor' + i"
             >
@@ -269,10 +269,8 @@ export default {
     },
 
     content() {
-      // console.log(this.post.content);
       let parts = this.post.content.split(/(?:\r?\n)+/);
 
-      // console.log(parts.length);
       let a = [];
 
       if (parts.length > 0) {
@@ -298,6 +296,7 @@ export default {
                 if (parts[i + 1]) {
                   p["content"] = parts[i + 1];
                   end += p["content"].length;
+                  p["n"] = p.content.length;
                   p["end"] = end;
 
                   i = i + 1; // skip next part
@@ -307,12 +306,14 @@ export default {
               // content
               p["content"] = parts[i];
               end += p.content.length;
+              p["n"] = p.content.length;
               p["end"] = end;
             }
             a.push(p);
           }
         }
       }
+      // console.log(a.length);
 
       return a;
     },
@@ -392,7 +393,7 @@ export default {
 
         if (startTrigger) {
           if (target.id === "warning-0") {
-            console.log("todo: fetch post contract! and first page");
+            console.log("todo: nothing/ setReader");
             delete target.dataset.aos;
           }
 
@@ -403,9 +404,13 @@ export default {
               this.progress = parseInt(target.dataset.end);
               this.updateBar();
             }
+
+            if (target.dataset.n) {
+              console.log(`todo: payWriter(${target.dataset.n})`);
+            }
             delete target.dataset.aos;
           }
-          break; // --> at most one animation per scroll event !
+          // break; // --> at most one animation per scroll event !
         }
       }
       this.prevPosY = window.scrollY;
