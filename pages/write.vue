@@ -4,7 +4,7 @@
       <div class="row">
         <div
           :class="
-            $options.ratio.w > $options.ratio.h
+            $options.type === 'article'
               ? 'col-12 col-md-10 offset-md-1'
               : 'col-4 col-md-2 offset-sm-1 offset-lg-2'
           "
@@ -13,7 +13,7 @@
             <div class="form-group d-grid">
               <div
                 class="ratio field--upload rounded image cursor-pointer bg-light"
-                :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
+                :class="$options.type === 'article' ? 'ratio-3x1' : 'ratio-3x4'"
                 @click="toggleModal"
                 :style="{
                   backgroundImage:
@@ -35,13 +35,35 @@
         <div
           class=""
           :class="
-            $options.ratio.w > $options.ratio.h
-              ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
+            $options.type === 'article'
+              ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2 mt-2'
               : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
           "
         >
-          <div class="badge bg-secondary">
-            {{ categoryName }}
+          <div class="form-group">
+            <select
+              class="form-select"
+              aria-label="category select"
+              id="category"
+              @change="setCategory($event)"
+            >
+              <option selected value="select">
+                Select {{ $options.type === "article" ? "channel" : "genre" }}
+              </option>
+              <option
+                :value="c.slug"
+                v-for="(c, i) in [...categories].sort((a, b) =>
+                  a.title > b.title ? 1 : -1
+                )"
+                :key="i"
+              >
+                {{ c.title }}
+              </option>
+            </select>
+
+            <div class="badge bg-secondary mt-3" v-if="categoryName">
+              {{ categoryName }}
+            </div>
           </div>
 
           <ul class="bullet-list-inline mt-1 mb-1">
@@ -74,11 +96,40 @@
           </form>
         </div>
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
+          <div class="form-group mt-3">
+            <p class="mb-0">
+              <span class="text-danger" v-if="post.intro.length < introMin">
+                The minimum length is {{ introMin }} characters.
+              </span>
+              <span class="text-danger" v-if="post.intro.length > introMax">
+                The maximum length is {{ introMax }} characters.
+              </span>
+            </p>
+            <textarea
+              class="form-control"
+              id="intro"
+              rows="8"
+              :placeholder="
+                $options.type === 'article' ? 'Introduction' : 'Blurb'
+              "
+              @input="(e) => setIntro(e.target.value)"
+            ></textarea>
+            <span id="characters">{{ post.intro.length }}</span
+            >/{{ introMax }} characters
+          </div>
           <div class="form-group">
-            <p class="bg-info rounded p-2 mt-3">
+            <p
+              class="bg-info rounded p-2 mt-3"
+              v-if="$options.type === 'article'"
+            >
+              <b>Important:</b> Paragraphs shorter than 50 characters will be
+              automatically converted to headings after publication.
+            </p>
+            <p class="bg-info rounded p-2 mt-3" v-else>
               <b>Important:</b> Each chapter title has to start with 'Chapter '
               or 'CHAPTER ' and has to be shorter than 80 characters.
             </p>
+
             <!-- <p>
                   <b>Tip:</b> To create a sub heading, add two asterisks before
                   and after the title: e.g. <b>**Lorem ipsum**</b>.
@@ -86,79 +137,31 @@
             <textarea
               class="form-control"
               id="content"
-              rows="33"
+              rows="20"
               @input="(e) => setText(e.target.value)"
-              placeholder="Text"
+              placeholder="Content"
             ></textarea>
 
             <ul class="bullet-list-inline">
               <li>{{ post.content ? post.content.length : 0 }} characters</li>
-              <li v-if="numChapters > 0 && post.type === 'book'">
+              <li v-if="numChapters > 0 && $options.type === 'book'">
                 {{ numChapters }} chapter<span v-if="numChapters > 1">s</span>
+              </li>
+              <li v-if="numHeadings > 0 && $options.type === 'article'">
+                {{ numHeadings }} heading<span v-if="numHeadings > 1">s</span>
               </li>
             </ul>
           </div>
-        </div>
-        <!-- </form> -->
-      </div>
-
-      <div class="mt-4"></div>
-
-      <div class="col-12 col-md-8 offset-md-2">
-        <form>
-          <div class="form-group">
-            <select
-              class="form-select"
-              aria-label="category select"
-              id="category"
-              @change="setCategory($event)"
-            >
-              <option selected>Select genre</option>
-              <option
-                :value="c.slug"
-                v-for="(c, i) in [...categories].sort((a, b) =>
-                  a.title > b.title ? 1 : -1
-                )"
-                :key="i"
-              >
-                {{ c.title }}
-              </option>
-            </select>
-          </div>
-          <div class="form-group mt-3">
-            <p class="mb-0">
-              <span
-                class="text-danger"
-                v-if="post.intro.length < $options.introMin"
-              >
-                The minimum length is {{ $options.introMin }} characters.
-              </span>
-              <span
-                class="text-danger"
-                v-if="post.intro.length > $options.introMax"
-              >
-                The maximum length is {{ $options.introMax }} characters.
-              </span>
-            </p>
-            <textarea
-              class="form-control"
-              id="intro"
-              rows="8"
-              :placeholder="post.type === 'article' ? 'Introduction' : 'Blurb'"
-              @input="(e) => setIntro(e.target.value)"
-            ></textarea>
-            <span id="characters">{{ post.intro.length }}</span
-            >/{{ $options.introMax }} characters
-          </div>
 
           <div
-            class="btn btn-secondary mt-2"
+            class="btn btn-secondary mt-1"
             @click="validFields ? publishPost() : false"
             :class="validFields ? 'opacity-100' : 'opacity-50'"
           >
             Publish
           </div>
-        </form>
+        </div>
+        <!-- </form> -->
       </div>
     </div>
 
@@ -179,13 +182,13 @@
           </div>
           <div class="row g-1">
             <div
-              :class="$options.ratio.w > $options.ratio.h ? 'col-4' : 'col-3'"
+              :class="$options.type === 'article' ? 'col-4' : 'col-3'"
               v-for="i in 12"
               :key="i"
             >
               <div
                 class="ratio cursor-pointer"
-                :class="'ratio-' + $options.ratio.w + 'x' + $options.ratio.h"
+                :class="$options.type === 'article' ? 'ratio-4x3' : 'ratio-3x4'"
               >
                 <div
                   class="position-absolute rounded bg-light image"
@@ -212,24 +215,18 @@ import Vue from "vue";
 import getUSD from "@/utils/getUSD.js";
 
 export default {
+  type: "article",
+
   data() {
     return {
       showModal: false,
       image: -1,
       category: undefined,
       post: { intro: "" },
-      categoryName: "genre",
+      categoryName: "",
       trxusd: 1,
     };
   },
-
-  ratio: {
-    w: 3,
-    h: 4,
-  },
-
-  introMin: 250, //100
-  introMax: 500, //200
 
   async created() {
     Vue.set(this.post, "author", 43);
@@ -242,20 +239,33 @@ export default {
   },
 
   computed: {
+    introMin() {
+      return this.$options.type === "article" ? 100 : 250;
+    },
+
+    introMax() {
+      return this.$options.type === "article" ? 200 : 500;
+    },
+
     today() {
       return this.dateToString(new Date());
     },
 
     path() {
-      return this.$options.ratio.w > this.$options.ratio.h
-        ? "landscape"
-        : "portrait";
+      return this.$options.type === "article" ? "landscape" : "portrait";
     },
 
     price() {
       return this.post.content
         ? ((this.post.content.length / 1000) * this.trxusd).toFixed(2)
         : -1;
+    },
+
+    numHeadings() {
+      return this.post.content
+        ? this.post.content.split(/(?:\r?\n)+/).filter((p) => p.length < 50)
+            .length
+        : "0";
     },
 
     numChapters() {
@@ -281,8 +291,8 @@ export default {
     validFields() {
       return (
         this.post.intro &&
-        this.post.intro.length >= this.$options.introMin &&
-        this.post.intro.length <= this.$options.introMax &&
+        this.post.intro.length >= this.introMin &&
+        this.post.intro.length <= this.introMax &&
         this.post.title &&
         this.post.title.length > 0 &&
         this.post.visual &&
@@ -308,7 +318,7 @@ export default {
 
     selectImage(i) {
       this.image = i;
-      Vue.set(this.post, "visual", `/_nuxt/images/${this.path}/${i}.jpg`);
+      Vue.set(this.post, "visual", `${this.path}/${i}.jpg`);
 
       this.showModal = !this.showModal;
     },
@@ -323,58 +333,20 @@ export default {
       Vue.set(this.post, "intro", e);
     },
 
-    // parseContent() {
-    //   let parts = e.split(/(?:\r?\n)+/);
-
-    //   if (parts.length > 0) {
-    //     let a = [];
-    //     let end = 0;
-    //     let chapters = 0;
-    //     for (let i = 0; i < parts.length; i++) {
-    //       if (parts[i]) {
-    //         let p = {};
-
-    //         // let p = paragraphs[i];
-    //         if (parts[i].startsWith("**")) {
-    //           //title
-    //           let title = parts[i].replaceAll("**", "");
-    //           if (title.length > 0) {
-    //             p["title"] = title;
-    //             end += title.length;
-    //             p["titleEnd"] = end;
-
-    //             chapters += 1;
-
-    //             if (parts[i + 1]) {
-    //               p["content"] = parts[i + 1];
-    //               end += p["content"].length;
-    //               p["end"] = end;
-
-    //               i = i + 1; // skip next part
-    //             }
-    //           }
-    //         } else {
-    //           // content
-    //           p["content"] = parts[i];
-    //           end += p.content.length;
-    //           p["end"] = end;
-    //         }
-    //         a.push(p);
-    //       }
-    //     }
-    //   }
-    // },
-
     setText(e) {
       Vue.set(this.post, "content", e);
     },
 
     setCategory(e) {
       console.log(e.target.value);
-      this.categoryName = this.$store.state.categories.find(
-        (c) => c.slug === e.target.value
-      ).title;
-      Vue.set(this.post, "category", e.target.value);
+      if (e.target.value !== "select") {
+        this.categoryName = this.$store.state.categories.find(
+          (c) => c.slug === e.target.value
+        ).title;
+        Vue.set(this.post, "category", e.target.value);
+      } else {
+        this.categoryName = "";
+      }
     },
 
     dateToString(date) {

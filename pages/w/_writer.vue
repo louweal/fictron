@@ -25,7 +25,7 @@
           </template>
         </div>
 
-        <div class="col-md-3 d-none d-md-block">
+        <div class="col-md-3 d-none d-md-block" v-if="similarPosts.length > 0">
           <sidebar
             title="Discover also"
             :posts="

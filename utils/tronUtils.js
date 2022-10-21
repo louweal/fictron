@@ -1,9 +1,8 @@
 //import LibraryABI from './libraryABI'
 
 let account = null;
-let libraryContract;
 let libraryContractAddress = "TGcg2angYestWUkkWZKQ2gz8srqnfCHpME"; // Paste Contract address here
-let bookRentContract = null;
+let libraryContract = null;
 
 export const accountAddress = () => {
   return account;
@@ -22,7 +21,7 @@ export function getTronWeb() {
 export async function setLibraryContract() {
   // TODO: abtain contract Object
 
-  bookRentContract = await window.tronWeb.contract().at(libraryContractAddress);
+  libraryContract = await window.tronWeb.contract().at(libraryContractAddress);
 }
 
 export async function fetchAllPosts() {
@@ -31,16 +30,28 @@ export async function fetchAllPosts() {
   // push each object to books array
   const posts = [];
 
-  const numPosts = await bookRentContract.postId().call();
+  const numPosts = await libraryContract.postId().call();
   //iterate from 0 till bookId
   for (let i = 0; i < numPosts; i++) {
-    const post = await bookRentContract.posts(i).call();
-    // filter the deleted books
+    const post = await libraryContract.posts(i).call();
+
+    // // on scroll at post page
+    // const postContractAddress = await libraryContract.postContracts(i).call();
+    // let postContract = await window.tronWeb.contract().at(postContractAddress);
+
+    // let pages = [];
+    // const numPages = await postContract.pageId().call();
+    // for(let j = 0; j < numPages; j++) {
+    //   const page = await postContract.pages(i).call();
+    //   pages.push(page);
+    // }
+
     posts.push({
       id: i,
       title: post.title,
       intro: post.intro,
       category: post.category,
+      content: [],
     });
   }
 

@@ -22,7 +22,7 @@
         />
       </div>
 
-      <div class="col-md-3 d-none d-md-block">
+      <div class="col-md-3 d-none d-md-block" v-if="categoryPosts.length > 0">
         <sidebar
           title="Recently published"
           :posts="
@@ -32,7 +32,7 @@
           "
         />
 
-        <h2 class="fs-5 mt-4">Explore genres</h2>
+        <!-- <h2 class="fs-5 mt-4">Explore genres</h2>
 
         <ul class="list-inline">
           <li
@@ -44,7 +44,7 @@
               {{ c.title }}
             </nuxt-link>
           </li>
-        </ul>
+        </ul> -->
       </div>
     </div>
   </div>

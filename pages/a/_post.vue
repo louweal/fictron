@@ -13,7 +13,7 @@
             class="post-img ratio rounded mb-2 bg-light"
             :class="$options.type === 'article' ? 'ratio-3x1' : 'ratio-3x4'"
             :style="{
-              backgroundImage: `url(${post.visual}`,
+              backgroundImage: `url(${require('@/images/' + post.visual)}`,
             }"
           ></div>
         </div>
@@ -51,7 +51,7 @@
               {{ author.name }}
             </nuxt-link>
           </h2>
-          <div class="text-danger" v-else @click="removePost()">
+          <div class="text-danger cursor-pointer" v-else @click="removePost()">
             <i class="bi bi-x"></i> Depublish
           </div>
         </div>
@@ -171,6 +171,7 @@
         <div
           class="bar bg-secondary h-100 left-0 position-absolute fw-bold text-end"
           ref="bar"
+          v-if="progress > 0"
         >
           {{ progress / 1000 }} TRX
         </div>
@@ -263,6 +264,10 @@ export default {
   },
 
   computed: {
+    maxTitleLength() {
+      return this.$options.type === "article" ? 50 : 80;
+    },
+
     content() {
       // console.log(this.post.content);
       let parts = this.post.content.split(/(?:\r?\n)+/);
@@ -279,7 +284,7 @@ export default {
 
             if (
               parts[i].toLowerCase().startsWith("chapter ") &&
-              parts[i].length <= 80
+              parts[i].length <= this.maxTitleLength
             ) {
               //title
               let title = parts[i]; //.replaceAll("**", ""); // todo
@@ -427,6 +432,7 @@ $fontsize: 13px;
   z-index: 9;
 
   .bar {
+    width: 0;
     transition: width 0.8s ease-out;
     will-change: width;
     padding-right: 4px;

@@ -28,7 +28,7 @@
           <div
             class="card-img ratio ratio-4x3 rounded mb-md-1 mb-xl-2 w-100 bg-light"
             :style="{
-              backgroundImage: `url(${post.visual}`,
+              backgroundImage: `url(${require('@/images/' + post.visual)}`,
             }"
           ></div>
 

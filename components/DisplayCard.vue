@@ -19,7 +19,7 @@
       <div
         class="card-img position-absolute rounded bg-light"
         :style="{
-          backgroundImage: `url(${post.visual}`,
+          backgroundImage: `url(${require('@/images/' + post.visual)}`,
         }"
       ></div>
 

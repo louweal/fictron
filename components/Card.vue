@@ -25,7 +25,7 @@
             <div
               class="card-img position-absolute rounded bg-light"
               :style="{
-                backgroundImage: `url(${post.visual}`,
+                backgroundImage: `url(${require('@/images/' + post.visual)}`,
               }"
             >
               {{ post.visual === "none" ? post.visual : "" }}
@@ -50,8 +50,8 @@
               :class="blurb ? 'd-md-block' : ''"
             >
               <p>
-                {{ post.intro.slice(0, 420) }}
-                {{ post.intro.length > 420 ? "..." : false }}
+                {{ post.intro.slice(0, maxBlurbLength) }}
+                {{ post.intro.length > maxBlurbLength ? "..." : "" }}
               </p>
             </div>
           </div>
@@ -133,6 +133,10 @@ export default {
     author() {
       return this.$store.state.writers.find((w) => w.id === this.post.author)
         .name;
+    },
+
+    maxBlurbLength() {
+      return this.hero ? 800 : 420;
     },
   },
 

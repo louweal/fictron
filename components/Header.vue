@@ -39,7 +39,8 @@
               toggleDropdown();
               $router.push('/c/' + c.slug);
             "
-            v-for="(c, i) in hasCategories ? userCategories : categories"
+            xxxv-for="(c, i) in hasCategories ? userCategories : categories"
+            v-for="(c, i) in categories"
             :key="i"
             class="dropdown-item"
           >

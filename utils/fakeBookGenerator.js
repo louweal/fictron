@@ -1,4 +1,4 @@
-// run this file with: node storyGenerator.js
+// run this file with: node fakeBookGenerator.js
 
 import loremIpsum from "~/data/lorem-ipsum.json";
 import categories from "~/data/genres.json";
@@ -65,7 +65,7 @@ export function posts(n) {
     a.push({
       title: title,
       intro: getWords(100 + Math.ceil(Math.random() * 100)),
-      visual: `/_nuxt/images/${category}/${imagesUsed[catId] + 1}.jpg`,
+      visual: `${category}/${imagesUsed[catId] + 1}.jpg`,
       category: category,
       content: content, // todoo!
       date:

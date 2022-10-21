@@ -29,7 +29,7 @@ import {
   fetchAllPosts,
 } from "~/utils/tronUtils.js";
 
-import { posts } from "@/utils/storyGenerator.js";
+import { posts } from "@/utils/fakeBookGenerator.js";
 import categories from "@/data/genres.json";
 
 import writers from "@/data/writers.json";
