@@ -38,8 +38,7 @@
             </li>
             <li>
               <i class="bi bi-piggy-bank"></i>
-              {{ (post.content.length / 1000).toFixed(3) }} TRX ≈
-              {{ price }} USD
+              {{ post.price }} TRX ≈ {{ price }} USD
             </li>
           </ul>
 
@@ -101,7 +100,12 @@
           class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
           v-if="!$route.hash"
         >
-          <notice id="warning-0" data-aos="70" />
+          <notice
+            id="warning-0"
+            data-aos="0"
+            :price="post.price"
+            :usd="+price"
+          />
         </div>
       </div>
 
@@ -124,11 +128,8 @@
               :class="historicProgress < p.end ? 'fade-in-up' : false"
               :data-aos="historicProgress < p.end ? 70 : undefined"
               :data-end="p.end"
-              :data-n="p.n"
             >
               {{ p.content }}
-
-              {{ p.end }}
             </p>
 
             <div
@@ -137,7 +138,12 @@
               :id="'c' + p.end"
               :key="'anchor' + i"
             >
-              <notice />
+              <notice
+                :price="
+                  Math.ceil(post.price * ((100 - progressPercentage) / 100))
+                "
+                :usd="(+price * ((100 - progressPercentage) / 100)).toFixed(2)"
+              />
             </div>
           </template>
 
@@ -167,13 +173,17 @@
           <card :post="a" :showIntro="false" :borderTop="i !== 0" />
         </div>
       </div>
-      <div class="progress position-fixed bottom-0 start-0 end-0">
+      <div
+        class="progress position-fixed bottom-0 start-0 end-0"
+        v-if="$store.state.user.id !== author.id"
+      >
         <div
-          class="bar bg-secondary h-100 left-0 position-absolute fw-bold text-end"
+          class="bar bg-primary h-100 left-0 position-absolute fw-bold"
           ref="bar"
-          v-if="progress > 0"
         >
-          {{ progress / 1000 }} TRX
+          <div class="label text-white align-end" v-if="progressPercentage > 4">
+            {{ progressPercentage }} %&nbsp;
+          </div>
         </div>
       </div>
     </div>
@@ -202,6 +212,7 @@ export default {
       showBlurb: true,
       showContents: false,
       numChapters: 0,
+      paid: 0,
     };
   },
 
@@ -229,8 +240,7 @@ export default {
     }
 
     this.scrollHeight = document.body.scrollHeight;
-    window.addEventListener("scroll", this.aos); // todo wrap in debounce?
-
+    window.addEventListener("scroll", this.aos);
     let history = this.$store.state.user.history.find(
       (a) => a.id === this.post.id
     );
@@ -238,9 +248,9 @@ export default {
     if (history) {
       this.historicProgress = history.progress;
       this.progress = history.progress;
+      this.paid = (history.progress * 100) / this.post.content.length;
+      this.updateBar();
     }
-
-    this.updateBar();
   },
 
   beforeDestroy() {
@@ -264,6 +274,9 @@ export default {
   },
 
   computed: {
+    progressPercentage() {
+      return parseInt((100 * this.progress) / this.post.content.length);
+    },
     maxTitleLength() {
       return this.$options.type === "article" ? 50 : 80;
     },
@@ -275,7 +288,6 @@ export default {
 
       if (parts.length > 0) {
         let end = 0;
-        // let chapters = 0;
         for (let i = 0; i < parts.length; i++) {
           if (parts[i]) {
             let p = {};
@@ -285,7 +297,7 @@ export default {
               parts[i].length <= this.maxTitleLength
             ) {
               //title
-              let title = parts[i]; //.replaceAll("**", ""); // todo
+              let title = parts[i];
               if (title.length > 0) {
                 p["title"] = title;
                 end += title.length;
@@ -319,7 +331,7 @@ export default {
     },
 
     price() {
-      return ((this.post.content.length / 1000) * this.trxusd).toFixed(2);
+      return (this.post.price * this.trxusd).toFixed(2);
     },
 
     author() {
@@ -363,7 +375,7 @@ export default {
 
     updateBar() {
       if (this.post) {
-        let p = (100 * this.progress) / this.post.content.length;
+        let p = Math.ceil((100 * this.progress) / this.post.content.length);
         let bar = this.$refs["bar"];
 
         if (bar) {
@@ -403,11 +415,21 @@ export default {
             if (target.dataset.end) {
               this.progress = parseInt(target.dataset.end);
               this.updateBar();
+
+              // payment
+              if (this.$store.state.user.id !== this.author.id) {
+                let p = Math.ceil(
+                  (100 * this.progress) / this.post.content.length
+                );
+                let toPay = parseInt(p - this.paid);
+
+                if (p % 2 === 0 && p > this.paid) {
+                  console.log("todo: pay: " + toPay + "%");
+                  this.paid = p;
+                }
+              }
             }
 
-            if (target.dataset.n) {
-              console.log(`todo: payWriter(${target.dataset.n})`);
-            }
             delete target.dataset.aos;
           }
           // break; // --> at most one animation per scroll event !
@@ -430,20 +452,30 @@ export default {
   background-size: 115%;
 }
 
-$fontsize: 13px;
+$fontsize: 12px;
 .progress {
   height: 1.9vh;
   background-color: var(--bs-gray-400);
   z-index: 9;
 
   .bar {
+    position: relative;
     width: 0;
     transition: width 0.8s ease-out;
     will-change: width;
-    padding-right: 4px;
-    padding-top: 2px; //calc(50% - $fontsize / 2);
-    font-size: $fontsize;
-    line-height: 1;
+
+    .label {
+      padding-top: 2px;
+      position: absolute;
+      font-size: $fontsize;
+      line-height: 1;
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 100%;
+      text-align: right;
+    }
   }
 }
 

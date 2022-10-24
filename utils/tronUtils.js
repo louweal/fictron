@@ -10,12 +10,23 @@ export const accountAddress = () => {
 
 export function getTronWeb() {
   // Obtain the tronweb object injected by tronLink
-  var obj = setInterval(async () => {
-    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-      clearInterval(obj);
-      console.log("tronWeb successfully detected!");
-    }
-  }, 10);
+  // var obj = setInterval(async () => {
+  //   if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+  //     clearInterval(obj);
+  //     console.log("tronWeb successfully detected!");
+  //   } else {
+  //     console.log("problem");
+  //   }
+  // }, 10);
+  if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+    // console.log(window.tronWeb.defaultAddress.base58);
+    console.log("tronWeb successfully detected!");
+    console.log(window.tronWeb);
+    return window.tronWeb.defaultAddress;
+  } else {
+    console.log("problem connecting to TronWeb");
+    return undefined;
+  }
 }
 
 export async function setLibraryContract() {

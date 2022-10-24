@@ -20,16 +20,10 @@
 </template>
 
 <script>
-// import { posts } from "@/utils/newsGenerator.js";
 // import categories from "@/data/channels.json";
+import { getTronWeb } from "~/utils/tronUtils.js";
 
-import {
-  getTronWeb,
-  setLibraryContract,
-  fetchAllPosts,
-} from "~/utils/tronUtils.js";
-
-import { posts } from "@/utils/fakeBookGenerator.js";
+import { fakeBooks } from "@/utils/fakeBookGenerator.js";
 import categories from "@/data/genres.json";
 
 import writers from "@/data/writers.json";
@@ -41,14 +35,14 @@ export default {
   created() {
     this.$store.commit("SET_CATEGORIES", this.$options.categories);
     this.$store.commit("SET_WRITERS", this.$options.writers);
-    this.$store.commit("SET_POSTS", []); //delete any previous posts
+    this.$store.commit("SET_POSTS", fakeBooks(120));
 
-    let n = 4;
-    let dummyPosts = posts(n);
+    // let n = 4;
+    // let dummyPosts = posts(n);
 
-    for (let i = 0; i < n; i++) {
-      this.$store.commit("addPost", { id: i, ...dummyPosts[i] });
-    }
+    // for (let i = 0; i < n; i++) {
+    //   this.$store.commit("addPost", { id: i, ...dummyPosts[i] });
+    // }
 
     //todo (elsewhere): sort posts and add to contracts
   },
@@ -56,26 +50,9 @@ export default {
   async mounted() {
     // await getTronWeb();
 
-    // await setLibraryContract();
-
-    // fetch all books
-    // const posts = await fetchAllPosts();
-
-    // console.log(books);
-
-    // console.log("The total number of Books: " + posts.length);
-
     let headerHeight = document.querySelector("#header").offsetHeight; //refs ?
     let pushdown = document.querySelector("#pushdown"); // refs?
     pushdown.style.height = headerHeight + "px";
-
-    // this.$store.commit("setUser", {
-    //   id: 1,
-    //   name: "Anneloes Louwe",
-    //   categories: ["dogs", "hiking", "chess", "save-ukraine"],
-    //   writers: [],
-    //   history: [],
-    // });
   },
 
   watch: {

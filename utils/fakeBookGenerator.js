@@ -39,7 +39,7 @@ function makeParagraphs(n) {
   return s;
 }
 
-export function posts(n) {
+export function fakeBooks(n) {
   let numCategories = categories.length;
   let categorySlugs = categories.map((c) => c.slug);
   let imagesUsed = new Array(numCategories).fill(0);
@@ -56,14 +56,16 @@ export function posts(n) {
       continue; // do not add post with duplicate title/slug
     }
 
-    let author = 42; // Math.floor(Math.random() * 42); // the data/writers.json contains 42 writers, with ids 0-41
+    let author = Math.floor(Math.random() * 42); // the data/writers.json contains 42 writers, with ids 0-41
     title = title.charAt(0) + title.slice(1).toLowerCase();
     let content = makeParagraphs(37 + Math.ceil(Math.random() * 15));
     let catId = author % numCategories;
     let category = categorySlugs[catId];
 
     a.push({
+      id: i,
       title: title,
+      slug: title.toLowerCase().replaceAll(" ", "-"),
       intro: getWords(100 + Math.ceil(Math.random() * 100)),
       visual: `${category}/${imagesUsed[catId] + 1}.jpg`,
       category: category,
@@ -73,7 +75,8 @@ export function posts(n) {
           (1662031747 + Math.ceil(Math.random() * 2592000)) * 1000
         ).getTime() / 1000, // 1 sept 2022 + 1 month -- the date timestamp is in SECONDS for solidity
       author: author,
-      // views: Math.ceil(Math.random() * 777),
+      views: Math.ceil(Math.random() * 777),
+      price: (3 + Math.ceil(Math.random() * 7)) * 50,
     });
 
     imagesUsed[catId] = (imagesUsed[catId] + 1) % imagesPerCategory[catId];
@@ -81,17 +84,3 @@ export function posts(n) {
 
   return a;
 }
-
-// call generator
-// let p = posts(1);
-// sort
-// posts.sort((a, b) => (a.date > b.date ? -1 : 1));
-
-// create Library smart contract
-
-// loop books
-// add each book to Library
-
-// create Post smart contract for each book
-
-// add reference to Library item

@@ -110,7 +110,7 @@ export default {
         (a) => a.id === this.post.id
       );
       if (history) {
-        this.progress = parseInt(
+        this.progress = Math.ceil(
           (100 * history.progress) / this.post.content.length
         );
       }

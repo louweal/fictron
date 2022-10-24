@@ -21,8 +21,9 @@
           </div>
           <div class="modal-body px-4">
             <p class="text-center">
-              Connect your TRON wallet to get full access. Reading books costs 1
-              TRX per 1000 characters. Publishing books is free.
+              Connect your TRON wallet to start reading. You don't need to pay
+              for books upfront, instead you pay using microtransations whilst
+              reading.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
@@ -37,6 +38,8 @@
 </template>
 
 <script>
+import { getTronWeb } from "~/utils/tronUtils.js";
+
 export default {
   type: "books", // articles
 
@@ -52,15 +55,22 @@ export default {
       this.$router.push(path);
     },
     signIn() {
+      let address = getTronWeb();
+
+      if (address === undefined) {
+        this.toggleModal();
+        return;
+      }
+      // return;
+
       this.$store.commit("setUser", {
         id: 42,
-        name: "Anneloes Louwe",
-        categories: ["fantasy", "sci-fi"], // ["dogs", "hiking", "chess", "save-ukraine"],
-        writers: [1, 3, 7, 9, 13, 15, 21, 23],
+        name: address.name,
+        address: address.base58,
+        categories: [],
+        writers: [],
         history: [],
       });
-
-      // console.log(this.$route.path);
 
       let goto = this.$store.state.clickedPost
         ? this.$store.state.clickedPost

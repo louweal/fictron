@@ -5,12 +5,23 @@
         :categories="userCategories.length > 0 ? userCategories : categories"
       />
 
-      <!-- {{ userWriters }} -->
-
       <hero :posts="feed.slice(0, 3)" />
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
+          <div v-if="feed.length === 3" class="text-center">
+            <h1 class="fs-3">
+              Welcome to Fictron, {{ $store.state.user.name }}!
+            </h1>
+            <p>
+              This is your feed. Please start following your favorite writers.
+            </p>
+
+            <nuxt-link to="/search" class="btn btn-secondary">
+              Discover writers <i class="bi bi-arrow-right"></i>
+            </nuxt-link>
+          </div>
+
           <post-grid :posts="feed.slice(2, 12)" hide-first-post="desktop" />
         </div>
 
@@ -74,6 +85,23 @@
         </div>
       </template>
 
+      <div xxxclass="text-center" v-if="userCategories.length === 0">
+        <h2 class="fs-5">Genres</h2>
+
+        <p>Click to subscribe to a genre.</p>
+
+        <div class="hstack gap-2">
+          <div
+            class="btn btn-sm btn-primary"
+            @click="addUserCategory(c)"
+            v-for="(c, i) in categories"
+            :key="i"
+          >
+            {{ c.title }}
+          </div>
+        </div>
+      </div>
+
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
           <post-grid
@@ -123,6 +151,11 @@ export default {
     },
 
     feed() {
+      if (this.$store.state.user && this.userWriters.length === 0) {
+        return [...this.posts]
+          .sort((a, b) => (a.date > b.date ? -1 : 1))
+          .slice(0, 3);
+      }
       if (this.$store.state.user && this.userWriters.length > 0) {
         return [...this.posts]
           .filter((a) => this.$store.state.user.writers.includes(a.author))
@@ -151,6 +184,9 @@ export default {
   },
 
   methods: {
+    addUserCategory(cat) {
+      this.$store.commit("addUserCategory", cat.slug);
+    },
     loadMore() {
       this.feedMax += 18;
     },

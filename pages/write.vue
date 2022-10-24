@@ -37,36 +37,60 @@
           :class="
             $options.type === 'article'
               ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2 mt-2'
-              : 'col-12 col-md-8 col-lg-6 mb-5 align-self-center'
+              : 'col-12 col-md-8 col-lg-6 mb-2 align-self-center'
           "
         >
-          <div class="form-group">
-            <select
-              class="form-select"
-              aria-label="category select"
-              id="category"
-              @change="setCategory($event)"
-            >
-              <option selected value="select">
-                Select {{ $options.type === "article" ? "channel" : "genre" }}
-              </option>
-              <option
-                :value="c.slug"
-                v-for="(c, i) in [...categories].sort((a, b) =>
-                  a.title > b.title ? 1 : -1
-                )"
-                :key="i"
-              >
-                {{ c.title }}
-              </option>
-            </select>
+          <div class="row gy-2 my-2">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                <select
+                  class="form-select"
+                  aria-label="category select"
+                  id="category"
+                  @change="setCategory($event)"
+                >
+                  <option selected value="select">
+                    Select
+                    {{ $options.type === "article" ? "channel" : "genre" }}
+                  </option>
+                  <option
+                    :value="c.slug"
+                    v-for="(c, i) in [...categories].sort((a, b) =>
+                      a.title > b.title ? 1 : -1
+                    )"
+                    :key="i"
+                  >
+                    {{ c.title }}
+                  </option>
+                </select>
 
-            <div class="badge bg-secondary mt-3" v-if="categoryName">
-              {{ categoryName }}
+                <!-- <div class="badge bg-secondary mt-3" v-if="categoryName">
+                  {{ categoryName }}
+                </div> -->
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                <select
+                  class="form-select"
+                  aria-label="category select"
+                  id="price"
+                  @change="setPrice($event)"
+                >
+                  <option selected value="select">Select price</option>
+                  <option
+                    :value="p"
+                    v-for="(p, i) in [200, 250, 300, 350, 400, 450, 500]"
+                    :key="i"
+                  >
+                    {{ p }} TRX ≈ {{ (p * trxusd).toFixed(2) }} USD
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <ul class="bullet-list-inline mt-1 mb-1">
+          <!-- <ul class="bullet-list-inline mt-1 mb-1">
             <li>{{ today }}</li>
 
             <li v-if="post.content">
@@ -74,7 +98,7 @@
               {{ (post.content.length / 1000).toFixed(2) }} TRX ≈
               {{ price }} USD
             </li>
-          </ul>
+          </ul> -->
 
           <form class="gy-3">
             <div class="form-group">
@@ -87,24 +111,16 @@
               ></textarea>
             </div>
 
-            <h2 class="fs-3 mt-3">
+            <!-- <h2 class="fs-3 mt-3">
               By
-              <span class="text-secondary">
+              <span xxxclass="text-secondary">
                 {{ me }}
               </span>
-            </h2>
+            </h2> -->
           </form>
         </div>
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <div class="form-group mt-3">
-            <p class="mb-0">
-              <span class="text-danger" v-if="post.intro.length < introMin">
-                The minimum length is {{ introMin }} characters.
-              </span>
-              <span class="text-danger" v-if="post.intro.length > introMax">
-                The maximum length is {{ introMax }} characters.
-              </span>
-            </p>
             <textarea
               class="form-control"
               id="intro"
@@ -114,8 +130,25 @@
               "
               @input="(e) => setIntro(e.target.value)"
             ></textarea>
-            <span id="characters">{{ post.intro.length }}</span
-            >/{{ introMax }} characters
+
+            <ul class="bullet-list-inline">
+              <li>
+                <span id="characters">{{ post.intro.length }}</span
+                >/{{ introMax }} characters
+              </li>
+
+              <li v-if="post.intro.length < introMin">
+                <span class="text-danger">
+                  The minimum length is {{ introMin }} characters.
+                </span>
+              </li>
+
+              <li v-if="post.intro.length > introMax">
+                <span class="text-danger">
+                  The maximum length is {{ introMax }} characters.
+                </span>
+              </li>
+            </ul>
           </div>
           <div class="form-group">
             <p
@@ -215,7 +248,7 @@ import Vue from "vue";
 import getUSD from "@/utils/getUSD.js";
 
 export default {
-  type: "article",
+  type: "book",
 
   data() {
     return {
@@ -229,7 +262,7 @@ export default {
   },
 
   async created() {
-    Vue.set(this.post, "author", 43);
+    Vue.set(this.post, "author", this.$store.state.user.id);
     Vue.set(this.post, "type", "book"); // story stories
     this.trxusd = await getUSD();
   },
@@ -297,8 +330,16 @@ export default {
         this.post.title.length > 0 &&
         this.post.visual &&
         this.post.category &&
-        this.post.content
+        this.post.content &&
+        this.post.price
       );
+    },
+  },
+
+  watch: {
+    "$store.state.user": function () {
+      this.validatePage();
+      this.$router.push("/");
     },
   },
 
@@ -325,7 +366,7 @@ export default {
 
     setTitle(e) {
       Vue.set(this.post, "title", e);
-      let slug = e.toLowerCase().replace(" ", "-");
+      let slug = e.toLowerCase().replaceAll(" ", "-");
       Vue.set(this.post, "slug", slug);
     },
 
@@ -338,7 +379,6 @@ export default {
     },
 
     setCategory(e) {
-      console.log(e.target.value);
       if (e.target.value !== "select") {
         this.categoryName = this.$store.state.categories.find(
           (c) => c.slug === e.target.value
@@ -346,6 +386,12 @@ export default {
         Vue.set(this.post, "category", e.target.value);
       } else {
         this.categoryName = "";
+      }
+    },
+
+    setPrice(e) {
+      if (e.target.value !== "select") {
+        Vue.set(this.post, "price", e.target.value);
       }
     },
 
@@ -359,12 +405,18 @@ export default {
 
     publishPost() {
       let id = this.$store.state.posts.length + 1;
+      // console.log(id);
+      // console.log(this.post.slug);
+
+      // return;
 
       Vue.set(this.post, "id", id);
       Vue.set(this.post, "date", new Date().getTime() / 1000);
       Vue.set(this.post, "views", 0);
 
       this.$store.commit("addPost", this.post);
+
+      // return;
 
       // console.log(this.post);
       this.$router.push("/a/" + this.post.slug);

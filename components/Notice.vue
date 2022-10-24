@@ -3,11 +3,26 @@
     <p class="text-center mb-0">
       <slot>
         <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> Scrolling further
-        costs 1 TRX/1000 characters.
+        may cost you up to {{ price }} TRX (≈ {{ usd }} USD).
       </slot>
     </p>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    price: {
+      type: Number,
+      default: 0,
+    },
+    usd: {
+      type: Number,
+      default: 0,
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 .notice {

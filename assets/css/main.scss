@@ -226,7 +226,7 @@ span.color-secondary {
       content: "";
       z-index: 2;
       left: calc(($padding / -2) - $size);
-      top: calc($line-height/2 - $size/2 - 1px);
+      top: calc($line-height/2 - $size/2 - 3px);
       width: $size;
       height: $size;
       border-radius: 50%;
