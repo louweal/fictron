@@ -21,15 +21,25 @@
           </div>
           <div class="modal-body px-4">
             <p class="text-center">
-              Connect your TRON wallet to start reading. You don't need to pay
-              for books upfront, instead you pay using microtransations whilst
-              reading.
+              Connect your TRON wallet to start reading. Fictronners only pay
+              for what they read, not for what they don't read.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
                 TronLink
               </div>
             </div>
+
+            <p class="text-danger text-center" v-if="error">
+              Unable to detect your TronLink wallet. Install the
+              <a
+                href="https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec"
+                target="_blank"
+                >TronLink
+                <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+              browser extension from the Chrome Web Store and sign in.
+            </p>
           </div>
         </slot>
       </div>
@@ -42,6 +52,12 @@ import { getTronWeb } from "~/utils/tronUtils.js";
 
 export default {
   type: "books", // articles
+
+  data() {
+    return {
+      error: false,
+    };
+  },
 
   methods: {
     toggleModal() {
@@ -58,19 +74,43 @@ export default {
       let address = getTronWeb();
 
       if (address === undefined) {
-        this.toggleModal();
+        // this.toggleModal();
+        this.error = true;
         return;
       }
       // return;
+      this.error = false;
 
-      this.$store.commit("setUser", {
-        id: 42,
-        name: address.name,
-        address: address.base58,
-        categories: [],
-        writers: [],
-        history: [],
-      });
+      let localStorageUser;
+
+      if (localStorage.getItem("user")) {
+        localStorageUser = JSON.parse(localStorage.getItem("user"));
+      }
+
+      if (localStorageUser && localStorageUser.id === address.base58) {
+        this.$store.commit("setUser", localStorageUser);
+      } else {
+        let id = address.base58;
+        let name = address.name;
+        let slug = address.name.toLowerCase().replaceAll(" ", "-");
+        this.$store.commit("setUser", {
+          id,
+          name,
+          slug,
+          categories: [],
+          writers: [],
+          history: [],
+        });
+
+        // also add writer (if not exists yet
+        console.log("to add!!");
+
+        this.$store.commit("addWriter", {
+          id,
+          name,
+          slug,
+        });
+      }
 
       let goto = this.$store.state.clickedPost
         ? this.$store.state.clickedPost

@@ -21,7 +21,6 @@ export function getTronWeb() {
   if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
     // console.log(window.tronWeb.defaultAddress.base58);
     console.log("tronWeb successfully detected!");
-    console.log(window.tronWeb);
     return window.tronWeb.defaultAddress;
   } else {
     console.log("problem connecting to TronWeb");

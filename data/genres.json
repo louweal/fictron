@@ -3,36 +3,42 @@
     "id": 0,
     "title": "Action & adventure",
     "slug": "action-adventure",
+    "visual": "5",
     "images": 27
   },
   {
     "id": 1,
     "title": "Fantasy",
     "slug": "fantasy",
+    "visual": "29",
     "images": 36
   },
   {
     "id": 2,
     "title": "Detective",
     "slug": "detective",
+    "visual": "15",
     "images": 23
   },
   {
     "id": 4,
     "title": "Romance",
     "slug": "romance",
+    "visual": "3",
     "images": 36
   },
   {
     "id": 3,
     "title": "Sci-fi",
     "slug": "sci-fi",
+    "visual": "21",
     "images": 30
   },
   {
     "id": 5,
     "title": "Horror",
     "slug": "horror",
+    "visual": "10",
     "images": 31
   }
 ]

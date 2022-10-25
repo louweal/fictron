@@ -3,18 +3,19 @@
     <div class="container-xl">
       <div class="row g-3 g-lg-5">
         <div class="col-12 col-md-9">
-          <form class="form-inline d-flex">
+          <div class="form-inline d-flex">
             <input
               class="form-control me-2"
               type="search"
               placeholder="Find authors and books"
               aria-label="Search"
+              event=""
               :value="query"
               @input="(e) => (query = e.target.value)"
             />
 
             <div class="btn btn-secondary">Search</div>
-          </form>
+          </div>
         </div>
 
         <div class="col-md-3 align-self-center">

@@ -89,9 +89,9 @@ export default {
   methods: {
     updateWriters() {
       if (this.following) {
-        this.$store.commit("removeWriter", this.writer.id);
+        this.$store.commit("removeUserWriter", this.writer.id);
       } else {
-        this.$store.commit("addWriter", this.writer.id);
+        this.$store.commit("addUserWriter", this.writer.id);
       }
     },
   },

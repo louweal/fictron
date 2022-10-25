@@ -1,5 +1,8 @@
 <template>
-  <div class="w-100 p-2 bg-secondary rounded mb-3 notice">
+  <div
+    class="w-100 p-4 xxxbg-primary rounded mb-3 notice text-white"
+    style="background-color: var(--bs-secondary)"
+  >
     <p class="text-center mb-0">
       <slot>
         <b><i class="bi bi-piggy-bank-fill"></i> Warning: </b> Scrolling further
@@ -25,13 +28,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.notice {
-  animation: hue-rotate 8s 0.2s linear infinite;
-}
+// .notice {
+//   animation: hue-rotate 8s 0.2s linear infinite;
+// }
 
-@keyframes hue-rotate {
-  to {
-    filter: hue-rotate(360deg);
-  }
-}
+// @keyframes hue-rotate {
+//   to {
+//     filter: hue-rotate(360deg);
+//   }
+// }
 </style>

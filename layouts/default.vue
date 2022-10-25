@@ -34,17 +34,28 @@ export default {
 
   created() {
     this.$store.commit("SET_CATEGORIES", this.$options.categories);
-    this.$store.commit("SET_WRITERS", this.$options.writers);
-    this.$store.commit("SET_POSTS", fakeBooks(120));
 
-    // let n = 4;
-    // let dummyPosts = posts(n);
+    let fakeWriters = this.$options.writers;
 
-    // for (let i = 0; i < n; i++) {
-    //   this.$store.commit("addPost", { id: i, ...dummyPosts[i] });
-    // }
+    let browserWriters = [];
+    let writers = fakeWriters;
+    if (localStorage.getItem("browserWriters") !== null) {
+      browserWriters = JSON.parse(localStorage.getItem("browserWriters"));
+    }
 
-    //todo (elsewhere): sort posts and add to contracts
+    console.log(writers);
+    writers = [...fakeWriters, ...browserWriters];
+    this.$store.commit("SET_WRITERS", writers);
+
+    let fakePosts = fakeBooks(70);
+    let browserPosts = [];
+
+    if (localStorage.getItem("browserPosts") !== null) {
+      browserPosts = JSON.parse(localStorage.getItem("browserPosts"));
+    }
+
+    let posts = [...fakePosts, ...browserPosts];
+    this.$store.commit("SET_POSTS", posts);
   },
 
   async mounted() {

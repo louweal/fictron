@@ -40,19 +40,27 @@
               <i class="bi bi-piggy-bank"></i>
               {{ post.price }} TRX ≈ {{ price }} USD
             </li>
+            <li
+              class="text-danger cursor-pointer"
+              v-if="mine"
+              @click="removePost()"
+            >
+              Depublish
+            </li>
           </ul>
 
           <h1>{{ post.title }}</h1>
 
-          <h2 class="fs-3" v-if="$store.state.user.id !== author.id">
+          {{ content.length }}
+
+          {{ post.content.length }}
+
+          <h2 class="fs-3">
             By
             <nuxt-link class="text-secondary" :to="'/w/' + author.slug">
               {{ author.name }}
             </nuxt-link>
           </h2>
-          <div class="text-danger cursor-pointer" v-else @click="removePost()">
-            <i class="bi bi-x"></i> Depublish
-          </div>
         </div>
 
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2 mt-3">
@@ -98,7 +106,7 @@
 
         <div
           class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
-          v-if="!$route.hash"
+          v-if="!$route.hash && !mine"
         >
           <notice
             id="warning-0"
@@ -139,6 +147,7 @@
               :key="'anchor' + i"
             >
               <notice
+                v-if="!mine"
                 :price="
                   Math.ceil(post.price * ((100 - progressPercentage) / 100))
                 "
@@ -147,7 +156,7 @@
             </div>
           </template>
 
-          <p class="text-secondary">
+          <p class="text-secondary" v-if="!mine">
             Thank you for supporting
             <b>
               <nuxt-link :to="'/w/' + author.slug" class="text-secondary">
@@ -271,6 +280,11 @@ export default {
         this.$store.commit("updateViews", this.post.id);
       }
     },
+    "$store.state.user": function () {
+      if (this.$store.state.user == undefined) {
+        this.$router.push("/");
+      }
+    },
   },
 
   computed: {
@@ -279,6 +293,11 @@ export default {
     },
     maxTitleLength() {
       return this.$options.type === "article" ? 50 : 80;
+    },
+
+    mine() {
+      // post is written by the user himself
+      return this.$store.state.user.id === this.author.id;
     },
 
     content() {
@@ -417,7 +436,7 @@ export default {
               this.updateBar();
 
               // payment
-              if (this.$store.state.user.id !== this.author.id) {
+              if (!this.mine) {
                 let p = Math.ceil(
                   (100 * this.progress) / this.post.content.length
                 );

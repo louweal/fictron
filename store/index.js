@@ -29,10 +29,20 @@ export const mutations = {
   },
 
   addPost(state, payload) {
-    state.posts.push({
+    let post = {
       slug: payload.title.toLowerCase().replaceAll(" ", "-"),
       ...payload,
-    });
+    };
+    state.posts.push(post);
+
+    if (localStorage.getItem("browserPosts")) {
+      let browserPosts = JSON.parse(localStorage.getItem("browserPosts"));
+      browserPosts.push(post);
+      localStorage.setItem("browserPosts", JSON.stringify(browserPosts));
+    } else {
+      let userPost = [post];
+      localStorage.setItem("browserPosts", JSON.stringify(userPost));
+    }
   },
 
   // id, progress
@@ -57,6 +67,41 @@ export const mutations = {
 
   setUser(state, payload) {
     state.user = payload;
+    console.log("set!");
+    if (payload) {
+      localStorage.setItem("user", JSON.stringify(state.user));
+    }
+  },
+
+  addWriter(state, payload) {
+    console.log(state.writers.find((w) => w.id === payload.id));
+    if (state.writers.find((w) => w.id === payload.id) === undefined) {
+      console.log("add!!");
+      state.writers.push(payload);
+
+      // update browser storage
+      localStorage.setItem(
+        "browserWriters",
+        JSON.stringify(state.writers.slice(42))
+      );
+    }
+  },
+
+  setUserName(state, payload) {
+    state.user.name = payload;
+    state.user.slug = payload.toLowerCase().replaceAll(" ", "-");
+    localStorage.setItem("user", JSON.stringify(state.user));
+
+    state.writers.forEach((w) => {
+      w.name = w.id === state.user.id ? state.user.name : w.name;
+      w.slug = w.id === state.user.id ? state.user.slug : w.slug;
+    });
+
+    // update browser storage
+    localStorage.setItem(
+      "browserWriters",
+      JSON.stringify(state.writers.slice(42))
+    );
   },
 
   updateViews(state, id) {
@@ -65,18 +110,22 @@ export const mutations = {
 
   addUserCategory(state, payload) {
     state.user.categories.push(payload);
+    localStorage.setItem("user", JSON.stringify(state.user));
   },
 
   removeUserCategory(state, payload) {
     state.user.categories = state.user.categories.filter((c) => c !== payload);
+    localStorage.setItem("user", JSON.stringify(state.user));
   },
 
-  addWriter(state, payload) {
+  addUserWriter(state, payload) {
     state.user.writers.push(payload);
+    localStorage.setItem("user", JSON.stringify(state.user));
   },
 
-  removeWriter(state, payload) {
+  removeUserWriter(state, payload) {
     state.user.writers = state.user.writers.filter((c) => c !== payload);
+    localStorage.setItem("user", JSON.stringify(state.user));
   },
 
   setClickedPost(state, payload) {

@@ -5,13 +5,18 @@
         :categories="userCategories.length > 0 ? userCategories : categories"
       />
 
-      <hero :posts="feed.slice(0, 3)" />
+      <hero :posts="feed.slice(0, 3)" v-if="feed.length > 3" />
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
-          <div v-if="feed.length === 3" class="text-center">
+          <div v-if="feed.length === 0" class="text-center">
             <h1 class="fs-3">
-              Welcome to Fictron, {{ $store.state.user.name }}!
+              Welcome,
+              <nuxt-link
+                :to="'/u/' + $store.state.user.id"
+                class="text-secondary"
+                >{{ $store.state.user.name }}</nuxt-link
+              >!
             </h1>
             <p>
               This is your feed. Please start following your favorite writers.
@@ -22,7 +27,10 @@
             </nuxt-link>
           </div>
 
-          <post-grid :posts="feed.slice(2, 12)" hide-first-post="desktop" />
+          <post-grid
+            :posts="feed.length > 3 ? feed.slice(2, 12) : feed.slice(0, 10)"
+            :hide-first-post="feed.length > 3 ? 'desktop' : false"
+          />
         </div>
 
         <div class="col-md-3 d-none d-md-block">
@@ -88,9 +96,15 @@
       <div xxxclass="text-center" v-if="userCategories.length === 0">
         <h2 class="fs-5">Genres</h2>
 
-        <p>Click to subscribe to a genre.</p>
+        <p>Choose genres to subscribe to.</p>
 
-        <div class="hstack gap-2">
+        <div class="row gy-0 gx-3 pt-1">
+          <div class="col-12 col-md" v-for="(c, i) in categories" :key="i">
+            <category-card :category="c" :borderTop="i !== 0" />
+          </div>
+        </div>
+
+        <!-- <div class="hstack gap-2">
           <div
             class="btn btn-sm btn-primary"
             @click="addUserCategory(c)"
@@ -99,7 +113,7 @@
           >
             {{ c.title }}
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
@@ -152,9 +166,7 @@ export default {
 
     feed() {
       if (this.$store.state.user && this.userWriters.length === 0) {
-        return [...this.posts]
-          .sort((a, b) => (a.date > b.date ? -1 : 1))
-          .slice(0, 3);
+        return [];
       }
       if (this.$store.state.user && this.userWriters.length > 0) {
         return [...this.posts]

@@ -39,7 +39,6 @@
               toggleDropdown();
               $router.push('/c/' + c.slug);
             "
-            xxxv-for="(c, i) in hasCategories ? userCategories : categories"
             v-for="(c, i) in categories"
             :key="i"
             class="dropdown-item"
@@ -50,16 +49,18 @@
       </div>
 
       <div class="ms-auto d-flex align-items-center gap-2 gap-md-4">
-        <div
+        <nuxt-link
+          :to="'/u/' + $store.state.user.id"
+          event=""
           v-if="$store.state.user"
-          @click="
+          @click.native="
             hideDropdown();
-            signOut();
+            $router.push('/u/' + $store.state.user.id);
           "
           class="cursor-pointer"
         >
-          Disconnect<span class="d-none d-md-inline"> wallet</span>
-        </div>
+          Account
+        </nuxt-link>
 
         <div
           class="btn btn-secondary"
@@ -127,12 +128,9 @@ export default {
         this.$router.push("/");
       }
     },
-    signOut() {
-      this.$store.commit("setUser", undefined);
-      if (this.$route.path.startsWith("/a/")) {
-        this.$router.push("/");
-      }
-    },
+    // signOut() {
+    //   this.$store.commit("setUser", undefined);
+    // },
 
     aosHeader() {
       let header = this.$refs["header"];

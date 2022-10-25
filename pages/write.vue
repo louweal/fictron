@@ -152,21 +152,19 @@
           </div>
           <div class="form-group">
             <p
-              class="bg-info rounded p-2 mt-3"
-              v-if="$options.type === 'article'"
+              class="rounded p-2 mt-3 text-white"
+              style="background-color: var(--bs-secondary)"
             >
-              <b>Important:</b> Paragraphs shorter than 50 characters will be
-              automatically converted to headings after publication.
-            </p>
-            <p class="bg-info rounded p-2 mt-3" v-else>
-              <b>Important:</b> Each chapter title has to start with 'Chapter '
-              or 'CHAPTER ' and has to be shorter than 80 characters.
+              <template v-if="$options.type === 'article'">
+                <b>Important:</b> Paragraphs shorter than 50 characters will be
+                automatically converted to headings after publication.
+              </template>
+              <template v-else>
+                <b>Important:</b> Each chapter title has to start with 'Chapter
+                ' or 'CHAPTER ' and has to be shorter than 80 characters.
+              </template>
             </p>
 
-            <!-- <p>
-                  <b>Tip:</b> To create a sub heading, add two asterisks before
-                  and after the title: e.g. <b>**Lorem ipsum**</b>.
-                </p> -->
             <textarea
               class="form-control"
               id="content"
@@ -338,8 +336,9 @@ export default {
 
   watch: {
     "$store.state.user": function () {
-      this.validatePage();
-      this.$router.push("/");
+      if (this.$store.state.user == undefined) {
+        this.$router.push("/");
+      }
     },
   },
 
@@ -405,18 +404,12 @@ export default {
 
     publishPost() {
       let id = this.$store.state.posts.length + 1;
-      // console.log(id);
-      // console.log(this.post.slug);
-
-      // return;
 
       Vue.set(this.post, "id", id);
       Vue.set(this.post, "date", new Date().getTime() / 1000);
       Vue.set(this.post, "views", 0);
 
       this.$store.commit("addPost", this.post);
-
-      // return;
 
       // console.log(this.post);
       this.$router.push("/a/" + this.post.slug);
