@@ -2,102 +2,56 @@
 pragma solidity ^0.8.11;
 
 contract Library {
-    uint256 public postId; // also getter for num posts (-1)
-    uint256 public userId; 
-    address public operator;
-
-    mapping(uint256 => mapping(uint256 => uint256)) public progress;
-    mapping(uint256 => mapping(uint256 => bool)) public writers; // writers user[i] follows
-    mapping(uint256 => mapping(uint256 => bool)) public categories; // categories user[i] is subscribed to
-
-    string[] public users;
-
-    struct Post { // all book data except its content (which is in the post contract)
-        string title;
-        string intro;
-        string visual; // demo images
-        uint256 category; // id
-        uint256 date; // timestamp
-        address payable author; 
-   }
-
-    Post[] public posts;
-    address[] public postContracts;
-
-    constructor() {
-        operator = msg.sender;
+    uint256 public bookId; 
+    mapping(uint256 => mapping(uint256 => uint256)) payLog;
+    struct Book {
+        address payable author;
+        uint256 price;
     }
+    Book[] public books;
 
-    function payAuthor(uint256 _postId, uint256 price) external payable {
-        require(
-            msg.value == price,
-            "Please pay the correct amount!"
-        );
-
-        address payable author = posts[_postId].author;
+    function payAuthor(uint256 _bookId, uint256 _userId, uint256 value) external payable returns (uint256 perc) {
+        require(msg.value == value, "Please send the correct amount!");
+        require(msg.value > 0,"Please pay more than nothing");
+        uint256 price = books[_bookId].price;
+        uint256 prev = payLog[_userId][_bookId];
+        require(msg.value <= (price - prev),"Payment is too high");
+        address payable author = books[_bookId].author;
+        require(payable(msg.sender) != author, "You shouldn't pay yourself");
+        payLog[_userId][_bookId] += value; 
         author.transfer(msg.value);
+        return (payLog[_userId][_bookId] * 100) / books[_bookId].price; // percentage of book paid
     }
 
-    function addPost(string memory title, string memory intro, string memory visual, uint256 category, uint256 date, address payable author) public onlyOperator returns (bool success) {
-        Post memory post = Post(title, intro, visual, category, date, author);
-        posts.push(post);
-        emit NewPost(postId++);
-        return true;
+    function addFakeBook(address payable author, uint256 price) public {
+        require(bookId < 42, "Maximum number of addFakeBook calls reached");
+        add(author, price);
     }
 
-    function removePost(uint256 _postId) public returns (bool success) {
-        posts[_postId] = posts[posts.length - 1]; // overwrite item with last post item and then delete last
-        posts.pop();
-        return true;
+    function addBook(uint256 price) public {
+        add(payable(msg.sender), price);
+    }
+    
+    function add(address payable author, uint256 price) internal {
+        require(price % 50  == 0, "Price not divisible by 50");
+        require(price >= 200, "Price too low");
+        require(price <= 500, "Price too high");
+        Book memory b = Book(author, price);
+        books.push(b);
+        emit NewBook(bookId++);
     }
 
-    function addPostContract(uint256 _postId, address _contractAddress) public onlyOperator returns (bool success) {
-        postContracts[_postId] = _contractAddress;
-        return true;
+    function removeBook(uint256 _bookId) public {
+        require(_bookId < bookId, "Incorrect bookId");
+        address payable author = books[_bookId].author;
+        require(msg.sender == author, "You're not allowed to delete this book");
+
+        books[_bookId] = books[books.length - 1]; // overwrite item with last book item and then delete last
+        books.pop();
+        emit NewBook(bookId--);
     }
-
-    function addUser(string memory name) public onlyOperator() returns (bool success) {
-        users.push(name);  
-        emit NewUser(userId++);
-        return true;
-    }
-
-    function updateProgress(uint256 _postId, uint256 _userId, uint256 value) public onlyOperator returns (bool success) {
-        progress[_postId][_userId] = value;
-        return true;
-    }
-
-    // lets user[i] follow or unfollow a writer
-    function updateWriters(uint256 _userId, uint256 writerId, bool follow) public returns (bool success) {
-        writers[_userId][writerId] = follow; 
-        return true;
-    } 
-
-    // lets user[i] subscribe or unsubscribe from a category
-    function updateCategories(uint256 _userId, uint256 categoryId, bool subscribe) public returns (bool success) {
-        categories[_userId][categoryId] = subscribe; 
-        return true;
-    } 
-
-    // modifiers
-
-
-    modifier onlyOperator() {
-        require(operator == msg.sender, "Only the operator can call this function");
-        _;
-    }
-
-    // error OnlyAuthor();
-    // modifier onlyAuthor(address author) {
-    //     if(msg.sender != author) {
-    //         revert OnlyAuthor();
-    //     }
-    //     _;
-    // }
 
     // events
-
-    event NewPost(uint256 indexed postId);
-    event NewUser(uint256 indexed userId);
+    event NewBook(uint256 indexed bookId);
 
 }

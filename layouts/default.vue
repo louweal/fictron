@@ -20,42 +20,33 @@
 </template>
 
 <script>
-// import categories from "@/data/channels.json";
-import { getTronWeb } from "~/utils/tronUtils.js";
-
-import { fakeBooks } from "@/utils/fakeBookGenerator.js";
 import categories from "@/data/genres.json";
-
+import posts from "@/data/posts.json";
 import writers from "@/data/writers.json";
 
 export default {
   categories,
   writers,
+  posts,
+
+  // : writers.map((name, index) => ({
+  //   id: index,
+  //   name,
+  //   slug: name.toLowerCase().replace(" ", "-"),
+  // })),
 
   created() {
     this.$store.commit("SET_CATEGORIES", this.$options.categories);
 
-    let fakeWriters = this.$options.writers;
+    this.$store.commit(
+      "SET_WRITERS",
+      this.combinedData(this.$options.writers, "browserWriters")
+    );
 
-    let browserWriters = [];
-    let writers = fakeWriters;
-    if (localStorage.getItem("browserWriters") !== null) {
-      browserWriters = JSON.parse(localStorage.getItem("browserWriters"));
-    }
-
-    console.log(writers);
-    writers = [...fakeWriters, ...browserWriters];
-    this.$store.commit("SET_WRITERS", writers);
-
-    let fakePosts = fakeBooks(70);
-    let browserPosts = [];
-
-    if (localStorage.getItem("browserPosts") !== null) {
-      browserPosts = JSON.parse(localStorage.getItem("browserPosts"));
-    }
-
-    let posts = [...fakePosts, ...browserPosts];
-    this.$store.commit("SET_POSTS", posts);
+    this.$store.commit(
+      "SET_POSTS",
+      this.combinedData(this.$options.posts, "browserPosts")
+    );
   },
 
   async mounted() {
@@ -78,6 +69,14 @@ export default {
         //after closing modal without sigin
         window.scrollTo(0, this.posY);
       }
+    },
+  },
+
+  methods: {
+    combinedData(staticData, lsKey) {
+      let data = localStorage.getItem(lsKey);
+      let browserData = data !== null ? JSON.parse(data) : [];
+      return [...staticData, ...browserData];
     },
   },
 };

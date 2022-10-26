@@ -124,34 +124,31 @@
               :key="'title' + i"
               v-if="p.title"
               class="fs-2"
-              :class="historicProgress < p.titleEnd ? 'fade-in-up' : false"
-              :data-aos="historicProgress < p.titleEnd ? 70 : undefined"
-              :data-end="p.titleEnd"
+              :class="historicProgress < p.progress ? 'fade-in-up' : false"
+              :data-aos="historicProgress < p.progress ? 70 : undefined"
             >
               {{ p.title }}
             </h2>
 
             <p
               :key="i"
-              :class="historicProgress < p.end ? 'fade-in-up' : false"
-              :data-aos="historicProgress < p.end ? 70 : undefined"
-              :data-end="p.end"
+              :class="historicProgress < p.progress ? 'fade-in-up' : false"
+              :data-aos="historicProgress < p.progress ? 70 : undefined"
+              :data-progress="p.progress"
             >
               {{ p.content }}
             </p>
 
             <div
               class="w-100"
-              v-if="+$route.hash.slice(2) === +p.end"
-              :id="'c' + p.end"
+              v-if="+$route.hash.slice(2) === +p.progress"
+              :id="'c' + p.progress"
               :key="'anchor' + i"
             >
               <notice
                 v-if="!mine"
-                :price="
-                  Math.ceil(post.price * ((100 - progressPercentage) / 100))
-                "
-                :usd="(+price * ((100 - progressPercentage) / 100)).toFixed(2)"
+                :price="Math.ceil(post.price * ((100 - progress) / 100))"
+                :usd="(+price * ((100 - progress) / 100)).toFixed(2)"
               />
             </div>
           </template>
@@ -190,8 +187,8 @@
           class="bar bg-primary h-100 left-0 position-absolute fw-bold"
           ref="bar"
         >
-          <div class="label text-white align-end" v-if="progressPercentage > 4">
-            {{ progressPercentage }} %&nbsp;
+          <div class="label text-white align-end" v-if="progress > 4">
+            {{ progress }} %&nbsp;
           </div>
         </div>
       </div>
@@ -257,16 +254,18 @@ export default {
     if (history) {
       this.historicProgress = history.progress;
       this.progress = history.progress;
-      this.paid = (history.progress * 100) / this.post.content.length;
+      this.paid = history.progress;
       this.updateBar();
     }
   },
 
   beforeDestroy() {
+    console.log("destroy");
+    console.log(+this.progress);
     if (this.post) {
       this.$store.commit("setProgress", {
         id: +this.post.id,
-        progress: this.progress,
+        progress: +this.progress,
       });
     }
 
@@ -275,8 +274,7 @@ export default {
 
   watch: {
     progress: function (val) {
-      let p = parseInt((val * 100) / this.post.content.length);
-      if (p === 100) {
+      if (val === 100) {
         this.$store.commit("updateViews", this.post.id);
       }
     },
@@ -288,9 +286,6 @@ export default {
   },
 
   computed: {
-    progressPercentage() {
-      return parseInt((100 * this.progress) / this.post.content.length);
-    },
     maxTitleLength() {
       return this.$options.type === "article" ? 50 : 80;
     },
@@ -320,15 +315,16 @@ export default {
               if (title.length > 0) {
                 p["title"] = title;
                 end += title.length;
-                p["titleEnd"] = end;
+                p["progress"] =
+                  Math.round((end * 50) / this.post.content.length) * 2;
 
                 this.numChapters += 1;
 
                 if (parts[i + 1]) {
                   p["content"] = parts[i + 1];
                   end += p["content"].length;
-                  p["n"] = p.content.length;
-                  p["end"] = end;
+                  p["progress"] =
+                    Math.round((end * 50) / this.post.content.length) * 2;
 
                   i = i + 1; // skip next part
                 }
@@ -338,7 +334,8 @@ export default {
               p["content"] = parts[i];
               end += p.content.length;
               p["n"] = p.content.length;
-              p["end"] = end;
+              p["progress"] =
+                Math.round((end * 50) / this.post.content.length) * 2;
             }
             a.push(p);
           }
@@ -394,11 +391,11 @@ export default {
 
     updateBar() {
       if (this.post) {
-        let p = Math.ceil((100 * this.progress) / this.post.content.length);
+        // let p = Math.ceil((100 * this.progress) / this.post.content.length);
         let bar = this.$refs["bar"];
 
         if (bar) {
-          bar.style.width = p + "%";
+          bar.style.width = this.progress + "%";
         }
       }
     },
@@ -423,28 +420,26 @@ export default {
           top < window.innerHeight * (+target.dataset.aos / 100) && top > 0;
 
         if (startTrigger) {
-          if (target.id === "warning-0") {
-            console.log("todo: nothing/ setReader");
-            delete target.dataset.aos;
-          }
+          // if (target.id === "warning-0") {
+          //   console.log("todo: nothing/ setReader");
+          //   delete target.dataset.aos;
+          // }
 
           if (!target.classList.contains("start-animation")) {
             target.classList.add("start-animation");
 
-            if (target.dataset.end) {
-              this.progress = parseInt(target.dataset.end);
+            if (target.dataset.progress) {
+              this.progress = parseInt(target.dataset.progress);
               this.updateBar();
 
               // payment
               if (!this.mine) {
-                let p = Math.ceil(
-                  (100 * this.progress) / this.post.content.length
-                );
-                let toPay = parseInt(p - this.paid);
+                let toPay =
+                  (parseInt(this.progress - this.paid) / 100) * this.post.price;
 
-                if (p % 2 === 0 && p > this.paid) {
-                  console.log("todo: pay: " + toPay + "%");
-                  this.paid = p;
+                if (toPay > 0) {
+                  console.log("todo: pay: " + toPay + " TRX");
+                  this.paid = this.progress;
                 }
               }
             }

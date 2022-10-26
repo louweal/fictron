@@ -23,28 +23,16 @@
       </div>
 
       <div class="col-md-3 d-none d-md-block" v-if="categoryPosts.length > 0">
-        <sidebar
-          title="Recently published"
-          :posts="
-            [...categoryPosts]
-              .sort((a, b) => (a.date > b.date ? -1 : 1))
-              .slice(0, 7)
-          "
-        />
-
-        <!-- <h2 class="fs-5 mt-4">Explore genres</h2>
-
-        <ul class="list-inline">
-          <li
-            v-for="(c, i) in otherCategories"
-            :key="i"
-            class="mb-2 me-2 list-inline-item"
-          >
-            <nuxt-link :to="'/c/' + c.slug" class="btn btn-sm btn-secondary">
-              {{ c.title }}
-            </nuxt-link>
-          </li>
-        </ul> -->
+        <sticky>
+          <sidebar
+            title="Recently published"
+            :posts="
+              [...categoryPosts]
+                .sort((a, b) => (a.date > b.date ? -1 : 1))
+                .slice(0, 7)
+            "
+          />
+        </sticky>
       </div>
     </div>
   </div>

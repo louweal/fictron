@@ -2,14 +2,14 @@
   <nuxt-link
     :to="{
       path: '/a/' + post.slug,
-      hash: historicProgress !== 0 ? '#c' + historicProgress : false,
+      hash: progress !== 0 ? '#c' + progress : false,
     }"
     event=""
     @click.native="
       $store.state.user
         ? $router.push({
             path: '/a/' + post.slug,
-            hash: historicProgress !== 0 ? '#c' + historicProgress : false,
+            hash: progress !== 0 ? '#c' + progress : false,
           })
         : paywall()
     "
@@ -25,7 +25,7 @@
             <div
               class="card-img position-absolute rounded bg-light"
               :style="{
-                backgroundImage: `url(${require('@/images/' + post.visual)}`,
+                backgroundImage: bg,
               }"
             >
               {{ post.visual === "none" ? post.visual : "" }}
@@ -109,34 +109,43 @@ export default {
       let history = this.$store.state.user.history.find(
         (a) => a.id === this.post.id
       );
-      if (history) {
-        this.progress = Math.ceil(
-          (100 * history.progress) / this.post.content.length
-        );
-      }
+
+      this.progress = history ? history.progress : 0;
     }
   },
 
   computed: {
-    historicProgress() {
-      if (this.$store.state.user) {
-        let history = this.$store.state.user.history.find(
-          (a) => a.id === this.post.id
-        );
-        if (history) {
-          return history.progress;
-        }
-      }
-      return 0;
-    },
+    // historicProgress() {
+    //   if (this.$store.state.user) {
+    //     let history = this.$store.state.user.history.find(
+    //       (a) => a.id === this.post.id
+    //     );
+    //     if (history) {
+    //       return history.progress;
+    //     }
+    //   }
+    //   return 0;
+    // },
 
     author() {
-      return this.$store.state.writers.find((w) => w.id === this.post.author)
-        .name;
+      let author = this.$store.state.writers.find(
+        (w) => w.id === this.post.author
+      );
+      return author ? author.name : "Unknown author";
     },
 
     maxBlurbLength() {
       return this.hero ? 800 : 420;
+    },
+
+    bg() {
+      try {
+        return `url(${"/_nuxt/images/" + this.post.visual})`; //"none";
+      } catch {
+        console.log("catch");
+
+        return `url(${require("@/images/" + this.post.visual)}`; //`url(${require("@/images/" + post.visual)}`;
+      }
     },
   },
 

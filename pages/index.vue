@@ -9,7 +9,7 @@
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
         <div class="col-12 col-md-9">
-          <div v-if="feed.length === 0" class="text-center">
+          <div v-if="feed.length === 0 && signedIn" class="text-center">
             <h1 class="fs-3">
               Welcome,
               <nuxt-link
@@ -93,27 +93,14 @@
         </div>
       </template>
 
-      <div xxxclass="text-center" v-if="userCategories.length === 0">
-        <h2 class="fs-5">Genres</h2>
-
-        <p>Choose genres to subscribe to.</p>
+      <div v-if="userCategories.length === 0" class="mb-2 mt-5">
+        <p v-if="signedIn">You can also subscribe to your favorite genres.</p>
 
         <div class="row gy-0 gx-3 pt-1">
           <div class="col-12 col-md" v-for="(c, i) in categories" :key="i">
             <category-card :category="c" :borderTop="i !== 0" />
           </div>
         </div>
-
-        <!-- <div class="hstack gap-2">
-          <div
-            class="btn btn-sm btn-primary"
-            @click="addUserCategory(c)"
-            v-for="(c, i) in categories"
-            :key="i"
-          >
-            {{ c.title }}
-          </div>
-        </div> -->
       </div>
 
       <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
@@ -151,7 +138,7 @@ export default {
 
   data() {
     return {
-      feedMax: 30,
+      feedMax: 21,
     };
   },
 
@@ -193,6 +180,10 @@ export default {
       }
       return [];
     },
+
+    signedIn() {
+      return this.$store.state.user ? true : false;
+    },
   },
 
   methods: {
@@ -200,7 +191,7 @@ export default {
       this.$store.commit("addUserCategory", cat.slug);
     },
     loadMore() {
-      this.feedMax += 18;
+      this.feedMax += 9;
     },
   },
 };

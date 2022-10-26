@@ -45,11 +45,9 @@
         </div>
 
         <div class="col-12 col-md-9 order-md-2">
-          <h1>{{ me.name }}</h1>
-
-          <nuxt-link :to="'/w/' + me.slug"
-            ><i class="bi bi-book-half"></i> View profile</nuxt-link
-          >
+          <nuxt-link :to="'/w/' + me.slug">
+            <h1>{{ me.name }}</h1>
+          </nuxt-link>
 
           <div class="hstack gap-2">
             <span
@@ -164,34 +162,20 @@ export default {
       return writers.filter((w) => w.numBooks > 0);
     },
 
-    reading() {
-      let history = this.$store.state.user.history.filter(
-        (h) => h.progress > 0
-      );
-      let historyIds = history.map((h) => h.id);
+    history() {
+      return this.$store.state.user.history;
+    },
 
-      return this.$store.state.posts.filter(
-        (p) =>
-          historyIds.includes(p.id) &&
-          Math.ceil(
-            (100 * history.find((h) => h.id == p.id).progress) /
-              p.content.length
-          ) < 100
-      );
+    reading() {
+      let ids = this.history
+        .filter((h) => h.progress < 100 && h.progress > 0)
+        .map((h) => h.id);
+      return this.$store.state.posts.filter((p) => ids.includes(p.id));
     },
 
     read() {
-      let history = this.$store.state.user.history;
-      let historyIds = this.$store.state.user.history.map((h) => h.id);
-
-      return this.$store.state.posts.filter(
-        (p) =>
-          historyIds.includes(p.id) &&
-          Math.ceil(
-            (100 * history.find((h) => h.id == p.id).progress) /
-              p.content.length
-          ) === 100
-      );
+      let ids = this.history.filter((h) => h.progress === 100).map((h) => h.id);
+      return this.$store.state.posts.filter((p) => ids.includes(p.id));
     },
 
     categories() {

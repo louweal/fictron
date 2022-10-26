@@ -5,6 +5,7 @@
         <div class="col-12 col-md-9">
           <div class="hstack gap-3 mt-2 mb-4">
             <h1>{{ writer.name }}</h1>
+            <span>{{ writer.address }}</span>
             <div
               class="btn btn-sm btn-secondary"
               v-if="$store.state.user"

@@ -3,7 +3,7 @@
     class="modal"
     :class="$store.state.showModal ? 'modal--active' : 'modal--inactive'"
   >
-    <div class="modal__bg" @click="toggleModal"></div>
+    <div class="modal__bg cursor-pointer" @click="toggleModal"></div>
     <div class="modal__inner">
       <div class="modal__content p-2 rounded border">
         <slot>
@@ -21,8 +21,9 @@
           </div>
           <div class="modal-body px-4">
             <p class="text-center">
-              Connect your TRON wallet to start reading. Fictronners only pay
-              for what they read, not for what they don't read.
+              Reading reimagined: what if you could only pay for the pages you
+              actually read? Connect your TRON wallet to explore this modern
+              reading experience.
             </p>
             <div class="d-grid gap-2 mb-3">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
@@ -30,16 +31,24 @@
               </div>
             </div>
 
-            <p class="text-danger text-center" v-if="error">
-              Unable to detect your TronLink wallet. Install the
-              <a
-                href="https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec"
-                target="_blank"
-                >TronLink
-                <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-              browser extension from the Chrome Web Store and sign in.
-            </p>
+            <div class="text-center" v-if="error">
+              <p class="text-danger">
+                Unable to detect your TronLink wallet. Install the
+                <a
+                  href="https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec"
+                  target="_blank"
+                  >TronLink
+                  <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                browser extension from the Chrome Web Store and sign in.
+              </p>
+
+              <p>
+                <small class="fw-bold text-muted" xxxclick="signInDemo()">
+                  Continue using a demo wallet <i class="bi bi-arrow-right"></i>
+                </small>
+              </p>
+            </div>
           </div>
         </slot>
       </div>
@@ -64,6 +73,7 @@ export default {
       this.$store.commit("toggleModal");
       document.getElementById("page").classList.toggle("is-blurred");
       this.$store.commit("setClickedPost", undefined);
+      this.error = false;
     },
 
     closeAndClick() {
@@ -78,8 +88,6 @@ export default {
         this.error = true;
         return;
       }
-      // return;
-      this.error = false;
 
       let localStorageUser;
 

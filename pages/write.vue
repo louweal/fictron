@@ -151,10 +151,7 @@
             </ul>
           </div>
           <div class="form-group">
-            <p
-              class="rounded p-2 mt-3 text-white"
-              style="background-color: var(--bs-secondary)"
-            >
+            <p class="mb-0">
               <template v-if="$options.type === 'article'">
                 <b>Important:</b> Paragraphs shorter than 50 characters will be
                 automatically converted to headings after publication.
