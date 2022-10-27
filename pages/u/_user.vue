@@ -2,18 +2,7 @@
   <main>
     <div class="container-xl" v-if="$store.state.user">
       <div class="row g-3 g-lg-5">
-        <!-- <div class="col-12 col-md-9">
-
-        </div>
-
-        <div class="col-md-3 align-self-center"></div> -->
-
-        <div
-          class="col-12 col-md-3 order-md-3"
-          v-if="writers.length > 0 || categories.length > 0"
-        >
-          <!-- <h2 class="fs-3 mb-3">Writers & Genres</h2> -->
-
+        <div class="col-12 col-md-3 order-md-3" v-if="sidebarData">
           <div
             class="border bg-white shadow-sm rounded py-3 px-3 xxxmb-3"
             v-if="writers.length > 0"
@@ -22,9 +11,7 @@
 
             <div
               class="py-2"
-              v-for="(w, i) in [...writers].sort((a, b) =>
-                a.numBooks > b.numBooks ? -1 : 1
-              )"
+              v-for="(w, i) in writers"
               :key="i"
               :class="i > 0 ? 'border-top' : false"
             >
@@ -53,12 +40,12 @@
             <span
               class="cursor-pointer btn btn-sm text-white"
               style="background-color: var(--bs-secondary)"
-              @click="toggleModal()"
+              @click="showModal = !showModal"
               >Change username</span
             >
             <span
               @click="$store.commit('setUser', undefined)"
-              class="xxxcursor-pointer btn btn-primary btn-sm"
+              class="btn btn-primary btn-sm"
             >
               <i class="bi bi-box-arrow-right"></i>
               Disconnect<span class="d-none d-md-inline"> wallet</span>
@@ -69,15 +56,11 @@
 
           <template v-if="reading.length > 0">
             <h2 class="fs-3 mb-3">Continue reading</h2>
-
             <post-grid :posts="reading" />
           </template>
 
           <template v-if="read.length > 0">
             <h2 class="fs-3 mt-4 mb-3">Read again</h2>
-
-            <!-- <p>Reading books again is always free.</p> -->
-
             <post-grid :posts="read" />
           </template>
         </div>
@@ -85,7 +68,10 @@
     </div>
 
     <div class="modal" :class="showModal ? 'modal--active' : 'modal--inactive'">
-      <div class="modal__bg" @click="toggleModal"></div>
+      <div
+        class="modal__bg cursor-pointer"
+        @click="showModal = !showModal"
+      ></div>
       <div class="modal__inner">
         <div class="modal__content p-2 rounded border">
           <div class="d-flex justify-content-between">
@@ -96,7 +82,7 @@
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
-              @click="toggleModal"
+              @click="showModal = !showModal"
             ></button>
           </div>
           <div class="">
@@ -159,22 +145,24 @@ export default {
           ).length)
       );
 
-      return writers.filter((w) => w.numBooks > 0);
-    },
-
-    history() {
-      return this.$store.state.user.history;
+      return [...writers.filter((w) => w.numBooks > 0)].sort((a, b) =>
+        a.numBooks > b.numBooks ? -1 : 1
+      );
     },
 
     reading() {
-      let ids = this.history
+      //books the user is currently reading
+      let ids = this.$store.state.user.history
         .filter((h) => h.progress < 100 && h.progress > 0)
         .map((h) => h.id);
       return this.$store.state.posts.filter((p) => ids.includes(p.id));
     },
 
     read() {
-      let ids = this.history.filter((h) => h.progress === 100).map((h) => h.id);
+      // books the user has read
+      let ids = this.$store.state.user.history
+        .filter((h) => h.progress === 100)
+        .map((h) => h.id);
       return this.$store.state.posts.filter((p) => ids.includes(p.id));
     },
 
@@ -182,6 +170,10 @@ export default {
       let subs = this.$store.state.user.categories;
 
       return this.$store.state.categories.filter((c) => subs.includes(c.slug));
+    },
+
+    sidebarData() {
+      return this.categories.length > 0 || this.writers.length > 0;
     },
   },
 
@@ -200,10 +192,6 @@ export default {
       if (this.username.length > 1) {
         this.$store.commit("setUserName", this.username);
       }
-      this.toggleModal();
-    },
-
-    toggleModal() {
       this.showModal = !this.showModal;
     },
   },

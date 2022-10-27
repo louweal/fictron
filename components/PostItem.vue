@@ -9,21 +9,22 @@
     <nuxt-link
       :to="{
         path: '/a/' + post.slug,
-        hash: historicProgress !== 0 ? '#' + historicProgress : false,
+        hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
       }"
       event=""
       @click.native="
         $store.state.user
           ? $router.push({
               path: '/a/' + post.slug,
-              hash: historicProgress !== 0 ? '#' + historicProgress : false,
+              hash:
+                progress !== 0 && progress !== 100 ? '#c' + progress : false,
             })
           : paywall(post)
       "
     >
       <h3 class="fs-6 fw-light mb-0">
         <span class="badge bg-light" v-if="progress">
-          <i v-if="progress === 100" class="bi bi-check-lg"></i>
+          <i v-if="progress === 100 && !mine" class="bi bi-check-lg"></i>
           <span v-else>{{ progress }}%</span>
         </span>
         {{ post.title }}
@@ -51,16 +52,12 @@ export default {
     author() {
       return this.$store.state.writers.find((a) => a.id === this.post.author);
     },
-    historicProgress() {
-      if (this.$store.state.user) {
-        let history = this.$store.state.user.history.find(
-          (a) => a.id === this.post.id
-        );
-        if (history) {
-          return history.progress;
-        }
-      }
-      return 0;
+    mine() {
+      // post is written by the user himself
+      return (
+        this.$store.state.user.id === this.author.id ||
+        this.$store.state.user.id === this.author.address
+      );
     },
   },
 
@@ -69,11 +66,7 @@ export default {
       let history = this.$store.state.user.history.find(
         (a) => a.id === this.post.id
       );
-      if (history) {
-        this.progress = parseInt(
-          (100 * history.progress) / this.post.content.length
-        );
-      }
+      this.progress = history ? history.progress : 0;
     }
   },
 
@@ -86,8 +79,6 @@ export default {
   },
 };
 </script>
-
-<style></style>
 
 <style lang="scss" scoped>
 a {

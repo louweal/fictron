@@ -50,7 +50,11 @@
         </div>
 
         <div class="col-12 col-md-9 order-md-2">
-          <post-grid :posts="posts" />
+          <post-grid :posts="posts.slice(0, gridMax)" />
+
+          <div class="text-center my-4" v-if="posts.length > gridMax">
+            <div class="btn btn-secondary" @click="gridMax += 9">Load more</div>
+          </div>
         </div>
       </div>
     </div>
@@ -62,6 +66,7 @@ export default {
   data() {
     return {
       query: "",
+      gridMax: 27,
     };
   },
 
@@ -103,7 +108,7 @@ export default {
       writers = writers.filter((w) => w.numBooks > 0);
 
       if (this.q.length <= 2) {
-        return writers; // ...
+        return writers; // all writers
       } else {
         return writers.filter((w) => w.name.toLowerCase().includes(this.q));
       }

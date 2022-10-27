@@ -2,14 +2,14 @@
   <nuxt-link
     :to="{
       path: '/a/' + post.slug,
-      hash: progress !== 0 ? '#c' + progress : false,
+      hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
     }"
     event=""
     @click.native="
       $store.state.user
         ? $router.push({
             path: '/a/' + post.slug,
-            hash: progress !== 0 ? '#c' + progress : false,
+            hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
           })
         : paywall()
     "
@@ -42,7 +42,7 @@
               >
                 {{ post.title }}
               </component>
-              <span class="fw-bold text-white">{{ author }}</span>
+              <span class="fw-bold text-white">{{ author.name }}</span>
             </div>
 
             <div
@@ -57,7 +57,7 @@
           </div>
           <span
             class="badge bg-light position-absolute m-1 top-0 end-0 lh-1"
-            v-if="progress"
+            v-if="progress && !mine"
           >
             <i v-if="progress === 100" class="bi bi-check-lg"></i>
             <span v-else>{{ progress }}%</span>
@@ -115,23 +115,19 @@ export default {
   },
 
   computed: {
-    // historicProgress() {
-    //   if (this.$store.state.user) {
-    //     let history = this.$store.state.user.history.find(
-    //       (a) => a.id === this.post.id
-    //     );
-    //     if (history) {
-    //       return history.progress;
-    //     }
-    //   }
-    //   return 0;
-    // },
+    mine() {
+      // post is written by the user himself
+      return (
+        this.$store.state.user.id === this.author.id ||
+        this.$store.state.user.id === this.author.address
+      );
+    },
 
     author() {
       let author = this.$store.state.writers.find(
         (w) => w.id === this.post.author
       );
-      return author ? author.name : "Unknown author";
+      return author ? author : { name: "Unknown author" };
     },
 
     maxBlurbLength() {
@@ -140,11 +136,9 @@ export default {
 
     bg() {
       try {
-        return `url(${"/_nuxt/images/" + this.post.visual})`; //"none";
+        return `url(${"/_nuxt/images/" + this.post.visual})`;
       } catch {
-        console.log("catch");
-
-        return `url(${require("@/images/" + this.post.visual)}`; //`url(${require("@/images/" + post.visual)}`;
+        return `url(${require("@/images/" + this.post.visual)}`;
       }
     },
   },

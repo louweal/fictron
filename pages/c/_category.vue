@@ -40,8 +40,6 @@
 
 <script>
 export default {
-  // transition: "page",
-
   async mounted() {
     await this.validatePage();
   },
@@ -62,7 +60,6 @@ export default {
     },
 
     category() {
-      // console.log("this.$route.params :>> ", this.$route.params);
       return this.categories.find(
         (c) => c.slug === this.$route.params.category
       );

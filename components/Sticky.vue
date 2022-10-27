@@ -10,7 +10,7 @@
 
   > :first-child {
     position: sticky;
-    top: 4px;
+    top: 82px;
   }
 }
 </style>

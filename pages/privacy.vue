@@ -18,7 +18,31 @@
 </template>
 
 <script>
-export default {};
+// import { fakeBooks } from "@/utils/fakeBookGenerator";
+import { setLibraryContract, addFakeBook } from "@/utils/tronUtils";
+
+export default {
+  async created() {
+    // let bookset = fakeBooks(140);
+    // console.log(bookset);
+
+    return;
+    await setLibraryContract();
+
+    let posts = this.$store.state.posts;
+    let writers = this.$store.state.writers;
+
+    for (let i = 0; i < 1; i++) {
+      console.log(posts[i].id);
+      console.log(posts[i].author);
+      console.log(posts[i].price);
+
+      let address = writers.find((w) => w.id === posts[i].id).address;
+      console.log(address);
+      await addFakeBook(address, posts[i].price);
+    }
+  },
+};
 </script>
 
 <style></style>

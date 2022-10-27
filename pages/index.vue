@@ -1,9 +1,7 @@
 <template>
   <main>
     <div class="container-xl">
-      <category-list
-        :categories="userCategories.length > 0 ? userCategories : categories"
-      />
+      <category-list :categories="categories" />
 
       <hero :posts="feed.slice(0, 3)" v-if="feed.length > 3" />
 
@@ -125,7 +123,6 @@
               [...posts].sort((a, b) => (a.date > b.date ? -1 : 1)).slice(0, 10)
             "
           />
-          <!-- <sidebar :posts="posts.slice(0, 10)" /> -->
         </div>
       </div>
     </div>
@@ -134,8 +131,6 @@
 
 <script>
 export default {
-  // transition: "page",
-
   data() {
     return {
       feedMax: 21,
@@ -158,7 +153,7 @@ export default {
       if (this.$store.state.user && this.userWriters.length > 0) {
         return [...this.posts]
           .filter((a) => this.$store.state.user.writers.includes(a.author))
-          .sort((a, b) => (a.date > b.date ? -1 : 1)); // move somewhere else!
+          .sort((a, b) => (a.date > b.date ? -1 : 1));
       }
       return [...this.posts].sort((a, b) => (a.date > b.date ? -1 : 1));
     },
@@ -187,14 +182,9 @@ export default {
   },
 
   methods: {
-    addUserCategory(cat) {
-      this.$store.commit("addUserCategory", cat.slug);
-    },
     loadMore() {
       this.feedMax += 9;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped></style>

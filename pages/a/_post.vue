@@ -30,6 +30,7 @@
           </nuxt-link>
 
           <ul class="bullet-list-inline mt-1 mb-1">
+            <li>ID: {{ post.id }}</li>
             <li>
               {{ formatDate(post.date) }}
             </li>
@@ -50,10 +51,6 @@
           </ul>
 
           <h1>{{ post.title }}</h1>
-
-          {{ content.length }}
-
-          {{ post.content.length }}
 
           <h2 class="fs-3">
             By
@@ -109,6 +106,7 @@
           v-if="!$route.hash && !mine"
         >
           <notice
+            class="mb-5"
             id="warning-0"
             data-aos="0"
             :price="post.price"
@@ -141,14 +139,14 @@
 
             <div
               class="w-100"
-              v-if="+$route.hash.slice(2) === +p.progress"
+              v-if="+$route.hash.slice(2) === +p.progress && p.progress < 100"
               :id="'c' + p.progress"
               :key="'anchor' + i"
             >
               <notice
                 v-if="!mine"
                 :price="Math.ceil(post.price * ((100 - progress) / 100))"
-                :usd="(+price * ((100 - progress) / 100)).toFixed(2)"
+                :usd="+(+price * ((100 - progress) / 100)).toFixed(2)"
               />
             </div>
           </template>
@@ -176,13 +174,15 @@
             .slice(0, 5)"
           :key="i"
         >
-          <card :post="a" :showIntro="false" :borderTop="i !== 0" />
+          <card
+            :post="a"
+            :showIntro="false"
+            :blurb="false"
+            :borderTop="i !== 0"
+          />
         </div>
       </div>
-      <div
-        class="progress position-fixed bottom-0 start-0 end-0"
-        v-if="$store.state.user.id !== author.id"
-      >
+      <div class="progress position-fixed bottom-0 start-0 end-0" v-if="!mine">
         <div
           class="bar bg-primary h-100 left-0 position-absolute fw-bold"
           ref="bar"
@@ -198,6 +198,7 @@
 
 <script>
 import getUSD from "@/utils/getUSD.js";
+import { payAuthor } from "@/utils/tronUtils";
 
 export default {
   transition: "post", // important for scroll position on page load!
@@ -260,9 +261,7 @@ export default {
   },
 
   beforeDestroy() {
-    console.log("destroy");
-    console.log(+this.progress);
-    if (this.post) {
+    if (this.post && !this.mine) {
       this.$store.commit("setProgress", {
         id: +this.post.id,
         progress: +this.progress,
@@ -274,7 +273,7 @@ export default {
 
   watch: {
     progress: function (val) {
-      if (val === 100) {
+      if (val === 100 && !this.mine) {
         this.$store.commit("updateViews", this.post.id);
       }
     },
@@ -292,7 +291,10 @@ export default {
 
     mine() {
       // post is written by the user himself
-      return this.$store.state.user.id === this.author.id;
+      return (
+        this.$store.state.user.id === this.author.id ||
+        this.$store.state.user.id === this.author.address
+      );
     },
 
     content() {
@@ -400,7 +402,7 @@ export default {
       }
     },
 
-    aos() {
+    async aos() {
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
 
@@ -410,7 +412,6 @@ export default {
       }
 
       let animTargets = document.querySelectorAll("[data-aos]");
-      // console.log(animTargets.length);
 
       for (let i = 0; i < animTargets.length; i++) {
         let target = animTargets[i];
@@ -420,25 +421,29 @@ export default {
           top < window.innerHeight * (+target.dataset.aos / 100) && top > 0;
 
         if (startTrigger) {
-          // if (target.id === "warning-0") {
-          //   console.log("todo: nothing/ setReader");
-          //   delete target.dataset.aos;
-          // }
-
           if (!target.classList.contains("start-animation")) {
-            target.classList.add("start-animation");
-
             if (target.dataset.progress) {
               this.progress = parseInt(target.dataset.progress);
               this.updateBar();
 
               // payment
               if (!this.mine) {
-                let toPay =
-                  (parseInt(this.progress - this.paid) / 100) * this.post.price;
+                let toPay = parseInt(
+                  (parseInt(this.progress - this.paid) / 100) * this.post.price
+                );
 
                 if (toPay > 0) {
                   console.log("todo: pay: " + toPay + " TRX");
+                  await payAuthor(this.post.id, toPay);
+
+                  // let response = await payAuthor(this.post.id, toPay);
+                  // console.log(
+                  //   "tron response paid %: " + parseInt(response._hex, 16) + " %"
+                  // );
+
+                  //if succes
+                  target.classList.add("start-animation");
+
                   this.paid = this.progress;
                 }
               }
@@ -446,7 +451,7 @@ export default {
 
             delete target.dataset.aos;
           }
-          // break; // --> at most one animation per scroll event !
+          break; // --> at most one animation per scroll event !
         }
       }
       this.prevPosY = window.scrollY;

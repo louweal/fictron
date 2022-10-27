@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { setLibraryContract } from "@/utils/tronUtils";
+
 import categories from "@/data/genres.json";
 import posts from "@/data/posts.json";
 import writers from "@/data/writers.json";
@@ -29,13 +31,7 @@ export default {
   writers,
   posts,
 
-  // : writers.map((name, index) => ({
-  //   id: index,
-  //   name,
-  //   slug: name.toLowerCase().replace(" ", "-"),
-  // })),
-
-  created() {
+  async created() {
     this.$store.commit("SET_CATEGORIES", this.$options.categories);
 
     this.$store.commit(
@@ -47,11 +43,11 @@ export default {
       "SET_POSTS",
       this.combinedData(this.$options.posts, "browserPosts")
     );
+
+    await setLibraryContract();
   },
 
   async mounted() {
-    // await getTronWeb();
-
     let headerHeight = document.querySelector("#header").offsetHeight; //refs ?
     let pushdown = document.querySelector("#pushdown"); // refs?
     pushdown.style.height = headerHeight + "px";

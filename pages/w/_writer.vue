@@ -5,7 +5,6 @@
         <div class="col-12 col-md-9">
           <div class="hstack gap-3 mt-2 mb-4">
             <h1>{{ writer.name }}</h1>
-            <span>{{ writer.address }}</span>
             <div
               class="btn btn-sm btn-secondary"
               v-if="$store.state.user"
@@ -14,6 +13,7 @@
               {{ following ? "Unfollow" : "Follow" }}
             </div>
           </div>
+          <!-- <span>{{ writer.address }}</span> -->
 
           <template v-for="(c, i) in writerCategories">
             <h2 class="fs-3 mb-3" :key="'title' + i">
@@ -24,6 +24,7 @@
             </h2>
 
             <post-grid
+              class="mb-4"
               :posts="writerPosts.filter((p) => p.category === c)"
               :key="i"
             />
@@ -47,8 +48,6 @@
 
 <script>
 export default {
-  type: "stories", //"articles",
-
   computed: {
     writer() {
       return this.$store.state.writers.find(

@@ -31,14 +31,10 @@ export const mutations = {
     };
     state.posts.push(post);
 
-    if (localStorage.getItem("browserPosts")) {
-      let browserPosts = JSON.parse(localStorage.getItem("browserPosts"));
-      browserPosts.push(post);
-      localStorage.setItem("browserPosts", JSON.stringify(browserPosts));
-    } else {
-      let userPost = [post];
-      localStorage.setItem("browserPosts", JSON.stringify(userPost));
-    }
+    localStorage.setItem(
+      "browserPosts",
+      JSON.stringify(state.posts.filter((p) => p.id >= 140))
+    );
   },
 
   // id, progress
@@ -63,16 +59,14 @@ export const mutations = {
 
   setUser(state, payload) {
     state.user = payload;
-    console.log("set!");
     if (payload) {
-      localStorage.setItem("user", JSON.stringify(state.user));
+      appendLocalStorage("users", state.user);
     }
   },
 
   addWriter(state, payload) {
-    console.log(state.writers.find((w) => w.id === payload.id));
+    // console.log(state.writers.find((w) => w.id === payload.id));
     if (state.writers.find((w) => w.id === payload.id) === undefined) {
-      console.log("add!!");
       state.writers.push(payload);
 
       // update browser storage
@@ -86,7 +80,14 @@ export const mutations = {
   setUserName(state, payload) {
     state.user.name = payload;
     state.user.slug = payload.toLowerCase().replaceAll(" ", "-");
-    localStorage.setItem("user", JSON.stringify(state.user));
+
+    // also update username in localstorage
+    let users = JSON.parse(localStorage.getItem("users"));
+    users.forEach((w) => {
+      w.name = w.id === state.user.id ? state.user.name : w.name;
+      w.slug = w.id === state.user.id ? state.user.slug : w.slug;
+    });
+    localStorage.setItem("users", JSON.stringify(users));
 
     state.writers.forEach((w) => {
       w.name = w.id === state.user.id ? state.user.name : w.name;
@@ -106,25 +107,63 @@ export const mutations = {
 
   addUserCategory(state, payload) {
     state.user.categories.push(payload);
-    localStorage.setItem("user", JSON.stringify(state.user));
+    // localStorage.setItem("users", JSON.stringify(state.user));
+    addLocalStorageProp("users", state.user.id, "categories", payload);
   },
 
   removeUserCategory(state, payload) {
     state.user.categories = state.user.categories.filter((c) => c !== payload);
-    localStorage.setItem("user", JSON.stringify(state.user));
+    // localStorage.setItem("users", JSON.stringify(state.user));
+    removeLocalStorageProp("users", state.user.id, "categories", payload);
   },
 
   addUserWriter(state, payload) {
     state.user.writers.push(payload);
-    localStorage.setItem("user", JSON.stringify(state.user));
+    // localStorage.setItem("users", JSON.stringify(state.user));
+    addLocalStorageProp("users", state.user.id, "writers", payload);
   },
 
   removeUserWriter(state, payload) {
     state.user.writers = state.user.writers.filter((c) => c !== payload);
-    localStorage.setItem("user", JSON.stringify(state.user));
+    // localStorage.setItem("users", JSON.stringify(state.user));
+    removeLocalStorageProp("users", state.user.id, "writers", payload);
   },
 
   setClickedPost(state, payload) {
     state.clickedPost = payload;
   },
 };
+
+function appendLocalStorage(key, data) {
+  if (localStorage.getItem(key)) {
+    let obj = JSON.parse(localStorage.getItem(key));
+    if (!obj.find((o) => o.id === data.id)) {
+      obj.push(data);
+      localStorage.setItem(key, JSON.stringify(obj));
+    } else {
+      console.log("Object with id " + data.id + "is already in local storage");
+    }
+  } else {
+    localStorage.setItem(key, JSON.stringify([data]));
+  }
+}
+
+function addLocalStorageProp(key, id, propName, item) {
+  let data = JSON.parse(localStorage.getItem(key));
+  let prop = data.find((d) => d.id == id)[propName];
+  prop.push(item);
+
+  data.forEach((w) => {
+    w[propName] = w.id === id ? prop : w[propName];
+  });
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function removeLocalStorageProp(key, id, propName, item) {
+  let data = JSON.parse(localStorage.getItem(key));
+  data.forEach((w) => {
+    w[propName] =
+      w.id === id ? w[propName].filter((i) => i !== item) : w[propName];
+  });
+  localStorage.setItem(key, JSON.stringify(data));
+}

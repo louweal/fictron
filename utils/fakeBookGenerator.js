@@ -63,7 +63,7 @@ export function fakeBooks(n) {
     let category = categorySlugs[catId];
 
     a.push({
-      id: i,
+      id: a.length,
       title: title,
       slug: title.toLowerCase().replaceAll(" ", "-"),
       intro: getWords(100 + Math.ceil(Math.random() * 100)),

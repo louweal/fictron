@@ -19,13 +19,13 @@
               @click="toggleModal"
             ></button>
           </div>
-          <div class="modal-body px-4">
+          <div class="modal-body px-1">
             <p class="text-center">
-              Reading reimagined: what if you could only pay for the pages you
-              actually read? Connect your TRON wallet to explore this modern
-              reading experience.
+              Can you imagine a world where you can start reading every book you
+              want and only pay for the pages you actually read? Connect your
+              TRON wallet and let your imagination become real.
             </p>
-            <div class="d-grid gap-2 mb-3">
+            <div class="d-grid gap-2 mb-1">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
                 TronLink
               </div>
@@ -44,8 +44,8 @@
               </p>
 
               <p>
-                <small class="fw-bold text-muted" xxxclick="signInDemo()">
-                  Continue using a demo wallet <i class="bi bi-arrow-right"></i>
+                <small class="fw-bold text-muted" @click="signInDemo()">
+                  Continue using demo wallet <i class="bi bi-arrow-right"></i>
                 </small>
               </p>
             </div>
@@ -57,11 +57,9 @@
 </template>
 
 <script>
-import { getTronWeb } from "~/utils/tronUtils.js";
+import { getTronWebAddress } from "~/utils/tronUtils.js";
 
 export default {
-  type: "books", // articles
-
   data() {
     return {
       error: false,
@@ -76,50 +74,64 @@ export default {
       this.error = false;
     },
 
-    closeAndClick() {
-      this.toggleModal();
-      this.$router.push(path);
+    setUser(id, address, name, slug) {
+      this.$store.commit("setUser", {
+        id,
+        address,
+        name,
+        slug,
+        categories: [],
+        writers: [],
+        history: [],
+      });
     },
-    signIn() {
-      let address = getTronWeb();
 
-      if (address === undefined) {
-        // this.toggleModal();
+    signInDemo() {
+      let address = "TArXQAezpyHmebwrvshUUf3ECoEXoPc9Ri";
+      let name = "Demo wallet";
+      let slug = "demo-wallet";
+
+      let users = JSON.parse(localStorage.getItem("users"));
+      let user = users ? users.find((u) => u.address === address) : undefined;
+
+      if (user) {
+        this.$store.commit("setUser", user);
+      } else {
+        let numUsers = users ? users.length : 0;
+        let id = 42 + numUsers;
+        this.setUser(id, address, name, slug);
+        this.$store.commit("addWriter", { id, address, name, slug });
+      }
+      this.closeModal();
+    },
+
+    async signIn() {
+      let tronAddress = await getTronWebAddress();
+      if (!tronAddress) {
         this.error = true;
         return;
       }
 
-      let localStorageUser;
+      let users = JSON.parse(localStorage.getItem("users"));
+      let user = users
+        ? users.find((u) => u.address === tronAddress.base58)
+        : undefined;
 
-      if (localStorage.getItem("user")) {
-        localStorageUser = JSON.parse(localStorage.getItem("user"));
-      }
-
-      if (localStorageUser && localStorageUser.id === address.base58) {
-        this.$store.commit("setUser", localStorageUser);
+      if (user) {
+        this.$store.commit("setUser", user);
       } else {
-        let id = address.base58;
-        let name = address.name;
-        let slug = address.name.toLowerCase().replaceAll(" ", "-");
-        this.$store.commit("setUser", {
-          id,
-          name,
-          slug,
-          categories: [],
-          writers: [],
-          history: [],
-        });
-
-        // also add writer (if not exists yet
-        console.log("to add!!");
-
-        this.$store.commit("addWriter", {
-          id,
-          name,
-          slug,
-        });
+        let numUsers = users ? users.length : 0;
+        let id = 42 + numUsers;
+        let address = tronAddress.base58;
+        let name = tronAddress.name;
+        let slug = tronAddress.name.toLowerCase().replaceAll(" ", "-");
+        this.setUser(id, address, name, slug);
+        this.$store.commit("addWriter", { id, address, name, slug });
       }
+      this.closeModal();
+    },
 
+    closeModal() {
       let goto = this.$store.state.clickedPost
         ? this.$store.state.clickedPost
         : this.$route.path;

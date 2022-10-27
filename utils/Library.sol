@@ -3,24 +3,20 @@ pragma solidity ^0.8.11;
 
 contract Library {
     uint256 public bookId; 
-    mapping(uint256 => mapping(uint256 => uint256)) payLog;
-    struct Book {
-        address payable author;
-        uint256 price;
-    }
+    mapping(address => mapping(uint256 => uint256)) payLog;
+    struct Book {address payable author; uint256 price; }
     Book[] public books;
 
-    function payAuthor(uint256 _bookId, uint256 _userId, uint256 value) external payable returns (uint256 perc) {
-        require(msg.value == value, "Please send the correct amount!");
-        require(msg.value > 0,"Please pay more than nothing");
+    function payAuthor(uint256 _bookId) external payable returns (uint256 perc) {
+        require(msg.value > 0, "Please pay more than nothing");
         uint256 price = books[_bookId].price;
-        uint256 prev = payLog[_userId][_bookId];
-        require(msg.value <= (price - prev),"Payment is too high");
+        uint256 prev = payLog[msg.sender][_bookId];
+        require(msg.value <= (price - prev), "Payment is too high");
         address payable author = books[_bookId].author;
         require(payable(msg.sender) != author, "You shouldn't pay yourself");
-        payLog[_userId][_bookId] += value; 
+        payLog[msg.sender][_bookId] += msg.value; 
         author.transfer(msg.value);
-        return (payLog[_userId][_bookId] * 100) / books[_bookId].price; // percentage of book paid
+        return (payLog[msg.sender][_bookId] * 100) / books[_bookId].price; // percentage of book paid
     }
 
     function addFakeBook(address payable author, uint256 price) public {
@@ -34,8 +30,7 @@ contract Library {
     
     function add(address payable author, uint256 price) internal {
         require(price % 50  == 0, "Price not divisible by 50");
-        require(price >= 200, "Price too low");
-        require(price <= 500, "Price too high");
+        require(price > 0, "Price too low");
         Book memory b = Book(author, price);
         books.push(b);
         emit NewBook(bookId++);
@@ -45,13 +40,9 @@ contract Library {
         require(_bookId < bookId, "Incorrect bookId");
         address payable author = books[_bookId].author;
         require(msg.sender == author, "You're not allowed to delete this book");
-
-        books[_bookId] = books[books.length - 1]; // overwrite item with last book item and then delete last
-        books.pop();
-        emit NewBook(bookId--);
+        delete books[_bookId]; 
     }
 
     // events
     event NewBook(uint256 indexed bookId);
-
 }

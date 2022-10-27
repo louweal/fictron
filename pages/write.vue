@@ -9,27 +9,25 @@
               : 'col-4 col-md-2 offset-sm-1 offset-lg-2'
           "
         >
-          <form>
-            <div class="form-group d-grid">
-              <div
-                class="ratio field--upload rounded image cursor-pointer bg-light"
-                :class="$options.type === 'article' ? 'ratio-3x1' : 'ratio-3x4'"
-                @click="toggleModal"
-                :style="{
-                  backgroundImage:
-                    image !== -1
-                      ? `url(${require('@/images/' +
-                          path +
-                          '/' +
-                          image +
-                          '.jpg')})`
-                      : false,
-                }"
-              >
-                <p v-if="image === -1">Click to select an image</p>
-              </div>
+          <div class="form-group d-grid">
+            <div
+              class="ratio field--upload rounded image cursor-pointer bg-light"
+              :class="$options.type === 'article' ? 'ratio-3x1' : 'ratio-3x4'"
+              @click="toggleModal"
+              :style="{
+                backgroundImage:
+                  image !== -1
+                    ? `url(${require('@/images/' +
+                        path +
+                        '/' +
+                        image +
+                        '.jpg')})`
+                    : false,
+              }"
+            >
+              <p v-if="image === -1">Click to select an image</p>
             </div>
-          </form>
+          </div>
         </div>
 
         <div
@@ -63,10 +61,6 @@
                     {{ c.title }}
                   </option>
                 </select>
-
-                <!-- <div class="badge bg-secondary mt-3" v-if="categoryName">
-                  {{ categoryName }}
-                </div> -->
               </div>
             </div>
             <div class="col-12 col-sm-6">
@@ -90,41 +84,22 @@
             </div>
           </div>
 
-          <!-- <ul class="bullet-list-inline mt-1 mb-1">
-            <li>{{ today }}</li>
-
-            <li v-if="post.content">
-              <i class="bi bi-piggy-bank"></i>
-              {{ (post.content.length / 1000).toFixed(2) }} TRX ≈
-              {{ price }} USD
-            </li>
-          </ul> -->
-
-          <form class="gy-3">
-            <div class="form-group">
-              <textarea
-                class="form-control fs-2 fw-bold"
-                id="title"
-                rows="2"
-                @input="(e) => setTitle(e.target.value)"
-                placeholder="Title"
-              ></textarea>
-            </div>
-
-            <!-- <h2 class="fs-3 mt-3">
-              By
-              <span xxxclass="text-secondary">
-                {{ me }}
-              </span>
-            </h2> -->
-          </form>
+          <div class="form-group">
+            <textarea
+              class="form-control fs-2 fw-bold"
+              id="title"
+              rows="2"
+              @input="(e) => setTitle(e.target.value)"
+              placeholder="Title"
+            ></textarea>
+          </div>
         </div>
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <div class="form-group mt-3">
             <textarea
               class="form-control"
               id="intro"
-              rows="8"
+              :rows="$options.type === 'article' ? 5 : 8"
               :placeholder="
                 $options.type === 'article' ? 'Introduction' : 'Blurb'
               "
@@ -189,7 +164,6 @@
             Publish
           </div>
         </div>
-        <!-- </form> -->
       </div>
     </div>
 
@@ -251,7 +225,6 @@ export default {
       image: -1,
       category: undefined,
       post: { intro: "" },
-      categoryName: "",
       trxusd: 1,
     };
   },
@@ -273,10 +246,6 @@ export default {
 
     introMax() {
       return this.$options.type === "article" ? 200 : 500;
-    },
-
-    today() {
-      return this.dateToString(new Date());
     },
 
     path() {
@@ -376,12 +345,9 @@ export default {
 
     setCategory(e) {
       if (e.target.value !== "select") {
-        this.categoryName = this.$store.state.categories.find(
-          (c) => c.slug === e.target.value
-        ).title;
         Vue.set(this.post, "category", e.target.value);
       } else {
-        this.categoryName = "";
+        Vue.set(this.post, "category", undefined);
       }
     },
 
@@ -391,24 +357,12 @@ export default {
       }
     },
 
-    dateToString(date) {
-      return date.toLocaleDateString("us-EN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    },
-
     publishPost() {
-      let id = this.$store.state.posts.length + 1;
-
-      Vue.set(this.post, "id", id);
+      Vue.set(this.post, "id", this.$store.state.posts.length + 1);
       Vue.set(this.post, "date", new Date().getTime() / 1000);
       Vue.set(this.post, "views", 0);
 
       this.$store.commit("addPost", this.post);
-
-      // console.log(this.post);
       this.$router.push("/a/" + this.post.slug);
     },
   },

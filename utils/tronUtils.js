@@ -1,25 +1,13 @@
-//import LibraryABI from './libraryABI'
-
-let account = null;
-let libraryContractAddress = "TGcg2angYestWUkkWZKQ2gz8srqnfCHpME"; // Paste Contract address here
+// let account = null;
+let libraryContractAddress = "TJPzbUM6c3VVEQym5EgAV1MzjhTCeQcN15";
 let libraryContract = null;
 
-export const accountAddress = () => {
-  return account;
-};
+// export const accountAddress = () => {
+//   return account;
+// };
 
-export function getTronWeb() {
-  // Obtain the tronweb object injected by tronLink
-  // var obj = setInterval(async () => {
-  //   if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-  //     clearInterval(obj);
-  //     console.log("tronWeb successfully detected!");
-  //   } else {
-  //     console.log("problem");
-  //   }
-  // }, 10);
+export function getTronWebAddress() {
   if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-    // console.log(window.tronWeb.defaultAddress.base58);
     console.log("tronWeb successfully detected!");
     return window.tronWeb.defaultAddress;
   } else {
@@ -29,41 +17,28 @@ export function getTronWeb() {
 }
 
 export async function setLibraryContract() {
-  // TODO: abtain contract Object
-
   libraryContract = await window.tronWeb.contract().at(libraryContractAddress);
 }
 
-export async function fetchAllPosts() {
-  // TODO: call bookId func of library contract to abtain total books number
-  // iterate till book Id
-  // push each object to books array
-  const posts = [];
+export async function addFakeBook(author, price) {
+  console.log("addFakeBook");
+  let sunPrice = window.tronWeb.toSun(price);
+  await libraryContract.addFakeBook(author, sunPrice).send({
+    feeLimit: 100_000_000,
+    callValue: 0,
+    shouldPollResponse: true, // ?
+  });
+}
 
-  const numPosts = await libraryContract.postId().call();
-  //iterate from 0 till bookId
-  for (let i = 0; i < numPosts; i++) {
-    const post = await libraryContract.posts(i).call();
+export async function payAuthor(bookId, value) {
+  console.log("payAuthor");
+  let sunValue = window.tronWeb.toSun(value);
 
-    // // on scroll at post page
-    // const postContractAddress = await libraryContract.postContracts(i).call();
-    // let postContract = await window.tronWeb.contract().at(postContractAddress);
-
-    // let pages = [];
-    // const numPages = await postContract.pageId().call();
-    // for(let j = 0; j < numPages; j++) {
-    //   const page = await postContract.pages(i).call();
-    //   pages.push(page);
-    // }
-
-    posts.push({
-      id: i,
-      title: post.title,
-      intro: post.intro,
-      category: post.category,
-      content: [],
-    });
-  }
-
-  return posts;
+  // const result =
+  await libraryContract.payAuthor(bookId).send({
+    feeLimit: 100_000_000,
+    callValue: sunValue, //tronWeb.toSun(value),
+    shouldPollResponse: false,
+  });
+  // return result;
 }
