@@ -40,19 +40,19 @@ export const mutations = {
   // id, progress
   setProgress(state, payload) {
     if (state.user) {
-      // console.log(state.user.history.map((i) => i.id));
       if (state.user.history.map((i) => i.id).includes(payload.id)) {
         //update
         state.user.history.forEach(
           (i) =>
             (i.progress = i.id === payload.id ? payload.progress : i.progress)
         );
+
+        updateLocalStorageHistory("users", state.user.id, payload);
       } else {
         // add history item
-        state.user.history.push({
-          id: payload.id,
-          progress: payload.progress,
-        });
+        state.user.history.push(payload);
+
+        addLocalStorageProp("users", state.user.id, "history", payload);
       }
     }
   },
@@ -65,7 +65,6 @@ export const mutations = {
   },
 
   addWriter(state, payload) {
-    // console.log(state.writers.find((w) => w.id === payload.id));
     if (state.writers.find((w) => w.id === payload.id) === undefined) {
       state.writers.push(payload);
 
@@ -107,25 +106,21 @@ export const mutations = {
 
   addUserCategory(state, payload) {
     state.user.categories.push(payload);
-    // localStorage.setItem("users", JSON.stringify(state.user));
     addLocalStorageProp("users", state.user.id, "categories", payload);
   },
 
   removeUserCategory(state, payload) {
     state.user.categories = state.user.categories.filter((c) => c !== payload);
-    // localStorage.setItem("users", JSON.stringify(state.user));
     removeLocalStorageProp("users", state.user.id, "categories", payload);
   },
 
   addUserWriter(state, payload) {
     state.user.writers.push(payload);
-    // localStorage.setItem("users", JSON.stringify(state.user));
     addLocalStorageProp("users", state.user.id, "writers", payload);
   },
 
   removeUserWriter(state, payload) {
     state.user.writers = state.user.writers.filter((c) => c !== payload);
-    // localStorage.setItem("users", JSON.stringify(state.user));
     removeLocalStorageProp("users", state.user.id, "writers", payload);
   },
 
@@ -140,8 +135,6 @@ function appendLocalStorage(key, data) {
     if (!obj.find((o) => o.id === data.id)) {
       obj.push(data);
       localStorage.setItem(key, JSON.stringify(obj));
-    } else {
-      console.log("Object with id " + data.id + "is already in local storage");
     }
   } else {
     localStorage.setItem(key, JSON.stringify([data]));
@@ -155,6 +148,21 @@ function addLocalStorageProp(key, id, propName, item) {
 
   data.forEach((w) => {
     w[propName] = w.id === id ? prop : w[propName];
+  });
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+// todo:  for history/progress
+function updateLocalStorageHistory(key, id, updatedObj) {
+  let data = JSON.parse(localStorage.getItem(key));
+  let newHistory = data.find((d) => d.id == id).history;
+  newHistory.forEach(
+    (o) =>
+      (o.progress = o.id == updatedObj.id ? updatedObj.progress : o.progress)
+  );
+
+  data.forEach((w) => {
+    w.history = w.id === id ? newHistory : w.history;
   });
   localStorage.setItem(key, JSON.stringify(data));
 }

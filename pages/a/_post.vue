@@ -30,7 +30,7 @@
           </nuxt-link>
 
           <ul class="bullet-list-inline mt-1 mb-1">
-            <li>ID: {{ post.id }}</li>
+            <!-- <li>ID: {{ post.id }}</li> -->
             <li>
               {{ formatDate(post.date) }}
             </li>
@@ -50,7 +50,9 @@
             </li>
           </ul>
 
-          <h1>{{ post.title }}</h1>
+          <h1>
+            {{ post.title }} <small>#{{ post.id }}</small>
+          </h1>
 
           <h2 class="fs-3">
             By
@@ -115,7 +117,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row no-select">
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2">
           <template v-for="(p, i) in content">
             <h2
@@ -193,16 +195,23 @@
         </div>
       </div>
     </div>
+
+    <div
+      class="error text-white bg-primary w-100 p-2 pb-4 position-fixed bottom-0 start-0"
+      style="z-index: 8"
+      v-if="error"
+    >
+      ERROR: {{ error }}
+    </div>
   </main>
 </template>
 
 <script>
 import getUSD from "@/utils/getUSD.js";
-import { payAuthor } from "@/utils/tronUtils";
+// import { payAuthor } from "@/utils/tronUtils";
 
 export default {
   transition: "post", // important for scroll position on page load!
-
   type: "book", // article
 
   data() {
@@ -214,12 +223,13 @@ export default {
       historicProgress: 0,
       posts: () => {},
       post: () => {},
-      categoryName: "Genre",
       trxusd: 1,
       showBlurb: true,
       showContents: false,
       numChapters: 0,
       paid: 0,
+      freeze: false, // freeze scroll whilst waiting for transaction
+      error: undefined,
     };
   },
 
@@ -228,26 +238,22 @@ export default {
     this.post = this.posts.find((a) => a.slug === this.$route.params.post);
 
     if (this.post) {
-      this.categoryName = this.$store.state.categories.find(
-        (c) => c.slug === this.post.category
-      ).title;
-
+      // todo move
       this.trxusd = await getUSD();
     }
   },
 
   async fetch() {
-    await this.validateAccess();
+    // await this.validateAccess();
     await this.validatePage();
   },
 
   async mounted() {
-    if (!this.$store.state.user) {
-      return;
-    }
-
     this.scrollHeight = document.body.scrollHeight;
     window.addEventListener("scroll", this.aos);
+
+    if (!this.$store.state.user) return;
+
     let history = this.$store.state.user.history.find(
       (a) => a.id === this.post.id
     );
@@ -289,8 +295,16 @@ export default {
       return this.$options.type === "article" ? 50 : 80;
     },
 
+    categoryName() {
+      return this.$store.state.categories.find(
+        (c) => c.slug === this.post.category
+      ).title;
+    },
+
     mine() {
       // post is written by the user himself
+      if (!this.$store.state.user) return false;
+
       return (
         this.$store.state.user.id === this.author.id ||
         this.$store.state.user.id === this.author.address
@@ -298,53 +312,29 @@ export default {
     },
 
     content() {
-      let parts = this.post.content.split(/(?:\r?\n)+/);
-
+      let parts = this.post.content.split(/(?:\r?\n)+/) || [];
       let a = [];
-
-      if (parts.length > 0) {
-        let end = 0;
-        for (let i = 0; i < parts.length; i++) {
-          if (parts[i]) {
-            let p = {};
-
-            if (
-              parts[i].toLowerCase().startsWith("chapter ") &&
-              parts[i].length <= this.maxTitleLength
-            ) {
-              //title
-              let title = parts[i];
-              if (title.length > 0) {
-                p["title"] = title;
-                end += title.length;
-                p["progress"] =
-                  Math.round((end * 50) / this.post.content.length) * 2;
-
-                this.numChapters += 1;
-
-                if (parts[i + 1]) {
-                  p["content"] = parts[i + 1];
-                  end += p["content"].length;
-                  p["progress"] =
-                    Math.round((end * 50) / this.post.content.length) * 2;
-
-                  i = i + 1; // skip next part
-                }
-              }
-            } else {
-              // content
-              p["content"] = parts[i];
-              end += p.content.length;
-              p["n"] = p.content.length;
-              p["progress"] =
-                Math.round((end * 50) / this.post.content.length) * 2;
-            }
-            a.push(p);
+      let end = 0;
+      for (let i = 0; i < parts.length; i++) {
+        let p = {};
+        if (this.isChapterTitle(parts[i])) {
+          end += parts[i].length;
+          p["title"] = parts[i];
+          p["progress"] = this.computeProgress(end);
+          this.numChapters += 1;
+          if (parts[i + 1]) {
+            end += parts[i + 1].length;
+            p["content"] = parts[i + 1];
+            p["progress"] = this.computeProgress(end);
+            i = i + 1; // skip next part
           }
+        } else {
+          end += parts[i].length;
+          p["content"] = parts[i];
+          p["progress"] = this.computeProgress(end);
         }
+        a.push(p);
       }
-      // console.log(a.length);
-
       return a;
     },
 
@@ -358,6 +348,30 @@ export default {
   },
 
   methods: {
+    isChapterTitle(p) {
+      return (
+        p.toLowerCase().startsWith("chapter ") &&
+        p.length <= this.maxTitleLength
+      );
+    },
+
+    unfreezeWindow() {
+      document.body.classList.remove("disable-scroll");
+      this.freeze = false;
+      window.scrollTo(0, this.scrollY);
+    },
+
+    freezeWindow() {
+      this.freeze = true;
+      document.body.style.top = `-${this.scrollY}px`;
+      document.body.classList.add("disable-scroll");
+    },
+
+    computeProgress(end) {
+      // percentage of book read after reading this part [2%, 4%, ..., 100%]
+      return Math.round((end * 50) / this.post.content.length) * 2;
+    },
+
     toggleAccordion() {
       this.showContents = !this.showContents;
       this.showBlurb = !this.showBlurb;
@@ -392,75 +406,100 @@ export default {
     },
 
     updateBar() {
-      if (this.post) {
-        // let p = Math.ceil((100 * this.progress) / this.post.content.length);
-        let bar = this.$refs["bar"];
-
-        if (bar) {
-          bar.style.width = this.progress + "%";
-        }
-      }
+      this.$refs["bar"].style.width = this.$refs["bar"]
+        ? this.progress + "%"
+        : 0;
     },
 
     async aos() {
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
+      this.prevPosY = window.scrollY;
 
-      if (this.prevPosY === 0 || direction === "up") {
-        this.prevPosY = window.scrollY;
-        return;
-      }
+      if (this.prevPosY === 0 || direction === "up") return;
 
+      this.scrollY = window.scrollY; // for freeze method
       let animTargets = document.querySelectorAll("[data-aos]");
-
       for (let i = 0; i < animTargets.length; i++) {
         let target = animTargets[i];
         let top = target.getBoundingClientRect().top;
 
-        let startTrigger =
-          top < window.innerHeight * (+target.dataset.aos / 100) && top > 0;
-
-        if (startTrigger) {
+        if (top < window.innerHeight * (+target.dataset.aos / 100) && top > 0) {
           if (!target.classList.contains("start-animation")) {
-            if (target.dataset.progress) {
+            if (target.dataset.progress && !this.mine) {
               this.progress = parseInt(target.dataset.progress);
               this.updateBar();
 
-              // payment
-              if (!this.mine) {
-                let toPay = parseInt(
-                  (parseInt(this.progress - this.paid) / 100) * this.post.price
-                );
+              let toPay = +(
+                ((this.progress - this.paid) / 100) *
+                this.post.price
+              );
 
-                if (toPay > 0) {
-                  console.log("todo: pay: " + toPay + " TRX");
-                  await payAuthor(this.post.id, toPay);
+              if (toPay > 0) {
+                console.log("todo: pay: " + toPay + " TRX");
+                // let prevPaid = this.paid;
 
+                this.freezeWindow();
+
+                try {
+                  this.error = undefined;
                   // let response = await payAuthor(this.post.id, toPay);
-                  // console.log(
-                  //   "tron response paid %: " + parseInt(response._hex, 16) + " %"
+                  // console.log(response);
+                  // let result = await tronWeb.trx.sendTransaction(
+                  //   this.author.address,
+                  //   window.tronWeb.toSun(toPay)
                   // );
 
-                  //if succes
-                  target.classList.add("start-animation");
+                  // if (result && result.result === true) {
+                  //   console.log("Thank you for supporting Author!");
+                  // }
 
                   this.paid = this.progress;
+                  target.classList.add("start-animation");
+                  delete target.dataset.aos;
+                } catch (error) {
+                  // console.log("Something went wrong with payment");
+                  // console.log(error);
+                  this.error = error;
                 }
+                this.unfreezeWindow();
+              } else {
+                target.classList.add("start-animation");
+                delete target.dataset.aos;
               }
+            } else {
+              //title or mine
+              target.classList.add("start-animation");
+              delete target.dataset.aos;
             }
-
-            delete target.dataset.aos;
           }
           break; // --> at most one animation per scroll event !
         }
       }
-      this.prevPosY = window.scrollY;
+      // this.prevPosY = window.scrollY;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+h1 {
+  small {
+    opacity: 0;
+    transition: opacity 0.24s ease-out;
+  }
+
+  &:hover small {
+    opacity: 0.19;
+  }
+}
+
+.no-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
 .post-img {
   width: 100%;
   height: auto;

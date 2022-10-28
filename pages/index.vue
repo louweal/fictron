@@ -91,13 +91,20 @@
         </div>
       </template>
 
-      <div v-if="userCategories.length === 0" class="mb-2 mt-5">
+      <div v-if="userCategories.length === 0" class="mb-2 mt-3 mt-lg-5">
         <p v-if="signedIn">You can also subscribe to your favorite genres.</p>
 
-        <div class="row gy-0 gx-3 pt-1">
-          <div class="col-12 col-md" v-for="(c, i) in categories" :key="i">
+        <div class="row gy-3 gy-lg-0 gx-3 pt-1">
+          <hr class="mb-0 d-md-none" />
+
+          <div
+            class="col-12 col-md-4 col-lg"
+            v-for="(c, i) in categories"
+            :key="i"
+          >
             <category-card :category="c" :borderTop="i !== 0" />
           </div>
+          <hr class="mb-0 d-md-none" />
         </div>
       </div>
 

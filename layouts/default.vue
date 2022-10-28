@@ -1,26 +1,20 @@
 <template>
   <div>
     <pre-loader />
-
     <div id="page">
-      <!-- <characters /> -->
-
       <Header />
       <div class="min-vh-100 d-flex flex-column justify-content-between">
         <div id="pushdown" class="mb-2 mb-md-3 mb-lg-4"></div>
-
         <Nuxt />
-
         <Footer />
       </div>
     </div>
-
     <modal />
   </div>
 </template>
 
 <script>
-import { setLibraryContract } from "@/utils/tronUtils";
+// import { setLibraryContract, requestAccounts } from "@/utils/tronUtils";
 
 import categories from "@/data/genres.json";
 import posts from "@/data/posts.json";
@@ -44,7 +38,7 @@ export default {
       this.combinedData(this.$options.posts, "browserPosts")
     );
 
-    await setLibraryContract();
+    // await setLibraryContract();
   },
 
   async mounted() {
@@ -59,7 +53,7 @@ export default {
         this.posY = window.scrollY;
         document.body.style.top = `-${window.scrollY}px`;
       }
-      document.body.classList.toggle("modal-open");
+      document.body.classList.toggle("disable-scroll");
 
       if (!show && !this.$store.state.user) {
         //after closing modal without sigin

@@ -21,7 +21,7 @@ function makeParagraphs(n) {
   let chapter = 1;
 
   for (let i = 0; i < n; i++) {
-    if (i === 0 || Math.ceil(Math.random() * 5) == 5) {
+    if (i === 0 || Math.ceil(Math.random() * 7) == 7) {
       let title =
         "Chapter " +
         chapter +
@@ -32,7 +32,7 @@ function makeParagraphs(n) {
       s += title;
     }
 
-    let content = getWords(200 + Math.floor(Math.random() * 50)) + "\n";
+    let content = getWords(250 + Math.floor(Math.random() * 100)) + "\n";
     s += content;
   }
 
@@ -58,7 +58,7 @@ export function fakeBooks(n) {
 
     let author = Math.floor(Math.random() * 42); // the data/writers.json contains 42 writers, with ids 0-41
     title = title.charAt(0) + title.slice(1).toLowerCase();
-    let content = makeParagraphs(37 + Math.ceil(Math.random() * 15));
+    let content = makeParagraphs(40 + Math.ceil(Math.random() * 25));
     let catId = author % numCategories;
     let category = categorySlugs[catId];
 
@@ -69,14 +69,14 @@ export function fakeBooks(n) {
       intro: getWords(100 + Math.ceil(Math.random() * 100)),
       visual: `${category}/${imagesUsed[catId] + 1}.jpg`,
       category: category,
-      content: content, // todoo!
+      content: content,
       date:
         new Date(
-          (1662031747 + Math.ceil(Math.random() * 2592000)) * 1000
-        ).getTime() / 1000, // 1 sept 2022 + 1 month -- the date timestamp is in SECONDS for solidity
+          (1577840461 + Math.ceil(Math.random() * 94694400)) * 1000
+        ).getTime() / 1000, // 1-1-2020 + 3 years -- the date timestamp is in SECONDS for solidity
       author: author,
-      views: Math.ceil(Math.random() * 777),
-      price: (3 + Math.ceil(Math.random() * 7)) * 50,
+      views: Math.ceil(Math.random() * 500),
+      price: (3 + Math.ceil(Math.random() * 7)) * 50, // price in TRX
     });
 
     imagesUsed[catId] = (imagesUsed[catId] + 1) % imagesPerCategory[catId];

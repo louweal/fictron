@@ -2,36 +2,7 @@
   <main>
     <div class="container-xl" v-if="$store.state.user">
       <div class="row g-3 g-lg-5">
-        <div class="col-12 col-md-3 order-md-3" v-if="sidebarData">
-          <div
-            class="border bg-white shadow-sm rounded py-3 px-3 xxxmb-3"
-            v-if="writers.length > 0"
-          >
-            <h2 class="fs-5">Following</h2>
-
-            <div
-              class="py-2"
-              v-for="(w, i) in writers"
-              :key="i"
-              :class="i > 0 ? 'border-top' : false"
-            >
-              <nuxt-link :to="'/w/' + w.slug" class="">
-                <h3 class="fw-bold fs-6 mb-0 text-secondary">{{ w.name }}</h3>
-                <span
-                  >{{ w.numBooks }} book<span v-if="w.numBooks > 1"
-                    >s</span
-                  ></span
-                >
-              </nuxt-link>
-            </div>
-          </div>
-
-          <div v-for="(c, i) in categories" class="my-3" :key="i">
-            <category-card :category="c" :borderTop="i !== 0" />
-          </div>
-        </div>
-
-        <div class="col-12 col-md-9 order-md-2">
+        <div class="col-12 col-md-9">
           <nuxt-link :to="'/w/' + me.slug">
             <h1>{{ me.name }}</h1>
           </nuxt-link>
@@ -63,6 +34,34 @@
             <h2 class="fs-3 mt-4 mb-3">Read again</h2>
             <post-grid :posts="read" />
           </template>
+        </div>
+        <div class="col-12 col-md-3" v-if="sidebarData">
+          <div
+            class="border bg-white shadow-sm rounded py-3 px-3"
+            v-if="writers.length > 0"
+          >
+            <h2 class="fs-5">Following</h2>
+
+            <div
+              class="py-2"
+              v-for="(w, i) in writers"
+              :key="i"
+              :class="i > 0 ? 'border-top' : false"
+            >
+              <nuxt-link :to="'/w/' + w.slug" class="">
+                <h3 class="fw-bold fs-6 mb-0 text-secondary">{{ w.name }}</h3>
+                <span
+                  >{{ w.numBooks }} book<span v-if="w.numBooks > 1"
+                    >s</span
+                  ></span
+                >
+              </nuxt-link>
+            </div>
+          </div>
+
+          <div v-for="(c, i) in categories" class="my-3" :key="i">
+            <category-card :category="c" :borderTop="i !== 0" />
+          </div>
         </div>
       </div>
     </div>

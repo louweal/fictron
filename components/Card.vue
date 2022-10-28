@@ -6,7 +6,7 @@
     }"
     event=""
     @click.native="
-      $store.state.user
+      $store.state.user || 1 === 1
         ? $router.push({
             path: '/a/' + post.slug,
             hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
@@ -116,6 +116,7 @@ export default {
 
   computed: {
     mine() {
+      if (!this.$store.state.user) return false;
       // post is written by the user himself
       return (
         this.$store.state.user.id === this.author.id ||

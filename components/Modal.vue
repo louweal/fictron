@@ -43,11 +43,11 @@
                 browser extension from the Chrome Web Store and sign in.
               </p>
 
-              <p>
+              <!-- <p v-if="$route.query.demo === 'true'">
                 <small class="fw-bold text-muted" @click="signInDemo()">
                   Continue using demo wallet <i class="bi bi-arrow-right"></i>
                 </small>
-              </p>
+              </p> -->
             </div>
           </div>
         </slot>
@@ -118,6 +118,7 @@ export default {
         : undefined;
 
       if (user) {
+        console.log(user);
         this.$store.commit("setUser", user);
       } else {
         let numUsers = users ? users.length : 0;
