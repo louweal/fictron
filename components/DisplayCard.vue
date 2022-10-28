@@ -4,15 +4,6 @@
       path: '/a/' + post.slug,
       hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
     }"
-    event=""
-    @click.native="
-      $store.state.user || $route.query.demo === 'true'
-        ? $router.push({
-            path: '/a/' + post.slug,
-            hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
-          })
-        : paywall()
-    "
     class="card position-relative"
   >
     <div class="ratio ratio-4x3">
@@ -71,13 +62,13 @@ export default {
     },
   },
 
-  methods: {
-    paywall() {
-      this.$store.commit("toggleModal");
-      this.$store.commit("setClickedPost", "/a/" + this.post.slug);
-      document.getElementById("page").classList.toggle("is-blurred");
-    },
-  },
+  // methods: {
+  //   paywall() {
+  //     this.$store.commit("toggleModal");
+  //     this.$store.commit("setClickedPost", "/a/" + this.post.slug);
+  //     document.getElementById("page").classList.toggle("is-blurred");
+  //   },
+  // },
 };
 </script>
 

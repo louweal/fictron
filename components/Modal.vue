@@ -23,7 +23,7 @@
             <p class="text-center">
               Can you imagine a world where you can start reading every book you
               want and only pay for the pages you actually read? Connect your
-              TRON wallet and let your imagination become real.
+              TRON wallet and let your imagination become reality.
             </p>
             <div class="d-grid gap-2 mb-1">
               <div class="btn btn-secondary cursor-pointer" @click="signIn">
@@ -70,7 +70,7 @@ export default {
     toggleModal() {
       this.$store.commit("toggleModal");
       document.getElementById("page").classList.toggle("is-blurred");
-      this.$store.commit("setClickedPost", undefined);
+      // this.$store.commit("setClickedPost", undefined);
       this.error = false;
     },
 
@@ -145,7 +145,7 @@ export default {
 
         this.$router.push(goto);
       }
-      this.$store.commit("setClickedPost", undefined);
+      // this.$store.commit("setClickedPost", undefined);
     },
   },
 };

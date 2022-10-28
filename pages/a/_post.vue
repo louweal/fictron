@@ -134,10 +134,16 @@
               :key="i"
               :class="historicProgress < p.progress ? 'fade-in-up' : false"
               :data-aos="historicProgress < p.progress ? 70 : undefined"
-              :data-progress="p.progress"
+              xxxdata-progress="p.progress"
             >
               {{ p.content }}
             </p>
+
+            <div
+              :key="'end' + i"
+              :data-aos="historicProgress < p.progress ? 70 : undefined"
+              :data-progress="p.progress"
+            ></div>
 
             <div
               class="w-100"
@@ -240,7 +246,6 @@ export default {
   },
 
   async fetch() {
-    await this.validateAccess();
     await this.validatePage();
   },
 
@@ -383,14 +388,6 @@ export default {
         });
       }
     },
-    validateAccess() {
-      if (this.$store.state.user == undefined) {
-        return this.$nuxt.error({
-          statusCode: 403,
-          message: "Access denied",
-        });
-      }
-    },
 
     removePost() {
       console.log("todo: call contract func removePost");
@@ -433,6 +430,12 @@ export default {
         if (top < window.innerHeight * (+target.dataset.aos / 100) && top > 0) {
           if (!target.classList.contains("start-animation")) {
             if (target.dataset.progress && !this.mine) {
+              // trigger paywall
+              if (!this.$store.state.user) {
+                this.$store.commit("toggleModal");
+                document.getElementById("page").classList.toggle("is-blurred");
+                break;
+              }
               this.progress = parseInt(target.dataset.progress);
               this.updateBar();
 

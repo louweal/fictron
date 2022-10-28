@@ -124,9 +124,9 @@ export const mutations = {
     removeLocalStorageProp("users", state.user.id, "writers", payload);
   },
 
-  setClickedPost(state, payload) {
-    state.clickedPost = payload;
-  },
+  // setClickedPost(state, payload) {
+  //   state.clickedPost = payload;
+  // },
 };
 
 function appendLocalStorage(key, data) {
