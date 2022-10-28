@@ -69,7 +69,7 @@
         :class="hero ? 'd-none' : false"
       >
         <h2 class="fs-5">{{ post.title }}</h2>
-        <span class="fw-bold">{{ author }}</span>
+        <span class="fw-bold">{{ author.name }}</span>
       </div>
     </div>
   </nuxt-link>
@@ -135,11 +135,7 @@ export default {
     },
 
     bg() {
-      try {
-        return `url(${"/_nuxt/images/" + this.post.visual})`;
-      } catch {
-        return `url(${require("@/images/" + this.post.visual)}`;
-      }
+      return `url(${require("@/images/" + this.post.visual)}`;
     },
   },
 

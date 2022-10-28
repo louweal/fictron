@@ -7,7 +7,7 @@ contract Library {
     struct Book {address payable author; uint256 price; }
     Book[] public books;
 
-    function payAuthor(uint256 _bookId) external payable returns (uint256 perc) {
+    function payAuthor(uint256 _bookId) external payable {
         require(msg.value > 0, "Please pay more than nothing");
         uint256 price = books[_bookId].price;
         uint256 prev = payLog[msg.sender][_bookId];
@@ -16,7 +16,7 @@ contract Library {
         require(payable(msg.sender) != author, "You shouldn't pay yourself");
         payLog[msg.sender][_bookId] += msg.value; 
         author.transfer(msg.value);
-        return (payLog[msg.sender][_bookId] * 100) / books[_bookId].price; // percentage of book paid
+        // return (payLog[msg.sender][_bookId] * 100) / books[_bookId].price; // percentage of book paid
     }
 
     function addFakeBook(address payable author, uint256 price) public {
