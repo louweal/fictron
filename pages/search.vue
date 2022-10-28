@@ -76,7 +76,9 @@ export default {
     },
 
     posts() {
-      let posts = this.$store.state.posts;
+      let posts = [...this.$store.state.posts].sort((a, b) =>
+        a.date > b.date ? -1 : 1
+      );
       posts.forEach(
         (p) =>
           (p["authorName"] = this.$store.state.writers

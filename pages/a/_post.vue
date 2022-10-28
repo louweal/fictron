@@ -411,11 +411,18 @@ export default {
     },
 
     async aos() {
+      const style1 = [
+        "color: white",
+        "background: #420d0a",
+        "font-weight: bold",
+        "border-bottom: 5px solid #771414",
+        "padding: 2px 9px",
+      ].join(";");
+
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
-      this.prevPosY = window.scrollY;
 
-      if (this.prevPosY === 0 || direction === "up") return;
+      if (direction === "up") return;
 
       this.scrollY = window.scrollY; // for freeze method
       let animTargets = document.querySelectorAll("[data-aos]");
@@ -435,33 +442,31 @@ export default {
               );
 
               if (toPay > 0) {
-                console.log("todo: pay: " + toPay + " TRX");
-                // let prevPaid = this.paid;
-
-                this.freezeWindow();
-
                 try {
                   this.error = undefined;
-                  // let response = await payAuthor(this.post.id, toPay);
-                  // console.log(response);
-                  // let result = await tronWeb.trx.sendTransaction(
-                  //   this.author.address,
-                  //   window.tronWeb.toSun(toPay)
-                  // );
+                  this.freezeWindow();
 
-                  // if (result && result.result === true) {
-                  //   console.log("Thank you for supporting Author!");
-                  // }
+                  let result = await tronWeb.trx.sendTransaction(
+                    this.author.address,
+                    window.tronWeb.toSun(toPay)
+                  );
+                  this.unfreezeWindow();
+
+                  if (result && result.result === true) {
+                    console.log(
+                      `%c  Succesfully transferred ${toPay} TRX to ${this.author.name} (${this.author.address})`,
+                      style1
+                    );
+                  }
 
                   this.paid = this.progress;
                   target.classList.add("start-animation");
                   delete target.dataset.aos;
                 } catch (error) {
-                  // console.log("Something went wrong with payment");
-                  // console.log(error);
+                  this.unfreezeWindow();
+
                   this.error = error;
                 }
-                this.unfreezeWindow();
               } else {
                 target.classList.add("start-animation");
                 delete target.dataset.aos;
@@ -472,10 +477,11 @@ export default {
               delete target.dataset.aos;
             }
           }
+          this.prevPosY = window.scrollY;
           break; // --> at most one animation per scroll event !
         }
       }
-      // this.prevPosY = window.scrollY;
+      this.prevPosY = window.scrollY;
     },
   },
 };
