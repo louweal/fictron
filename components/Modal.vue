@@ -118,7 +118,6 @@ export default {
         : undefined;
 
       if (user) {
-        console.log(user);
         this.$store.commit("setUser", user);
       } else {
         let numUsers = users ? users.length : 0;

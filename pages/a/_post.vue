@@ -236,15 +236,11 @@ export default {
   async created() {
     this.posts = this.$store.state.posts;
     this.post = this.posts.find((a) => a.slug === this.$route.params.post);
-
-    if (this.post) {
-      // todo move
-      this.trxusd = await getUSD();
-    }
+    this.trxusd = await getUSD();
   },
 
   async fetch() {
-    // await this.validateAccess();
+    await this.validateAccess();
     await this.validatePage();
   },
 
@@ -284,8 +280,11 @@ export default {
       }
     },
     "$store.state.user": function () {
+      console.log("user changed!!");
       if (this.$store.state.user == undefined) {
         this.$router.push("/");
+      } else {
+        console.log("refresh");
       }
     },
   },

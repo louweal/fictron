@@ -178,7 +178,6 @@ export default {
 
   methods: {
     validateAccess() {
-      console.log(this.$store.state.user);
       if (this.$store.state.user == undefined) {
         return this.$nuxt.error({
           statusCode: 403,

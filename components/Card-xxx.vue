@@ -6,7 +6,7 @@
     }"
     event=""
     @click.native="
-      $store.state.user
+      $store.state.user || $route.query.demo === 'true'
         ? $router.push({
             path: '/a/' + post.slug,
             hash: progress !== 0 && progress !== 100 ? '#c' + progress : false,
