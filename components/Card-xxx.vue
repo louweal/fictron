@@ -95,14 +95,6 @@ export default {
       );
     },
   },
-
-  // methods: {
-  //   paywall() {
-  //     this.$store.commit("toggleModal");
-  //     this.$store.commit("setClickedPost", "/a/" + this.post.slug);
-  //     document.getElementById("page").classList.toggle("is-blurred");
-  //   },
-  // },
 };
 </script>
 
@@ -113,7 +105,6 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  // border: 1px solid plum;
 
   &:hover {
     .card-img {

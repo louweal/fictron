@@ -1,6 +1,5 @@
 export default {
   ssr: false,
-
   modern: "client",
   target: "static",
   router: {
@@ -17,7 +16,7 @@ export default {
       {
         hid: "description",
         name: "description",
-        content: "Connects everyone with everyone",
+        content: "Stories, reimagined",
       },
       { name: "format-detection", content: "telephone=no" },
     ],
@@ -33,48 +32,6 @@ export default {
   components: true,
   buildModules: [],
   build: {},
-
-  // router: {
-  //   scrollBehavior(to) {
-  //     // this is deprecated but app/router.scrollBehavior.js doesnt work!!
-  //     // if (to.hash) {
-  //     //   console.log(document.querySelector(to.hash));
-  //     //   return window.scrollTo({
-  //     //     top: document.querySelector(to.hash).offsetTop + window.innerHeight, //useless offset!??
-  //     //     behavior: "smooth",
-  //     //   });
-  //     // }
-  //     // return window.scrollTo({ top: 0, behavior: "auto" }); // to disable smooth scrolling on route change!!
-
-  //     if (to.hash) {
-  //       return {
-  //         el: to.hash,
-  //         behavior: "auto",
-  //       };
-  //     }
-  //     // let position = {};
-  //     // console.log("router.options");
-  //     // console.log(window.innerHeight);
-  //     // if (to.hash) {
-  //     //   console.log("to hash yes");
-  //     //   position = {
-  //     //     selector: to.hash,
-  //     //     offset: { x: 0, y: 0 },
-  //     //     behavior: "smooth",
-  //     //   };
-  //     //   return new Promise((resolve) => {
-  //     //     setTimeout(() => {
-  //     //       resolve(position);
-  //     //     }, 100);
-  //     //   });
-  //     // }
-  //     // else {
-  //     //   position = { x: 0, y: 0 };
-  //     // }
-
-  //     return window.scrollTo({ top: 0, behavior: "auto" }); // to disable smooth scrolling on route change!!
-  //   },
-  // },
 
   generate: {
     fallback: true, // for error pages on Netlify

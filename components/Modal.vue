@@ -42,12 +42,6 @@
                 </a>
                 browser extension from the Chrome Web Store and sign in.
               </p>
-
-              <!-- <p v-if="$route.query.demo === 'true'">
-                <small class="fw-bold text-muted" @click="signInDemo()">
-                  Continue using demo wallet <i class="bi bi-arrow-right"></i>
-                </small>
-              </p> -->
             </div>
           </div>
         </slot>
@@ -70,7 +64,6 @@ export default {
     toggleModal() {
       this.$store.commit("toggleModal");
       document.getElementById("page").classList.toggle("is-blurred");
-      // this.$store.commit("setClickedPost", undefined);
       this.error = false;
     },
 
@@ -142,10 +135,8 @@ export default {
         this.toggleModal();
       } else {
         this.toggleModal();
-
         this.$router.push(goto);
       }
-      // this.$store.commit("setClickedPost", undefined);
     },
   },
 };

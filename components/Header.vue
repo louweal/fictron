@@ -128,9 +128,6 @@ export default {
         this.$router.push("/");
       }
     },
-    // signOut() {
-    //   this.$store.commit("setUser", undefined);
-    // },
 
     aosHeader() {
       let header = this.$refs["header"];
@@ -192,14 +189,6 @@ export default {
   transform: translateY(0);
 }
 
-// .dropdown-menu {
-//   display: none;
-
-//   &--active {
-//     display: block;
-//   }
-// }
-
 .dropdown-menu {
   display: block;
 }
@@ -209,7 +198,7 @@ export default {
   will-change: transform;
 
   &-logo img {
-    max-width: 20vw !important; //36vw !important;
+    max-width: 20vw !important;
   }
 }
 </style>

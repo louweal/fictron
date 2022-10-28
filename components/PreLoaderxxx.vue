@@ -36,7 +36,7 @@ export default {};
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center; //space-around;
+    justify-content: center;
     align-items: center;
 
     .logo {

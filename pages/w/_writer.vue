@@ -13,7 +13,6 @@
               {{ following ? "Unfollow" : "Follow" }}
             </div>
           </div>
-          <!-- <span>{{ writer.address }}</span> -->
 
           <template v-for="(c, i) in writerCategories">
             <h2 class="fs-3 mb-3" :key="'title' + i">

@@ -99,11 +99,9 @@ export default {
   bottom: 0;
   width: 100%;
   height: 100%;
-  // padding: 1.3rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  // align-items: flex-end;
   background: rgb(0, 0, 0);
   background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 59%);
   z-index: 3;

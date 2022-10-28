@@ -130,14 +130,6 @@ export default {
       return `url(${require("@/images/" + this.post.visual)}`;
     },
   },
-
-  // methods: {
-  //   paywall() {
-  //     this.$store.commit("toggleModal");
-  //     this.$store.commit("setClickedPost", "/a/" + this.post.slug);
-  //     document.getElementById("page").classList.toggle("is-blurred");
-  //   },
-  // },
 };
 </script>
 
@@ -166,11 +158,9 @@ export default {
   bottom: 0;
   width: 100%;
   height: 100%;
-  // padding: 1.3rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  // align-items: flex-end;
   background: rgb(0, 0, 0);
   background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 59%);
   z-index: 3;
@@ -182,17 +172,16 @@ export default {
   z-index: 4;
   opacity: 0;
   background-color: var(--bs-primary);
-  transition: opacity 0.35s 0.15s ease-out; //cubic-bezier(0.2, 0, 0.1, 1);
+  transition: opacity 0.35s 0.15s ease-out;
   overflow: hidden;
 
   p {
     opacity: 0;
-    transition: opacity 0.65s 0.35s ease-in; //cubic-bezier(0.2, 0, 0.1, 1);
+    transition: opacity 0.65s 0.35s ease-in;
   }
 
   &:hover {
     opacity: 1;
-
     p {
       opacity: 1;
     }

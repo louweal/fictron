@@ -30,7 +30,6 @@
           </nuxt-link>
 
           <ul class="bullet-list-inline mt-1 mb-1">
-            <!-- <li>ID: {{ post.id }}</li> -->
             <li>
               {{ formatDate(post.date) }}
             </li>
@@ -39,7 +38,7 @@
             </li>
             <li>
               <i class="bi bi-piggy-bank"></i>
-              {{ post.price }} TRX ≈ {{ price }} USD
+              {{ post.price }} TRX ≈ ${{ price }}
             </li>
             <li
               class="text-danger cursor-pointer"
@@ -412,8 +411,8 @@ export default {
         "color: white",
         "background: #420d0a",
         "font-weight: bold",
-        "border-bottom: 5px solid #771414",
-        "padding: 2px 9px",
+        "border-bottom: 6px solid #771414",
+        "padding: 2px 9px -3px 9px",
       ].join(";");
 
       let scrollY = window.pageYOffset;

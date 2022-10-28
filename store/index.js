@@ -123,10 +123,6 @@ export const mutations = {
     state.user.writers = state.user.writers.filter((c) => c !== payload);
     removeLocalStorageProp("users", state.user.id, "writers", payload);
   },
-
-  // setClickedPost(state, payload) {
-  //   state.clickedPost = payload;
-  // },
 };
 
 function appendLocalStorage(key, data) {

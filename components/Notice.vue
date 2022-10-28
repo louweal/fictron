@@ -26,15 +26,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-// .notice {
-//   animation: hue-rotate 8s 0.2s linear infinite;
-// }
-
-// @keyframes hue-rotate {
-//   to {
-//     filter: hue-rotate(360deg);
-//   }
-// }
-</style>
