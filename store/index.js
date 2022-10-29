@@ -3,7 +3,7 @@ export const state = () => ({
   posts: [],
   categories: [],
   writers: [],
-  clickedPost: undefined,
+  // clickedPost: undefined,
   user: undefined,
 });
 
@@ -30,6 +30,15 @@ export const mutations = {
       ...payload,
     };
     state.posts.push(post);
+
+    localStorage.setItem(
+      "browserPosts",
+      JSON.stringify(state.posts.filter((p) => p.id >= 140))
+    );
+  },
+
+  removePost(state, payload) {
+    state.posts = state.posts.filter((p) => p.id !== payload);
 
     localStorage.setItem(
       "browserPosts",
@@ -78,7 +87,10 @@ export const mutations = {
 
   setUserName(state, payload) {
     state.user.name = payload;
-    state.user.slug = payload.toLowerCase().replaceAll(" ", "-");
+    state.user.slug = payload
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .replaceAll(" ", "-");
 
     // also update username in localstorage
     let users = JSON.parse(localStorage.getItem("users"));

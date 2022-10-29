@@ -4,7 +4,7 @@
   "description": "fictron: fictional stories reimagined on TRON",
   "main": "index.js",
   "scripts": {
-    "dev": "nuxt --port 8000",
+    "dev": "nuxt --port 8001",
     "build": "nuxt build",
     "start": "nuxt start --port 8001",
     "generate": "nuxt generate"

@@ -34,12 +34,12 @@
               {{ formatDate(post.date) }}
             </li>
             <li v-if="post.views">
-              <i class="bi bi-eye"></i> {{ post.views }}
+              <i class="bi bi-eye"></i> {{ post.views }} readers
             </li>
-            <li>
+            <!-- <li>
               <i class="bi bi-piggy-bank"></i>
               {{ post.price }} TRX ≈ ${{ price }}
-            </li>
+            </li> -->
             <li
               class="text-danger cursor-pointer"
               v-if="mine"
@@ -50,15 +50,24 @@
           </ul>
 
           <h1>
-            {{ post.title }} <small>#{{ post.id }}</small>
+            {{ post.title }}
+            <!-- <small>#{{ post.id }}</small> -->
           </h1>
 
-          <h2 class="fs-3">
+          <h2 class="fs-3 author">
             By
             <nuxt-link class="text-secondary" :to="'/w/' + author.slug">
               {{ author.name }}
             </nuxt-link>
+            <!-- <span class="fs-6"
+              ><br />TRON wallet address: {{ author.address }}</span
+            > -->
           </h2>
+
+          <p>
+            Price: <b>{{ post.price }}</b> <small>TRX</small> /
+            <b>{{ price }}</b> <small>USD</small>
+          </p>
         </div>
 
         <div class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2 mt-3">
@@ -106,13 +115,13 @@
           class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
           v-if="!$route.hash && !mine"
         >
-          <notice
+          <!-- <notice
             class="mb-5"
             id="warning-0"
             data-aos="0"
             :price="post.price"
             :usd="+price"
-          />
+          /> -->
         </div>
       </div>
 
@@ -133,10 +142,17 @@
               :key="i"
               :class="historicProgress < p.progress ? 'fade-in-up' : false"
               :data-aos="historicProgress < p.progress ? 70 : undefined"
-              xxxdata-progress="p.progress"
             >
               {{ p.content }}
             </p>
+
+            <small
+              class="fw-bold text-danger"
+              :key="'notice' + i"
+              v-if="+p.progress - 2 == progress && error"
+            >
+              [ERROR: {{ error }}]
+            </small>
 
             <div
               :key="'end' + i"
@@ -149,13 +165,7 @@
               v-if="+$route.hash.slice(2) === +p.progress && p.progress < 100"
               :id="'c' + p.progress"
               :key="'anchor' + i"
-            >
-              <notice
-                v-if="!mine"
-                :price="Math.ceil(post.price * ((100 - progress) / 100))"
-                :usd="+(+price * ((100 - progress) / 100)).toFixed(2)"
-              />
-            </div>
+            ></div>
           </template>
 
           <p class="text-secondary" v-if="!mine">
@@ -189,31 +199,38 @@
           />
         </div>
       </div>
-      <div class="progress position-fixed bottom-0 start-0 end-0" v-if="!mine">
+      <div class="progress position-fixed bottom-0 start-0 end-0">
         <div
-          class="bar bg-primary h-100 left-0 position-absolute fw-bold"
+          class="bar bg-primary h-100 start-0 position-absolute fw-bold"
           ref="bar"
         >
           <div class="label text-white align-end" v-if="progress > 4">
             {{ progress }} %&nbsp;
           </div>
         </div>
+
+        <div
+          v-if="payment"
+          class="payments position-absolute text-end end-0 fw-bold"
+        >
+          - {{ payment }} TRX
+        </div>
       </div>
     </div>
-
+    <!-- 
     <div
-      class="error text-white bg-primary w-100 p-2 pb-4 position-fixed bottom-0 start-0"
+      class="error text-primary w-100 pb-4 position-fixed bottom-0 start-0"
       style="z-index: 8"
       v-if="error"
     >
-      ERROR: {{ error }}
-    </div>
+      {{ error }}
+    </div> -->
   </main>
 </template>
 
 <script>
 import getUSD from "@/utils/getUSD.js";
-// import { payAuthor } from "@/utils/tronUtils";
+import { payWriter } from "@/utils/tronUtils";
 
 export default {
   transition: "post", // important for scroll position on page load!
@@ -235,6 +252,7 @@ export default {
       paid: 0,
       freeze: false, // freeze scroll whilst waiting for transaction
       error: undefined,
+      payment: undefined,
     };
   },
 
@@ -284,11 +302,10 @@ export default {
       }
     },
     "$store.state.user": function () {
-      console.log("user changed!!");
+      // console.log("user changed!!");
       if (this.$store.state.user == undefined) {
-        this.$router.push("/");
-      } else {
-        console.log("refresh");
+        // console.log("hero");
+        // this.$router.push("/");
       }
     },
   },
@@ -389,13 +406,14 @@ export default {
     },
 
     removePost() {
-      console.log("todo: call contract func removePost");
+      this.$store.commit("removePost", this.post.id);
+      this.$router.back();
     },
 
     formatDate(date) {
       return new Date(date * 1000).toLocaleDateString("us-EN", {
-        day: "numeric",
-        month: "long",
+        // day: "numeric",
+        month: "short",
         year: "numeric",
       });
     },
@@ -407,13 +425,13 @@ export default {
     },
 
     async aos() {
-      const style1 = [
-        "color: white",
-        "background: #420d0a",
+      const clgstyle = [
+        "color: #771414",
         "font-weight: bold",
-        "border-bottom: 6px solid #771414",
-        "padding: 2px 9px -3px 9px",
+        "font-size: 0.9rem",
+        "padding: 4px 15px",
       ].join(";");
+      const dot = String.fromCodePoint("0x1F534");
 
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
@@ -435,40 +453,45 @@ export default {
                 document.getElementById("page").classList.toggle("is-blurred");
                 break;
               }
-              this.progress = parseInt(target.dataset.progress);
-              this.updateBar();
 
               let toPay = +(
-                ((this.progress - this.paid) / 100) *
+                ((target.dataset.progress - this.paid) / 100) *
                 this.post.price
               );
 
               if (toPay > 0) {
-                try {
-                  this.error = undefined;
-                  this.freezeWindow();
+                if (!tronWeb.defaultAddress) {
+                  // issue with connecting to account
+                  this.$store.commit("toggleModal");
+                }
+                // try {
+                this.error = undefined;
+                this.freezeWindow();
 
-                  let result = await tronWeb.trx.sendTransaction(
-                    this.author.address,
-                    window.tronWeb.toSun(toPay)
+                let result = await payWriter(
+                  this.author.address,
+                  toPay,
+                  this.post.price
+                );
+
+                if (result.success === true) {
+                  this.progress = parseInt(target.dataset.progress);
+                  this.updateBar();
+                  this.payment = toPay;
+
+                  console.log(
+                    `%c ${dot} Succesfully transferred ${toPay} TRX to ${this.author.name} (${this.author.address})`,
+                    clgstyle
                   );
-                  this.unfreezeWindow();
-
-                  if (result && result.result === true) {
-                    console.log(
-                      `%c  Succesfully transferred ${toPay} TRX to ${this.author.name} (${this.author.address})`,
-                      style1
-                    );
-                  }
-
                   this.paid = this.progress;
                   target.classList.add("start-animation");
                   delete target.dataset.aos;
-                } catch (error) {
-                  this.unfreezeWindow();
-
-                  this.error = error;
+                } else {
+                  // console.log(result);
+                  this.error = result.error ? result.error : undefined;
                 }
+
+                this.unfreezeWindow();
               } else {
                 target.classList.add("start-animation");
                 delete target.dataset.aos;
@@ -498,6 +521,17 @@ h1 {
 
   &:hover small {
     opacity: 0.19;
+  }
+}
+
+h2.author {
+  span {
+    opacity: 0;
+    transition: opacity 0.24s ease-out;
+  }
+
+  &:hover span {
+    opacity: 1;
   }
 }
 
@@ -542,6 +576,30 @@ $fontsize: 12px;
       text-align: right;
     }
   }
+
+  .payments {
+    opacity: 0;
+    animation: short 3s 0.5s linear forwards;
+  }
+}
+
+@keyframes short {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.error {
+  font-size: $fontsize;
+  line-height: 1;
+  opacity: 0.9;
+  background-color: var(--bs-gray-400);
 }
 
 .accordion-button {

@@ -50,12 +50,12 @@
 
       <div class="ms-auto d-flex align-items-center gap-2 gap-md-4">
         <nuxt-link
-          :to="'/u/' + $store.state.user.id"
+          to="/account"
           event=""
           v-if="$store.state.user"
           @click.native="
             hideDropdown();
-            $router.push('/u/' + $store.state.user.id);
+            $router.push('/account');
           "
           class="cursor-pointer"
         >

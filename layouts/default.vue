@@ -14,7 +14,7 @@
 </template>
 
 <script>
-// import { setLibraryContract, requestAccounts } from "@/utils/tronUtils";
+// import { setLibraryContract } from "@/utils/tronUtils";
 
 import categories from "@/data/genres.json";
 import posts from "@/data/posts.json";

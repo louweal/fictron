@@ -77,7 +77,7 @@
                     v-for="(p, i) in [200, 250, 300, 350, 400, 450, 500]"
                     :key="i"
                   >
-                    {{ p }} TRX ≈ {{ (p * trxusd).toFixed(2) }} USD
+                    {{ p }} TRX / {{ (p * trxusd).toFixed(2) }} USD
                   </option>
                 </select>
               </div>
@@ -331,7 +331,10 @@ export default {
 
     setTitle(e) {
       Vue.set(this.post, "title", e);
-      let slug = e.toLowerCase().replaceAll(" ", "-");
+      let slug = e
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .replaceAll(" ", "-");
       Vue.set(this.post, "slug", slug);
     },
 

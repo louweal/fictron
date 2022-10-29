@@ -10,10 +10,9 @@
           <div v-if="feed.length === 0 && signedIn" class="text-center">
             <h1 class="fs-3">
               Welcome,
-              <nuxt-link
-                :to="'/u/' + $store.state.user.id"
-                class="text-secondary"
-                >{{ $store.state.user.name }}</nuxt-link
+              <nuxt-link to="/account" class="text-secondary">{{
+                $store.state.user.name
+              }}</nuxt-link
               >!
             </h1>
             <p>

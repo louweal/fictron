@@ -3,7 +3,7 @@ export default {
     let position = {};
     console.log("router.options");
     if (to.hash) {
-      console.log("to hash yes");
+      // console.log("to hash yes");
       position = {
         selector: to.hash,
         offset: { x: 0, y: 800 },

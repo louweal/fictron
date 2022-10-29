@@ -31,18 +31,29 @@
               </div>
             </div>
 
-            <div class="text-center" v-if="error">
+            <div class="text-center mt-2" v-if="error">
               <p class="text-danger">
-                Unable to detect your TronLink wallet. Install the
+                Unable to connect your TronLink wallet. Install the
                 <a
                   href="https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec"
                   target="_blank"
                   >TronLink
                   <i class="bi bi-box-arrow-up-right"></i>
                 </a>
-                browser extension from the Chrome Web Store and sign in.
+                browser extension from the Chrome Web Store, sign in to your
+                TRON wallet, click the button above again and accept the
+                connection request.
               </p>
             </div>
+            <!-- <div class="text-center" v-if="error === 403 || $store.state.user">
+              <p class="text-danger">
+                Couldn't get permission to access to your wallet. <br />Please
+                <a :href="'https://fictron.codesparks.nl' + $route.path"
+                  >refresh</a
+                >
+                the website and try again.
+              </p>
+            </div> -->
           </div>
         </slot>
       </div>
@@ -52,6 +63,7 @@
 
 <script>
 import { getTronWebAddress } from "~/utils/tronUtils.js";
+import { setLibraryContract } from "@/utils/tronUtils";
 
 export default {
   data() {
@@ -100,10 +112,13 @@ export default {
 
     async signIn() {
       let tronAddress = await getTronWebAddress();
+
       if (!tronAddress) {
         this.error = true;
         return;
       }
+
+      setLibraryContract();
 
       let users = JSON.parse(localStorage.getItem("users"));
       let user = users
@@ -125,17 +140,12 @@ export default {
     },
 
     closeModal() {
-      let goto = this.$store.state.clickedPost
-        ? this.$store.state.clickedPost
-        : this.$route.path;
-
-      if (this.$route.path === goto) {
-        // stay on same page
-        window.scrollTo({ top: 0, behavior: "smooth" });
+      if (this.$route.path.startsWith("/a/")) {
+        // console.log("article page");
         this.toggleModal();
       } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
         this.toggleModal();
-        this.$router.push(goto);
       }
     },
   },
