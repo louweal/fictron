@@ -14,8 +14,6 @@
 </template>
 
 <script>
-// import { setLibraryContract } from "@/utils/tronUtils";
-
 import categories from "@/data/genres.json";
 import posts from "@/data/posts.json";
 import writers from "@/data/writers.json";
@@ -37,8 +35,6 @@ export default {
       "SET_POSTS",
       this.combinedData(this.$options.posts, "browserPosts")
     );
-
-    // await setLibraryContract();
   },
 
   async mounted() {
@@ -55,8 +51,8 @@ export default {
       }
       document.body.classList.toggle("disable-scroll");
 
-      if (!show && !this.$store.state.user) {
-        //after closing modal without sigin
+      if (this.$route.path.startsWith("/a/")) {
+        // stay at same scroll position on post detail pages
         window.scrollTo(0, this.posY);
       }
     },

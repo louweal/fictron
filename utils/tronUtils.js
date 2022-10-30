@@ -1,5 +1,5 @@
-let libraryContractAddress = "TC5Vy6nYvxr537deGrPPPRWqwe9vjZzbTE"; // Library: "THwEfPabQn3MtsuR7FT4c4XroyH7NeS4Y5";
-let libraryContract = null;
+let contractAddress = "TTjv9ogoQFUbBzVjpwFzZcWcpnaue74kM3"; // Library: "THwEfPabQn3MtsuR7FT4c4XroyH7NeS4Y5";
+let contract = null;
 
 const clgstyle = [
   "color: #771414",
@@ -8,10 +8,6 @@ const clgstyle = [
   "padding: 4px 15px",
 ].join(";");
 const dot = String.fromCodePoint("0x1F534");
-
-export function requestAccounts() {
-  tronLink.request({ method: "tron_requestAccounts" }); //???
-}
 
 export async function getTronWebAddress() {
   let tw = await window.tronWeb;
@@ -42,66 +38,76 @@ export async function getTronWebAddress() {
   return tw.defaultAddress;
 }
 
-export async function setLibraryContract() {
-  libraryContract = await window.tronWeb.contract().at(libraryContractAddress);
-  // let result = await libraryContract
-  //   .setReader()
-  //   .send()
-  //   .then((response) => console.log(response))
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // console.log("result: ", result);
+export async function setContract() {
+  contract = await window.tronWeb.contract().at(contractAddress);
 }
 
-export async function addFakeBook(author, price) {
-  console.log("addFakeBook");
-  let sunPrice = window.tronWeb.toSun(price);
-  await libraryContract.addFakeBook(author, sunPrice).send({
-    feeLimit: 100_000_000,
-    callValue: 0,
-    shouldPollResponse: true, // ?
-  });
-}
-
-export async function payAuthor(bookId, value) {
-  console.log("payAuthor");
-  let sunValue = window.tronWeb.toSun(value);
-
-  try {
-    const result = await libraryContract.payAuthor(bookId).send({
-      feeLimit: 100_000_000,
-      callValue: sunValue, //tronWeb.toSun(value),
-      shouldPollResponse: true,
-    });
-
-    console.log(`response: ${parseInt(result, 16)} %`);
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
+export async function payWriter(address, bookId, value) {
+  // let message = undefined;
+  // let success = false;
+  if (contract === null) {
+    // try to get the contract again
+    contract = await window.tronWeb.contract().at(contractAddress);
   }
-}
 
-export async function payWriter(address, value, price) {
-  let error = undefined;
-  if (libraryContract === null) {
-    error = "Contract 404";
-    return { success: false, error };
-  }
-  await libraryContract
+  let result = await contract
     .payWriter(address)
     .send({
       feeLimit: 100_000_000,
       callValue: window.tronWeb.toSun(value),
       shouldPollResponse: false,
     })
-    .then((response) => {
+    .then(() => {
       // console.log(response);
+      let message = `Succesfully transferred ${value} TRX`;
+      return { success: true, message };
     })
-    .catch(async (err) => {
-      // console.log(err);
-      error = err.error ? "Account balance might be insufficient" : err;
+    .catch((err) => {
+      let message;
+
+      // rewrite some common error messages to more comprehensive messages
+      if (
+        err.message ===
+        "Contract validate error : Validate InternalTransfer error, balance is not sufficient."
+      ) {
+        message = "Account balance is not sufficient.";
+      } else if (
+        err.message === "Contract validate error : account does not exist"
+      ) {
+        message = "Account balance is 0 or account doesn't exist.";
+      } else {
+        message = err.message || err;
+      }
+      return { success: false, message };
     });
-  return error ? { success: false, error: error } : { success: true };
+  return { success: result.success, message: result.message };
 }
+
+// export async function addFakeBook(author, price) {
+//   console.log("addFakeBook");
+//   let sunPrice = window.tronWeb.toSun(price);
+//   await libraryContract.addFakeBook(author, sunPrice).send({
+//     feeLimit: 100_000_000,
+//     callValue: 0,
+//     shouldPollResponse: true, // ?
+//   });
+// }
+
+// export async function payAuthor(bookId, value) {
+//   console.log("payAuthor");
+//   let sunValue = window.tronWeb.toSun(value);
+
+//   try {
+//     const result = await libraryContract.payAuthor(bookId).send({
+//       feeLimit: 100_000_000,
+//       callValue: sunValue, //tronWeb.toSun(value),
+//       shouldPollResponse: true,
+//     });
+
+//     console.log(`response: ${parseInt(result, 16)} %`);
+//     return true;
+//   } catch (message) {
+//     console.log(message);
+//     return false;
+//   }
+// }

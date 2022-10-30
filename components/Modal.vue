@@ -63,7 +63,7 @@
 
 <script>
 import { getTronWebAddress } from "~/utils/tronUtils.js";
-import { setLibraryContract } from "@/utils/tronUtils";
+import { setContract } from "@/utils/tronUtils";
 
 export default {
   data() {
@@ -107,19 +107,17 @@ export default {
         this.setUser(id, address, name, slug);
         this.$store.commit("addWriter", { id, address, name, slug });
       }
-      this.closeModal();
+      this.toggleModal();
     },
 
     async signIn() {
       let tronAddress = await getTronWebAddress();
-
       if (!tronAddress) {
         this.error = true;
         return;
       }
 
-      setLibraryContract();
-
+      setContract();
       let users = JSON.parse(localStorage.getItem("users"));
       let user = users
         ? users.find((u) => u.address === tronAddress.base58)
@@ -136,17 +134,7 @@ export default {
         this.setUser(id, address, name, slug);
         this.$store.commit("addWriter", { id, address, name, slug });
       }
-      this.closeModal();
-    },
-
-    closeModal() {
-      if (this.$route.path.startsWith("/a/")) {
-        // console.log("article page");
-        this.toggleModal();
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        this.toggleModal();
-      }
+      this.toggleModal();
     },
   },
 };

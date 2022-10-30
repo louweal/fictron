@@ -148,10 +148,18 @@
 
             <small
               class="fw-bold text-danger"
-              :key="'notice' + i"
+              :key="'error' + i"
               v-if="+p.progress - 2 == progress && error"
             >
               [ERROR: {{ error }}]
+            </small>
+
+            <small
+              class="fw-bold text-warning"
+              :key="'message' + i"
+              v-if="+p.progress == progress && message"
+            >
+              [{{ message }} to {{ author.name }}]
             </small>
 
             <div
@@ -208,23 +216,8 @@
             {{ progress }} %&nbsp;
           </div>
         </div>
-
-        <div
-          v-if="payment"
-          class="payments position-absolute text-end end-0 fw-bold"
-        >
-          - {{ payment }} TRX
-        </div>
       </div>
     </div>
-    <!-- 
-    <div
-      class="error text-primary w-100 pb-4 position-fixed bottom-0 start-0"
-      style="z-index: 8"
-      v-if="error"
-    >
-      {{ error }}
-    </div> -->
   </main>
 </template>
 
@@ -251,8 +244,9 @@ export default {
       numChapters: 0,
       paid: 0,
       freeze: false, // freeze scroll whilst waiting for transaction
-      error: undefined,
-      payment: undefined,
+      error: undefined, // error message after unsuccesful payment
+      message: undefined, // message after succesfull payment
+      // payment: undefined,
     };
   },
 
@@ -448,10 +442,10 @@ export default {
           if (!target.classList.contains("start-animation")) {
             if (target.dataset.progress && !this.mine) {
               // trigger paywall
-              if (!this.$store.state.user) {
+              if (!tronWeb.defaultAddress || !this.$store.state.user) {
                 this.$store.commit("toggleModal");
                 document.getElementById("page").classList.toggle("is-blurred");
-                break;
+                return; //break;
               }
 
               let toPay = +(
@@ -460,21 +454,18 @@ export default {
               );
 
               if (toPay > 0) {
-                if (!tronWeb.defaultAddress) {
-                  // issue with connecting to account
-                  this.$store.commit("toggleModal");
-                }
-                // try {
                 this.error = undefined;
+                this.message = undefined;
                 this.freezeWindow();
 
                 let result = await payWriter(
                   this.author.address,
-                  toPay,
-                  this.post.price
+                  this.post.id,
+                  toPay
                 );
 
                 if (result.success === true) {
+                  this.message = result.message || undefined;
                   this.progress = parseInt(target.dataset.progress);
                   this.updateBar();
                   this.payment = toPay;
@@ -487,8 +478,7 @@ export default {
                   target.classList.add("start-animation");
                   delete target.dataset.aos;
                 } else {
-                  // console.log(result);
-                  this.error = result.error ? result.error : undefined;
+                  this.error = result.message || undefined;
                 }
 
                 this.unfreezeWindow();
@@ -575,11 +565,6 @@ $fontsize: 12px;
       height: 100%;
       text-align: right;
     }
-  }
-
-  .payments {
-    opacity: 0;
-    animation: short 3s 0.5s linear forwards;
   }
 }
 
