@@ -118,7 +118,6 @@
             <div class="btn btn-secondary" @click="loadMore()">Load more</div>
           </div>
         </div>
-
         <div
           class="col-md-3 d-none d-md-block"
           v-if="feed.slice(11).length > 6"
@@ -128,6 +127,31 @@
             :posts="
               [...posts].sort((a, b) => (a.date > b.date ? -1 : 1)).slice(0, 10)
             "
+          />
+        </div>
+      </div>
+
+      <h2 class="fs-5 mt-3 mt-4">
+        <nuxt-link to="/search?price=free">
+          Free books
+          <i class="bi bi-arrow-right"></i>
+        </nuxt-link>
+      </h2>
+
+      <div class="row gy-0 gx-3 pt-md-1">
+        <div
+          class="col-12 col-md"
+          v-for="(post, i) in [...posts]
+            .filter((a) => a.price === 0)
+            .sort((a, b) => (a.date > b.date ? -1 : 1))
+            .slice(0, 5)"
+          :key="i"
+        >
+          <card
+            :post="post"
+            :showIntro="false"
+            :borderTop="i !== 0"
+            :blurb="false"
           />
         </div>
       </div>
