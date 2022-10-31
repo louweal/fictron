@@ -50,26 +50,20 @@ export const mutations = {
   setProgress(state, payload) {
     if (state.user) {
       if (state.user.history.map((i) => i.id).includes(payload.id)) {
-        //update
-        state.user.history.forEach(
-          (i) =>
-            (i.progress = i.id === payload.id ? payload.progress : i.progress)
-        );
-
-        updateLocalStorageHistory("users", state.user.id, payload);
+        state.user.history.forEach((i) => {
+          i.progress = i.id === payload.id ? payload.progress : i.progress;
+        });
       } else {
-        // add history item
         state.user.history.push(payload);
-
-        addLocalStorageProp("users", state.user.id, "history", payload);
       }
+      updateLocalStorageUser(state.user);
     }
   },
 
   setUser(state, payload) {
     state.user = payload;
     if (payload) {
-      appendLocalStorage("users", state.user);
+      updateLocalStorageUser(state.user);
     }
   },
 
@@ -118,68 +112,30 @@ export const mutations = {
 
   addUserCategory(state, payload) {
     state.user.categories.push(payload);
-    addLocalStorageProp("users", state.user.id, "categories", payload);
+    updateLocalStorageUser(state.user);
   },
 
   removeUserCategory(state, payload) {
     state.user.categories = state.user.categories.filter((c) => c !== payload);
-    removeLocalStorageProp("users", state.user.id, "categories", payload);
+    updateLocalStorageUser(state.user);
   },
 
   addUserWriter(state, payload) {
     state.user.writers.push(payload);
-    addLocalStorageProp("users", state.user.id, "writers", payload);
+    updateLocalStorageUser(state.user);
   },
 
   removeUserWriter(state, payload) {
     state.user.writers = state.user.writers.filter((c) => c !== payload);
-    removeLocalStorageProp("users", state.user.id, "writers", payload);
+    updateLocalStorageUser(state.user);
   },
 };
 
-function appendLocalStorage(key, data) {
-  if (localStorage.getItem(key)) {
-    let obj = JSON.parse(localStorage.getItem(key));
-    if (!obj.find((o) => o.id === data.id)) {
-      obj.push(data);
-      localStorage.setItem(key, JSON.stringify(obj));
-    }
-  } else {
-    localStorage.setItem(key, JSON.stringify([data]));
-  }
-}
-
-function addLocalStorageProp(key, id, propName, item) {
-  let data = JSON.parse(localStorage.getItem(key));
-  let prop = data.find((d) => d.id == id)[propName];
-  prop.push(item);
-
-  data.forEach((w) => {
-    w[propName] = w.id === id ? prop : w[propName];
-  });
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
-// todo:  for history/progress
-function updateLocalStorageHistory(key, id, updatedObj) {
-  let data = JSON.parse(localStorage.getItem(key));
-  let newHistory = data.find((d) => d.id == id).history;
-  newHistory.forEach(
-    (o) =>
-      (o.progress = o.id == updatedObj.id ? updatedObj.progress : o.progress)
+function updateLocalStorageUser(user) {
+  // or append
+  let users = JSON.parse(localStorage.getItem("users")).filter(
+    (u) => u.id !== user.id
   );
-
-  data.forEach((w) => {
-    w.history = w.id === id ? newHistory : w.history;
-  });
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
-function removeLocalStorageProp(key, id, propName, item) {
-  let data = JSON.parse(localStorage.getItem(key));
-  data.forEach((w) => {
-    w[propName] =
-      w.id === id ? w[propName].filter((i) => i !== item) : w[propName];
-  });
-  localStorage.setItem(key, JSON.stringify(data));
+  users.push(user);
+  localStorage.setItem("users", JSON.stringify(users));
 }

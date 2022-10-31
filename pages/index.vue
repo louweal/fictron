@@ -107,7 +107,7 @@
         </div>
       </div>
 
-      <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5">
+      <div class="row gx-3 gx-lg-5 mt-sm-3 mt-lg-5" v-if="feed.length >= 11">
         <div class="col-12 col-md-9">
           <post-grid
             :posts="feed.slice(11, feedMax)"
@@ -131,30 +131,25 @@
         </div>
       </div>
 
-      <h2 class="fs-5 mt-3 mt-4">
-        <nuxt-link to="/search?price=free">
-          Free books
-          <i class="bi bi-arrow-right"></i>
-        </nuxt-link>
-      </h2>
+      <template v-if="freePosts.length > 0">
+        <h2 class="fs-5 mt-3 mt-4">
+          <nuxt-link to="/search?price=free">
+            Free books
+            <i class="bi bi-arrow-right"></i>
+          </nuxt-link>
+        </h2>
 
-      <div class="row gy-0 gx-3 pt-md-1">
-        <div
-          class="col-12 col-md"
-          v-for="(post, i) in [...posts]
-            .filter((a) => a.price === 0)
-            .sort((a, b) => (a.date > b.date ? -1 : 1))
-            .slice(0, 5)"
-          :key="i"
-        >
-          <card
-            :post="post"
-            :showIntro="false"
-            :borderTop="i !== 0"
-            :blurb="false"
-          />
+        <div class="row gy-0 gx-3 pt-md-1 mb-lg-5">
+          <div class="col-12 col-md" v-for="(post, i) in freePosts" :key="i">
+            <card
+              :post="post"
+              :showIntro="false"
+              :borderTop="i !== 0"
+              :blurb="false"
+            />
+          </div>
         </div>
-      </div>
+      </template>
     </div>
   </main>
 </template>
@@ -170,6 +165,13 @@ export default {
   computed: {
     posts() {
       return this.$store.state.posts; // all posts
+    },
+
+    freePosts() {
+      return [...this.posts]
+        .filter((a) => a.price === 0)
+        .sort((a, b) => (a.date > b.date ? -1 : 1))
+        .slice(0, 5);
     },
 
     categories() {

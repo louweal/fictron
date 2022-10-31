@@ -31,13 +31,14 @@ export async function getTronWebAddress() {
 
 export async function setContract() {
   let host = window.tronWeb.fullNode.host;
+  console.log(host);
   if (host === "https://api.shasta.trongrid.io") {
     contractAddress = contractAddressShasta;
-  } else if (host === "https://nile.trongrid.io/") {
+  } else if (host === "https://api.nileex.io") {
     contractAddress = contractAddressNile;
   } else {
     console.log("Please use Nile or Shasta testnet");
-    return;
+    return false;
   }
 
   contract = await window.tronWeb
@@ -46,6 +47,7 @@ export async function setContract() {
     .catch((err) => {
       console.log(err);
     });
+  return true;
 }
 
 export async function payWriter(address, bookId, value) {

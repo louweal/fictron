@@ -58,7 +58,7 @@ export function fakeBooks(n) {
 
     let author = Math.floor(Math.random() * 42); // the data/writers.json contains 42 writers, with ids 0-41
     title = title.charAt(0) + title.slice(1).toLowerCase();
-    let content = makeParagraphs(40 + Math.ceil(Math.random() * 25));
+    let content = makeParagraphs(40 + Math.ceil(Math.random() * 10)); // max 50 paragraphs
     let catId = author % numCategories;
     let category = categorySlugs[catId];
 

@@ -205,11 +205,11 @@
       </div>
       <div class="progress position-fixed bottom-0 start-0 end-0">
         <div
-          class="bar bg-primary h-100 start-0 position-absolute fw-bold"
+          class="bar bg-primary h-100 start-0 position-absolute xxxfw-bold"
           ref="bar"
         >
-          <div class="label text-white align-end" v-if="progress > 4">
-            {{ progress }} %&nbsp;
+          <div class="label text-white align-end" xxxv-if="progress > 4">
+            {{ progress }}<small>%</small>&nbsp;
           </div>
         </div>
       </div>
@@ -242,7 +242,6 @@ export default {
       freeze: false, // freeze scroll whilst waiting for transaction
       error: undefined, // error message after unsuccesful payment
       message: undefined, // message after succesfull payment
-      par: 0, // id of the current paragraph
       // payment: undefined,
     };
   },
@@ -538,7 +537,7 @@ h2.author {
   background-size: 115%;
 }
 
-$fontsize: 12px;
+$fontsize: 14px;
 .progress {
   height: 1.9vh;
   background-color: var(--bs-gray-400);
@@ -549,18 +548,19 @@ $fontsize: 12px;
     width: 0;
     transition: width 0.8s ease-out;
     will-change: width;
+    overflow: hidden;
 
     .label {
-      padding-top: 2px;
       position: absolute;
       font-size: $fontsize;
       line-height: 1;
       width: 100%;
       left: 0;
       right: 0;
-      top: 0;
+      top: calc(50% - 7px);
       height: 100%;
       text-align: right;
+      word-wrap: none;
     }
   }
 }

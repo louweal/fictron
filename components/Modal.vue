@@ -26,9 +26,22 @@
               TRON wallet and let your imagination become reality.
             </p>
             <div class="d-grid gap-2 mb-1">
-              <div class="btn btn-secondary cursor-pointer" @click="signIn">
+              <div
+                class="btn btn-secondary cursor-pointer d-none d-md-block"
+                @click="signIn"
+              >
                 TronLink
               </div>
+              <div
+                class="btn btn-secondary cursor-pointer d-md-none opacity-50"
+              >
+                TronLink
+              </div>
+            </div>
+            <div class="text-center mt-2 d-md-none">
+              <p class="text-danger">
+                TronLink is currently not available for mobile browsers
+              </p>
             </div>
 
             <div class="text-center mt-2" v-if="error">
@@ -40,20 +53,11 @@
                   >TronLink
                   <i class="bi bi-box-arrow-up-right"></i>
                 </a>
-                browser extension from the Chrome Web Store, sign in to your
-                TRON wallet, click the button above again and accept the
-                connection request.
+                browser extension, sign in to your TRON wallet and select the
+                Nile or Shasta testnet. Then click the button above again and
+                accept the connection request.
               </p>
             </div>
-            <!-- <div class="text-center" v-if="error === 403 || $store.state.user">
-              <p class="text-danger">
-                Couldn't get permission to access to your wallet. <br />Please
-                <a :href="'https://fictron.codesparks.nl' + $route.path"
-                  >refresh</a
-                >
-                the website and try again.
-              </p>
-            </div> -->
           </div>
         </slot>
       </div>
@@ -117,7 +121,12 @@ export default {
         return;
       }
 
-      setContract();
+      let success = await setContract();
+      if (!success) {
+        this.error = true;
+        return;
+      }
+
       let users = JSON.parse(localStorage.getItem("users"));
       let user = users
         ? users.find((u) => u.address === tronAddress.base58)

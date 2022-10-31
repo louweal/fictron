@@ -86,10 +86,6 @@ export default {
             .name.toLowerCase())
       );
 
-      if (this.$route.query.price === "free") {
-        posts = posts.filter((p) => p.price === 0);
-      }
-
       if (this.q.length <= 2) {
         return posts; // all posts
       } else {
@@ -126,5 +122,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

@@ -278,12 +278,12 @@ span.color-secondary {
 }
 
 @media print {
-  $body-bg: #fff;
+  body {
+    background-color: #fff;
+  }
   .header,
   .pre-loader,
-  .footer {
-    display: none !important;
-  }
+  .footer,
   .no-select {
     display: none !important;
   }

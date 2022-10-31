@@ -20,7 +20,7 @@
 
 export default {
   async created() {
-    // let bookset = fakeBooks(140);
+    // let bookset = fakeBooks(142);
     // console.log(bookset);
   },
 };
