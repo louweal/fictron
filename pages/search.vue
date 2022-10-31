@@ -22,7 +22,15 @@
           {{ posts.length }} books found
         </div>
 
-        <div class="col-12 col-md-3 order-md-3">
+        <div class="col-12 col-md-9">
+          <post-grid :posts="posts.slice(0, gridMax)" />
+
+          <div class="text-center my-4" v-if="posts.length > gridMax">
+            <div class="btn btn-secondary" @click="gridMax += 9">Load more</div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3 d-none d-md-block">
           <div
             class="border bg-white shadow-sm rounded py-3 px-3"
             v-if="writers.length > 0"
@@ -46,14 +54,6 @@
                 >
               </nuxt-link>
             </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-9 order-md-2">
-          <post-grid :posts="posts.slice(0, gridMax)" />
-
-          <div class="text-center my-4" v-if="posts.length > gridMax">
-            <div class="btn btn-secondary" @click="gridMax += 9">Load more</div>
           </div>
         </div>
       </div>
