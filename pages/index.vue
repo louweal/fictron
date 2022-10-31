@@ -115,11 +115,7 @@
           />
 
           <div class="text-center mt-4" v-if="feed.length > feedMax">
-            <div
-              class="btn btn-secondary"
-              @mouseover="feedMax += 9"
-              @click="feedMax += 9"
-            >
+            <div class="btn btn-secondary" @mouseover="feedMax += 9">
               Load more
             </div>
           </div>
