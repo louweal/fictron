@@ -23,16 +23,14 @@
       </div>
 
       <div class="col-md-3 d-none d-md-block" v-if="categoryPosts.length > 0">
-        <sticky>
-          <sidebar
-            title="Recently published"
-            :posts="
-              [...categoryPosts]
-                .sort((a, b) => (a.date > b.date ? -1 : 1))
-                .slice(0, 7)
-            "
-          />
-        </sticky>
+        <sidebar
+          title="Recently published"
+          :posts="
+            [...categoryPosts]
+              .sort((a, b) => (a.date > b.date ? -1 : 1))
+              .slice(0, 9)
+          "
+        />
       </div>
     </div>
   </div>

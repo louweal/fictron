@@ -116,13 +116,16 @@ export default {
   },
   watch: {
     "$store.state.user": function () {
-      if (this.$store.state.user == undefined) {
+      console.log("user changed");
+      if (this.$store.state.user === undefined) {
         this.$router.push("/");
       }
     },
   },
 
-  async fetch() {
+  async fetch() {},
+
+  async mounted() {
     await this.validateAccess();
   },
 

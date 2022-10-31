@@ -230,13 +230,15 @@ export default {
   },
 
   async created() {
+    if (!this.$store.state.user) return;
+
     Vue.set(this.post, "author", this.$store.state.user.id);
     Vue.set(this.post, "type", "book"); // story stories
     this.trxusd = await getUSD();
   },
 
   async fetch() {
-    await this.validatePage();
+    await this.validateAccess();
   },
 
   computed: {
@@ -309,7 +311,7 @@ export default {
   },
 
   methods: {
-    validatePage() {
+    validateAccess() {
       if (this.$store.state.user == undefined) {
         return this.$nuxt.error({
           statusCode: 403,

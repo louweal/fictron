@@ -1,20 +1,20 @@
 <template>
   <main>
-    <div class="container-xl">
+    <div class="container-xl mt-1 mt-md-3">
       <div class="row g-3 g-lg-5">
         <div class="col-12 col-md-9">
           <div class="form-inline d-flex">
             <input
-              class="form-control me-2"
+              class="form-control me-2 bg-white"
               type="search"
-              placeholder="Find authors and books"
+              placeholder="Search ..."
               aria-label="Search"
               event=""
               :value="query"
               @input="(e) => (query = e.target.value)"
             />
 
-            <div class="btn btn-secondary">Search</div>
+            <div class="btn btn-primary">Search</div>
           </div>
         </div>
 
@@ -26,7 +26,13 @@
           <post-grid :posts="posts.slice(0, gridMax)" />
 
           <div class="text-center my-4" v-if="posts.length > gridMax">
-            <div class="btn btn-secondary" @click="gridMax += 9">Load more</div>
+            <div
+              class="btn btn-secondary"
+              @click="gridMax += 9"
+              @mouseover="gridMax += 9"
+            >
+              Load more
+            </div>
           </div>
         </div>
 

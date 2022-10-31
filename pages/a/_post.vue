@@ -51,7 +51,6 @@
 
           <h1>
             {{ post.title }}
-            <!-- <small>#{{ post.id }}</small> -->
           </h1>
 
           <h2 class="fs-3 author">
@@ -59,12 +58,9 @@
             <nuxt-link class="text-secondary" :to="'/w/' + author.slug">
               {{ author.name }}
             </nuxt-link>
-            <!-- <span class="fs-6"
-              ><br />TRON wallet address: {{ author.address }}</span
-            > -->
           </h2>
 
-          <p>
+          <p v-if="post.price > 0">
             Price: <b>{{ post.price }}</b> <small>TRX</small> /
             <b>{{ price }}</b> <small>USD</small>
           </p>
@@ -152,7 +148,7 @@
               :key="'error' + i"
               v-if="+p.progress - 2 == progress && error"
             >
-              [ERROR: {{ error }}]
+              [{{ error }}]
             </small>
 
             <small
@@ -292,13 +288,6 @@ export default {
         this.$store.commit("updateViews", this.post.id);
       }
     },
-    "$store.state.user": function () {
-      // console.log("user changed!!");
-      if (this.$store.state.user == undefined) {
-        // console.log("hero");
-        // this.$router.push("/");
-      }
-    },
   },
 
   computed: {
@@ -418,7 +407,6 @@ export default {
     async aos() {
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
-
       if (direction === "up") return;
 
       this.scrollY = window.scrollY; // for freeze method
@@ -445,7 +433,9 @@ export default {
 
               if (toPay > 0) {
                 this.error = undefined;
-                this.message = "Awaiting transaction ...";
+                this.message = undefined;
+
+                // this.message = "Awaiting transaction ...";
                 this.freezeWindow();
 
                 let result = await payWriter(
@@ -453,7 +443,6 @@ export default {
                   this.post.id,
                   toPay
                 );
-                this.message = undefined;
 
                 if (result.success === true) {
                   this.message =

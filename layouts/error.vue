@@ -20,5 +20,12 @@ export default {
       default: () => {},
     },
   },
+  watch: {
+    "$store.state.user": function () {
+      if (this.$store.state.user && this.error.statusCode === 403) {
+        this.$router.push({ path: this.$route.path, hash: "#auth" });
+      }
+    },
+  },
 };
 </script>

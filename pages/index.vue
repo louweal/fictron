@@ -115,7 +115,13 @@
           />
 
           <div class="text-center mt-4" v-if="feed.length > feedMax">
-            <div class="btn btn-secondary" @click="loadMore()">Load more</div>
+            <div
+              class="btn btn-secondary"
+              @mouseover="feedMax += 9"
+              @click="feedMax += 9"
+            >
+              Load more
+            </div>
           </div>
         </div>
         <div
@@ -139,7 +145,7 @@
           </nuxt-link>
         </h2>
 
-        <div class="row gy-0 gx-3 pt-md-1 mb-lg-5">
+        <div class="row gy-0 gx-3 pt-md-1 mb-lg-4">
           <div class="col-12 col-md" v-for="(post, i) in freePosts" :key="i">
             <card
               :post="post"
