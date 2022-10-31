@@ -32,7 +32,7 @@ function makeParagraphs(n) {
       s += title;
     }
 
-    let content = getWords(250 + Math.floor(Math.random() * 100)) + "\n";
+    let content = getWords(400 + Math.floor(Math.random() * 200)) + "\n";
     s += content;
   }
 
@@ -76,7 +76,10 @@ export function fakeBooks(n) {
         ).getTime() / 1000, // 1-1-2020 + 3 years -- the date timestamp is in SECONDS for solidity
       author: author,
       views: Math.ceil(Math.random() * 500),
-      price: (3 + Math.ceil(Math.random() * 7)) * 50, // price in TRX
+      price:
+        Math.ceil(Math.random() * 12) === 12
+          ? 0
+          : (3 + Math.ceil(Math.random() * 7)) * 50, // price in TRX
     });
 
     imagesUsed[catId] = (imagesUsed[catId] + 1) % imagesPerCategory[catId];

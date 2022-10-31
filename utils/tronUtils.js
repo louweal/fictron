@@ -1,13 +1,7 @@
-let contractAddress = "TTjv9ogoQFUbBzVjpwFzZcWcpnaue74kM3"; // Library: "THwEfPabQn3MtsuR7FT4c4XroyH7NeS4Y5";
-let contract = null;
-
-const clgstyle = [
-  "color: #771414",
-  "font-weight: bold",
-  "font-size: 0.9rem",
-  "padding: 4px 15px",
-].join(";");
-const dot = String.fromCodePoint("0x1F534");
+let contractAddressNile = "TJ1mmGhJJu1R4XpPnnCpeiaa9isz5AUvBW";
+let contractAddressShasta = "TTq1A5gRfF81dtXJnLYU6cNGThBY5TLML8";
+let contractAddress = undefined;
+let contract = undefined;
 
 export async function getTronWebAddress() {
   let tw = await window.tronWeb;
@@ -25,29 +19,39 @@ export async function getTronWebAddress() {
     requestAccountsResponse.code === 4001 ||
     requestAccountsResponse.code === 4000
   ) {
-    console.log(`%c ${dot} ${requestAccountsResponse.message}`, clgstyle);
+    console.log(requestAccountsResponse.message);
 
     return undefined;
   }
 
-  console.log(
-    `%c ${dot} TronWeb successfully connected to your wallet`,
-    clgstyle
-  );
+  console.log(`TronWeb successfully connected to your wallet`);
 
   return tw.defaultAddress;
 }
 
 export async function setContract() {
-  contract = await window.tronWeb.contract().at(contractAddress);
+  let host = window.tronWeb.fullNode.host;
+  if (host === "https://api.shasta.trongrid.io") {
+    contractAddress = contractAddressShasta;
+  } else if (host === "https://nile.trongrid.io/") {
+    contractAddress = contractAddressNile;
+  } else {
+    console.log("Please use Nile or Shasta testnet");
+    return;
+  }
+
+  contract = await window.tronWeb
+    .contract()
+    .at(contractAddress)
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 export async function payWriter(address, bookId, value) {
-  // let message = undefined;
-  // let success = false;
   if (contract === null) {
     // try to get the contract again
-    contract = await window.tronWeb.contract().at(contractAddress);
+    setContract();
   }
 
   let result = await contract

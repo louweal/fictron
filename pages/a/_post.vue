@@ -140,6 +140,7 @@
 
             <p
               :key="i"
+              :id="i"
               :class="historicProgress < p.progress ? 'fade-in-up' : false"
               :data-aos="historicProgress < p.progress ? 70 : undefined"
             >
@@ -159,24 +160,19 @@
               :key="'message' + i"
               v-if="+p.progress == progress && message"
             >
-              [{{ message }} to {{ author.name }}]
+              [{{ message }}]
             </small>
 
             <div
-              :key="'end' + i"
+              :key="'payment' + i"
               :data-aos="historicProgress < p.progress ? 70 : undefined"
               :data-progress="p.progress"
             ></div>
 
-            <div
-              class="w-100"
-              v-if="+$route.hash.slice(2) === +p.progress && p.progress < 100"
-              :id="'c' + p.progress"
-              :key="'anchor' + i"
-            ></div>
+            <div :id="'c' + p.progress" :key="'anchor' + i"></div>
           </template>
 
-          <p class="text-secondary" v-if="!mine">
+          <p class="text-secondary" v-if="!mine && post.price > 0">
             Thank you for supporting
             <b>
               <nuxt-link :to="'/w/' + author.slug" class="text-secondary">
@@ -246,6 +242,7 @@ export default {
       freeze: false, // freeze scroll whilst waiting for transaction
       error: undefined, // error message after unsuccesful payment
       message: undefined, // message after succesfull payment
+      par: 0, // id of the current paragraph
       // payment: undefined,
     };
   },
@@ -274,6 +271,7 @@ export default {
       this.historicProgress = history.progress;
       this.progress = history.progress;
       this.paid = history.progress;
+      this.par = history.par;
       this.updateBar();
     }
   },
@@ -419,14 +417,6 @@ export default {
     },
 
     async aos() {
-      const clgstyle = [
-        "color: #771414",
-        "font-weight: bold",
-        "font-size: 0.9rem",
-        "padding: 4px 15px",
-      ].join(";");
-      const dot = String.fromCodePoint("0x1F534");
-
       let scrollY = window.pageYOffset;
       let direction = scrollY > this.prevPosY ? "down" : "up";
 
@@ -440,11 +430,12 @@ export default {
 
         if (top < window.innerHeight * (+target.dataset.aos / 100) && top > 0) {
           if (!target.classList.contains("start-animation")) {
-            if (target.dataset.progress && !this.mine) {
+            if (target.dataset.progress && !this.mine && this.post.price > 0) {
               // trigger paywall
               if (!tronWeb.defaultAddress || !this.$store.state.user) {
                 this.$store.commit("toggleModal");
                 document.getElementById("page").classList.toggle("is-blurred");
+                this.prevPosY = window.scrollY;
                 return; //break;
               }
 
@@ -455,7 +446,7 @@ export default {
 
               if (toPay > 0) {
                 this.error = undefined;
-                this.message = undefined;
+                this.message = "Awaiting transaction ...";
                 this.freezeWindow();
 
                 let result = await payWriter(
@@ -463,17 +454,18 @@ export default {
                   this.post.id,
                   toPay
                 );
+                this.message = undefined;
 
                 if (result.success === true) {
-                  this.message = result.message || undefined;
+                  this.message =
+                    result.message + " to " + this.author.name || undefined;
                   this.progress = parseInt(target.dataset.progress);
                   this.updateBar();
                   this.payment = toPay;
 
-                  console.log(
-                    `%c ${dot} Succesfully transferred ${toPay} TRX to ${this.author.name} (${this.author.address})`,
-                    clgstyle
-                  );
+                  // console.log(
+                  //   `Succesfully transferred ${toPay} TRX to ${this.author.name} (${this.author.address})`
+                  // );
                   this.paid = this.progress;
                   target.classList.add("start-animation");
                   delete target.dataset.aos;
@@ -487,7 +479,12 @@ export default {
                 delete target.dataset.aos;
               }
             } else {
-              //title or mine
+              //title or mine or free
+              if (this.post.price === 0 && target.dataset.progress) {
+                console.log("freeeee");
+                this.progress = parseInt(target.dataset.progress);
+                this.updateBar();
+              }
               target.classList.add("start-animation");
               delete target.dataset.aos;
             }

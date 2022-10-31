@@ -53,6 +53,14 @@
             <i v-if="progress === 100" class="bi bi-check-lg"></i>
             <span v-else>{{ progress }}%</span>
           </span>
+
+          <span
+            class="badge text-white position-absolute m-1 top-0 start-0 lh-1"
+            style="background-color: var(--bs-secondary)"
+            v-if="post.price === 0"
+          >
+            FREE
+          </span>
         </div>
       </div>
       <div

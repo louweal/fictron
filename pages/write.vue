@@ -74,7 +74,7 @@
                   <option selected value="select">Select price</option>
                   <option
                     :value="p"
-                    v-for="(p, i) in [200, 250, 300, 350, 400, 450, 500]"
+                    v-for="(p, i) in [0, 200, 250, 300, 350, 400, 450, 500]"
                     :key="i"
                   >
                     {{ p }} TRX / {{ (p * trxusd).toFixed(2) }} USD
