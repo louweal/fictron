@@ -3,11 +3,11 @@
     <div class="pre-loader__inner p-5">
       <div class="d-flex logo">
         <div class="wobbler w-100 h-100">
-          <img src="@/images/logo.svg" alt="logo" class="w-100 h-100" />
+          <img src="@/images/logo2.svg" alt="logo" class="w-100 h-100" />
         </div>
       </div>
 
-      <p class="display-6 fs-3 text-center mt-2">
+      <p class="display-6 fs-1 text-center mt-2">
         <span class="text-primary delay-800">stories.</span>
         <span class="text-primary delay-1400">reimagined.</span>
       </p>
@@ -41,6 +41,10 @@ export default {};
     .logo {
       opacity: 0;
       animation: fade-in-up 1.8s cubic-bezier(0.2, 0, 0.1, 1) forwards;
+    }
+
+    img {
+      // width: 200%;
     }
 
     p {
