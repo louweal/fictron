@@ -26,9 +26,7 @@
           <post-grid :posts="posts.slice(0, gridMax)" />
 
           <div class="text-center my-4" v-if="posts.length > gridMax">
-            <div class="btn btn-secondary" @mouseover="gridMax += 9">
-              Load more
-            </div>
+            <div class="btn btn-secondary" @click="gridMax += 9">Load more</div>
           </div>
         </div>
 
