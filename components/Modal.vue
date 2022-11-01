@@ -21,9 +21,9 @@
           </div>
           <div class="modal-body px-1">
             <p class="text-center">
-              Can you imagine a world where you can start reading every book you
-              want and only pay for the pages you actually read? Connect your
-              TRON wallet and let your imagination become reality.
+              Can you imagine a world where you can start reading as many books
+              as you like and only pay for the pages you read? Connect your TRON
+              wallet and let your imagination become reality.
             </p>
             <div class="d-grid gap-2 mb-1">
               <div

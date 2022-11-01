@@ -132,12 +132,7 @@
       </div>
 
       <template v-if="freePosts.length > 0">
-        <h2 class="fs-5 mt-3 mt-4">
-          <nuxt-link to="/search?price=free">
-            Free books
-            <i class="bi bi-arrow-right"></i>
-          </nuxt-link>
-        </h2>
+        <h2 class="fs-5 mt-3 mt-4">Free books</h2>
 
         <div class="row gy-0 gx-3 pt-md-1 mb-lg-4">
           <div class="col-12 col-md" v-for="(post, i) in freePosts" :key="i">

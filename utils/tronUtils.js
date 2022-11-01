@@ -58,9 +58,7 @@ export async function payWriter(address, bookId, value) {
       shouldPollResponse: false,
     })
     .then(() => {
-      // console.log(response);
-      let message = `Succesfully transferred ${value} TRX`;
-      return { success: true, message };
+      return { success: true, message: `Succesfully transferred ${value} TRX` };
     })
     .catch((err) => {
       let message;

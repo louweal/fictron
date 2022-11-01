@@ -3,7 +3,6 @@ export const state = () => ({
   posts: [],
   categories: [],
   writers: [],
-  // clickedPost: undefined,
   user: undefined,
 });
 

@@ -36,10 +36,6 @@
             <li v-if="post.views">
               <i class="bi bi-eye"></i> {{ post.views }} readers
             </li>
-            <!-- <li>
-              <i class="bi bi-piggy-bank"></i>
-              {{ post.price }} TRX ≈ ${{ price }}
-            </li> -->
             <li
               class="text-danger cursor-pointer"
               v-if="mine"
@@ -63,6 +59,14 @@
           <p v-if="post.price > 0">
             Price: <b>{{ post.price }}</b> <small>TRX</small> /
             <b>{{ price }}</b> <small>USD</small>
+          </p>
+          <p v-else>
+            <span
+              class="badge text-white"
+              style="background-color: var(--bs-secondary)"
+            >
+              FREE
+            </span>
           </p>
         </div>
 
@@ -105,19 +109,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div
-          class="col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2"
-          v-if="!$route.hash && !mine"
-        >
-          <!-- <notice
-            class="mb-5"
-            id="warning-0"
-            data-aos="0"
-            :price="post.price"
-            :usd="+price"
-          /> -->
         </div>
       </div>
 
@@ -469,7 +460,6 @@ export default {
             } else {
               //title or mine or free
               if (this.post.price === 0 && target.dataset.progress) {
-                console.log("freeeee");
                 this.progress = parseInt(target.dataset.progress);
                 this.updateBar();
               }

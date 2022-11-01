@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       query: "",
-      gridMax: 27,
+      gridMax: 21,
     };
   },
 

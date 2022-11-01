@@ -57,9 +57,6 @@ export default {
 
   computed: {
     visual() {
-      console.log(
-        "@/images/" + this.category.slug + "/" + this.category.visual + ".jpg"
-      );
       return (
         "@/images/" +
         this.category.slug +

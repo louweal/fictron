@@ -116,7 +116,6 @@ export default {
   },
   watch: {
     "$store.state.user": function () {
-      console.log("user changed");
       if (this.$store.state.user === undefined) {
         this.$router.push("/");
       }
