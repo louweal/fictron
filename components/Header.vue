@@ -152,8 +152,6 @@ export default {
 
         // update previous scroll positon
         this.prevPosY = window.scrollY;
-      } else {
-        console.log("header missing?");
       }
 
       // hide dropdown on scroll
