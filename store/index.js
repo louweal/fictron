@@ -32,7 +32,7 @@ export const mutations = {
 
     localStorage.setItem(
       "browserPosts",
-      JSON.stringify(state.posts.filter((p) => p.id >= 140))
+      JSON.stringify(state.posts.filter((p) => p.id >= 144))
     );
   },
 
@@ -41,7 +41,7 @@ export const mutations = {
 
     localStorage.setItem(
       "browserPosts",
-      JSON.stringify(state.posts.filter((p) => p.id >= 140))
+      JSON.stringify(state.posts.filter((p) => p.id >= 144))
     );
   },
 
