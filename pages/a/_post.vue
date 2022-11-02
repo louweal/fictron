@@ -22,7 +22,7 @@
           :class="
             $options.type === 'article'
               ? 'col-12 col-sm-10 col-lg-8 offset-sm-1 offset-lg-2'
-              : 'col-12 col-sm-8 col-lg-6 mb-5 align-self-center'
+              : 'col-12 col-sm-8 col-lg-6 xxxmb-5 align-self-center'
           "
         >
           <nuxt-link :to="'/c/' + post.category" class="badge bg-secondary">
@@ -34,7 +34,7 @@
               {{ formatDate(post.date) }}
             </li>
             <li v-if="post.views">
-              <i class="bi bi-eye"></i> {{ post.views }} readers
+              <i class="bi bi-eye"></i> {{ post.views }} reads
             </li>
             <li
               class="text-danger cursor-pointer"
@@ -142,13 +142,13 @@
               [{{ error }}]
             </small>
 
-            <small
+            <div
               class="fw-bold text-warning"
               :key="'message' + i"
               v-if="+p.progress == progress && message"
             >
               [{{ message }}]
-            </small>
+            </div>
 
             <div
               :key="'payment' + i"
