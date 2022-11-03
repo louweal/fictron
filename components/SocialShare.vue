@@ -37,7 +37,6 @@ export default {
 
   computed: {
     domain() {
-      // return "https://nearpress.codesparks.nl";
       return "https://fictron.codesparks.nl";
     },
   },
