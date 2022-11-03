@@ -131,10 +131,9 @@ export const mutations = {
 };
 
 function updateLocalStorageUser(user) {
+  let u = JSON.parse(localStorage.getItem("users")) || [];
   // or append
-  let users = JSON.parse(localStorage.getItem("users")).filter(
-    (u) => u.id !== user.id
-  );
+  let users = u.filter((u) => u.id !== user.id);
   users.push(user);
   localStorage.setItem("users", JSON.stringify(users));
 }
