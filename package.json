@@ -1,7 +1,7 @@
 {
   "name": "fictron",
   "version": "1.0.0",
-  "description": "fictron: fictional stories reimagined on TRON",
+  "description": "fictron: fiction reimagined on TRON",
   "main": "index.js",
   "scripts": {
     "dev": "nuxt --port 8001",
