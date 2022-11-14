@@ -14,14 +14,12 @@ npm install
 ## Run in development mode
 
 ```
-nvm use
 npm run dev
 ```
 
 ## Run in production mode
 
 ```
-nvm use
 npm run generate
 npm run start
 ```
