@@ -95,25 +95,6 @@ export default {
       });
     },
 
-    signInDemo() {
-      let address = "TArXQAezpyHmebwrvshUUf3ECoEXoPc9Ri";
-      let name = "Demo wallet";
-      let slug = "demo-wallet";
-
-      let users = JSON.parse(localStorage.getItem("users"));
-      let user = users ? users.find((u) => u.address === address) : undefined;
-
-      if (user) {
-        this.$store.commit("setUser", user);
-      } else {
-        let numUsers = users ? users.length : 0;
-        let id = 42 + numUsers;
-        this.setUser(id, address, name, slug);
-        this.$store.commit("addWriter", { id, address, name, slug });
-      }
-      this.toggleModal();
-    },
-
     async signIn() {
       let tronAddress = await getTronWebAddress();
       if (!tronAddress) {
